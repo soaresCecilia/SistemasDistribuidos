@@ -1,6 +1,6 @@
 package com.jetbrains;
 
-public class Utilizador implements java.io.Serializable {
+public class Utilizador {
     private int identificador;
     private String nome;
     private String email;
@@ -10,7 +10,6 @@ public class Utilizador implements java.io.Serializable {
         this.identificador = id;
         this.nome = nome;
         this.email = email;
-        this.password = password;
+        this.password = pass;
     }
-
 }
