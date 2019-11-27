@@ -7,7 +7,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class Cliente {
-
+//aqui vamos fazer as verificações se o input do cliente é bem feito, e depois aqui trata do
+    // display dos resultados dados pelo servidor
     public static void main(String[] args) throws IOException {
 
         ClienteSTUB clienteSTUB = new ClienteSTUB();
@@ -16,7 +17,7 @@ public class Cliente {
 
         String mensagem = inputCliente.readLine();
 
-        Boolean rsp= clienteSTUB.procurarUtilizador(mensagem);
+        String rsp= clienteSTUB.procurarUtilizador(mensagem);
 
         System.out.println("O servidor encontrou o utilizador? "+rsp);
     }

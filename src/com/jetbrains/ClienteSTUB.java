@@ -4,8 +4,9 @@ import java.io.*;
 import java.net.Socket;
 
 public class ClienteSTUB {
+    // aqui ficam os vários protocolos de comunicação com o servidor
 
-    public Boolean procurarUtilizador(String mensagem) throws IOException {
+    public String procurarUtilizador(String mensagem) throws IOException {
 
         String address = "127.0.0.1";
         short port = 12345;
@@ -14,18 +15,20 @@ public class ClienteSTUB {
         //criar socket (A maquina em que está o serviço, em que porto me devo conectar)
         Socket socket = new Socket(address, port);
 
-        //le no terminal o nosso input
-        BufferedReader inserCliente = new BufferedReader(new InputStreamReader(System.in));
 
 
         //escreve noo canal de ligacao cliente cervidor
-
-
+        PrintWriter out = new PrintWriter(socket.getOutputStream());
         //le do canal de ligação cliente servidor
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 
-        RequestUtilizador rU = new RequestUtilizador(mensagem);
 
+        out.println(mensagem);
+        out.flush();
+
+
+        String rsp = in.readLine();
 
 
 

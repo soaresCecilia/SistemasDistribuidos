@@ -12,4 +12,8 @@ public class Utilizador {
         this.email = email;
         this.password = pass;
     }
+
+    public String getNome(){
+        return this.nome;
+    }
 }

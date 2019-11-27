@@ -29,12 +29,11 @@ public class Worker implements Runnable {
             PrintWriter out = new PrintWriter(clSock.getOutputStream());
 
             //passa o que li do canal para uma string
-            //String inComing=in.readLine();
+            String inComing=in.readLine();
 
-            // String[] comandos = inComing.split(" ");
+             String[] comandos = inComing.split(" ");
 
 
-/*
 
             while(inComing!=null){
 
@@ -43,19 +42,19 @@ public class Worker implements Runnable {
                 switch (comandos[0]){
 
 
-                    case "titulo":
+                    case "nome":
 
                         out.println("ServidorWorker encontrou ???");
                         out.flush();
                         break;
 
-
+/*
                     case "interprete":
 
                             out.println("ServidorWorker encontrou ??? asdad");
                             out.flush();
                             break;
-
+*/
                     default:
                         out.println("Opcao invalida");
                         out.flush();
@@ -66,7 +65,7 @@ public class Worker implements Runnable {
             }
             clSock.shutdownOutput();
             clSock.shutdownInput();
-            clSock.close();*/
+            clSock.close();
         }
         catch (IOException e){}
     }
