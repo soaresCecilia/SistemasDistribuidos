@@ -20,8 +20,8 @@ public class Worker implements Runnable {
     }
 
     public void run(){
-        try{
-            if(clSock==null) System.out.println("clSock null");
+        try {
+            if (clSock == null) System.out.println("clSock null");
 
             //lê do canal
             BufferedReader in = new BufferedReader(new InputStreamReader(this.clSock.getInputStream()));
@@ -29,20 +29,16 @@ public class Worker implements Runnable {
             PrintWriter out = new PrintWriter(clSock.getOutputStream());
 
             //passa o que li do canal para uma string
-            String inComing=in.readLine();
+            //String inComing=in.readLine();
 
-            String[] comandos = inComing.split(" ");
+            // String[] comandos = inComing.split(" ");
 
-            System.out.println("tenho :"+ comandos.length+ "palavras");
 
-            System.out.println("Worker id"+this.id+" e tenho no inComing: "+inComing);
-
+/*
 
             while(inComing!=null){
 
-                int saldo;
-                int idConta;
-                int valor;
+
 
                 switch (comandos[0]){
 
@@ -70,9 +66,11 @@ public class Worker implements Runnable {
             }
             clSock.shutdownOutput();
             clSock.shutdownInput();
-            clSock.close();
+            clSock.close();*/
         }
         catch (IOException e){}
     }
 
 }
+
+
