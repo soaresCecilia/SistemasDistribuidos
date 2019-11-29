@@ -10,20 +10,26 @@ public class Musica {
     private String titulo;
     private String interprete;
     private String ano;
+    private String genero;
     private byte[] ficheiro;
     private int nDownloads;
 
-    public Musica(int id, String titulo, String interprete, String ano, byte[] ficheiro) {
+    public Musica(int id, String titulo, String interprete, String ano, String genero, byte[] ficheiro) {
         this.id = id;
         this.titulo = titulo;
         this.interprete = interprete;
         this.ano = ano;
+        this.genero = genero;
         this.ficheiro = ficheiro;
         this.nDownloads=0;
     }
 
     public int getId() {
         return this.id;
+    }
+
+    public void setId(int id){
+        this.id=id;
     }
 
     public String getTitulo() {
@@ -37,6 +43,8 @@ public class Musica {
     public String getAno() {
         return this.ano;
     }
+
+    public String getGenero() { return this.genero; }
 
     public byte[] getFicheiro() {
         return this.ficheiro;
@@ -58,7 +66,8 @@ public class Musica {
         return super.equals(aux) && this.id == aux.getId()
                 && this.titulo.equals(aux.getTitulo())
                 && this.interprete.equals(aux.getInterprete())
-                && this.ano.equals(aux.getAno());
+                && this.ano.equals(aux.getAno())
+                && this.genero.equals(aux.getGenero());
     }
 
     public String toString() {
@@ -72,9 +81,16 @@ public class Musica {
         sb.append(this.interprete+" ");
         sb.append("Ano: ");
         sb.append(this.ano+" ");
+        sb.append("Genero: ");
+        sb.append(this.genero+" ");
         sb.append("Numero de downloads: ");
         sb.append(this.nDownloads);
 
         return sb.toString();
+    }
+
+    public void addNDownload(){
+
+        this.nDownloads++;
     }
 }

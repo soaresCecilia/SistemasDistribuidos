@@ -11,7 +11,7 @@ public class Cliente {
     // display dos resultados dados pelo servidor
     public static void main(String[] args) throws IOException {
 
-        ClienteSTUB clienteSTUB = new ClienteSTUB();
+        ClienteSTUB clienteSTUB = new ClienteSTUB("127.0.0.1",12345);
 
         BufferedReader inputCliente = new BufferedReader(new InputStreamReader(System.in));
 
