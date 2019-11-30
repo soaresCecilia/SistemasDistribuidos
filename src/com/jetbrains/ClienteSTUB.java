@@ -19,11 +19,11 @@ public class ClienteSTUB implements SoundCloud {
         out.println("login "+email+" "+password);
         out.flush();
 
-        String le =inBuffer.readLine();
+        String le = inBuffer.readLine();
         if(le!=null) {
             String[] rsp = le.split(" ");
             switch (rsp[0]){
-                case "1":
+                case "1": //correu tudo bem
                     break;
                 default:
                     throw new CredenciaisInvalidasException();

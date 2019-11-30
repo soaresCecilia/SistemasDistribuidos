@@ -3,31 +3,23 @@ package com.jetbrains;
 import java.util.Map;
 
 public class Utilizador {
-    private int id;
+
     private String nome;
-    private String email;
     private String password;
     private String caminhoFicheiro;
 
 
-    public Utilizador(int id, String nome, String email, String pass) {
-        this.id = id;
+    public Utilizador(String nome, String pass) {
         this.nome = nome;
-        this.email = email;
         this.password = pass;
     }
 
-    public int getId() {
-        return id;
-    }
 
     public String getNome(){
         return this.nome;
     }
 
-    public String getEmail() {
-        return email;
-    }
+
 
     public String getPassword() {
         return password;
@@ -41,22 +33,20 @@ public class Utilizador {
             return false;
         }
         Utilizador aux = (Utilizador) o;
-        return super.equals(aux) && this.id == aux.getId()
-                && this.nome.equals(aux.getNome())
-                && this.email.equals(aux.getEmail());
+        return super.equals(aux) && this.nome.equals(aux.getNome());
     }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("ID: ");
-        sb.append(this.id+" ");
         sb.append("Nome: ");
         sb.append(this.nome+" ");
-        sb.append("Email: ");
-        sb.append(this.email);
 
 
         return sb.toString();
+    }
+
+    public boolean autentica(String nome, String password) {
+        return (this.nome.equals(nome) && this.password.equals(password));
     }
 }
