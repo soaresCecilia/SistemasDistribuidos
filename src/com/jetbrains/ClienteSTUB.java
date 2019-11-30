@@ -115,41 +115,28 @@ public class ClienteSTUB implements SoundCloud {
 
     }
 
-    public String procurarUtilizador(String mensagem) throws IOException {
+    public void procuraMusica (String m) throws IOException, UtilizadorNaoAutenticadoException, MusicaInexistenteException{
 
-        String address = "127.0.0.1";
-        short port = 12345;
-
-
-        //criar socket (A maquina em que está o serviço, em que porto me devo conectar)
-        Socket socket = new Socket(address, port);
-
-
-
-        //escreve noo canal de ligacao cliente cervidor
-        PrintWriter out = new PrintWriter(socket.getOutputStream());
-        //le do canal de ligação cliente servidor
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-
-
-        out.println(mensagem);
+        out.println("procura "+m);
         out.flush();
 
+        String le =inBuffer.readLine();
+        if(le!=null) {
+            String[] rsp = le.split(" ");
+            switch (rsp[0]){
+                case "1":
+                    break;
+                case "2":
+                    throw new MusicaInexistenteException();
+                default:
+                    throw new UtilizadorNaoAutenticadoException();
 
-        String rsp = in.readLine();
-
-
-
-
-
-
-        socket.shutdownOutput();
-        socket.shutdownInput();
-        socket.close();
-
-        return rsp;
-
+            }
+        }
+        else{
+            throw new IOException();
+        }
     }
+
 
 }

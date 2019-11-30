@@ -1,6 +1,7 @@
 package com.jetbrains;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface SoundCloud {
 
@@ -10,5 +11,6 @@ public interface SoundCloud {
     void download(Integer id) throws IOException,MusicaInexistenteException, UtilizadorNaoAutenticadoException;
     void upload(String s) throws IOException, UtilizadorNaoAutenticadoException;
     void connect() throws IOException;
+    void procuraMusica (String m) throws IOException, UtilizadorNaoAutenticadoException, MusicaInexistenteException;
 
 }

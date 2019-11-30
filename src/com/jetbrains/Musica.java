@@ -11,16 +11,16 @@ public class Musica {
     private String interprete;
     private String ano;
     private String genero;
-    private byte[] ficheiro;
+    private String caminhoFicheiro;
     private int nDownloads;
 
-    public Musica(int id, String titulo, String interprete, String ano, String genero, byte[] ficheiro) {
+    public Musica(int id, String titulo, String interprete, String ano, String genero, String ficheiro) {
         this.id = id;
         this.titulo = titulo;
         this.interprete = interprete;
         this.ano = ano;
         this.genero = genero;
-        this.ficheiro = ficheiro;
+        this.caminhoFicheiro = ficheiro;
         this.nDownloads=0;
     }
 
@@ -46,8 +46,8 @@ public class Musica {
 
     public String getGenero() { return this.genero; }
 
-    public byte[] getFicheiro() {
-        return this.ficheiro;
+    public String getCaminhoFicheiro() {
+        return this.caminhoFicheiro;
     }
 
     public int getNDownloads(){
@@ -67,7 +67,8 @@ public class Musica {
                 && this.titulo.equals(aux.getTitulo())
                 && this.interprete.equals(aux.getInterprete())
                 && this.ano.equals(aux.getAno())
-                && this.genero.equals(aux.getGenero());
+                && this.genero.equals(aux.getGenero())
+                && this.caminhoFicheiro.equals((aux.getCaminhoFicheiro()));
     }
 
     public String toString() {

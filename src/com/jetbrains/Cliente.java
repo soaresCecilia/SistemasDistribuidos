@@ -15,10 +15,9 @@ public class Cliente {
 
         BufferedReader inputCliente = new BufferedReader(new InputStreamReader(System.in));
 
-        String mensagem = inputCliente.readLine();
 
-        String rsp= clienteSTUB.procurarUtilizador(mensagem);
 
-        System.out.println("O servidor encontrou o utilizador? "+rsp);
+
+        
     }
 }
