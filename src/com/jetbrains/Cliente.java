@@ -33,9 +33,9 @@ public class Cliente {
 
 
     private void autenticacao(String email, boolean querRegistar) throws IOException {
-        BufferedReader consola = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("password");
-        String password = consola.readLine();
+        String password = terminal.readLine();
 
         cStub.connect();
 
@@ -71,9 +71,11 @@ public class Cliente {
         String comando;
         String[] arrayComandos;
 
+        BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
+
 
         while (true) {
-            comando = System.console().readLine();
+            comando = terminal.readLine();
 
 
             arrayComandos = comando.split(" ");
