@@ -138,9 +138,6 @@ public class Cliente {
             arrayComandos = comando.split(" ",2);
 
             int tam = arrayComandos.length;
-            System.out.println("tamanho input"+tam);
-            System.out.println(arrayComandos[0]);
-            System.out.println(arrayComandos[1]);
 
             try {
                 switch (arrayComandos[0]) {
