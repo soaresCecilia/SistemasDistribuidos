@@ -7,20 +7,27 @@ import java.util.Map;
 
 public class Repositorio {
 
+    private Map<String, Utilizador> utilizadores; //nome, utilizador
 
-
+    //private List<Utilizador> utilizadorAutenticado;
 
     private Map<Integer,Musica> musicas;
 
-    private static int idMusica =0;
+    private static int idMusica = 0;
 
 
     public Repositorio(){
-
+        this.utilizadores = new HashMap<String, Utilizador>();
         this.musicas = new HashMap<Integer, Musica>();
-
     }
 
+    public void setUtilizadores(Map<String, Utilizador> utilizadores) {
+        this.utilizadores = utilizadores;
+    }
+
+    public Map<String, Utilizador> getUtilizadores() {
+        return utilizadores;
+    }
 
     public Map<Integer, Musica> getMusicas() {
         return musicas;
@@ -29,6 +36,17 @@ public class Repositorio {
     public Musica getMusicaId(int id){
 
         return (this.musicas.get(id));
+    }
+
+    public void adicionaUtilizador(String nome, String pass) throws UtilizadorJaExisteException {
+        if(!utilizadores.containsKey(nome)) {
+            throw new UtilizadorJaExisteException("Impossivel adicionar utilizador com mesmo nome");
+        }
+        else {
+            Utilizador u = new Utilizador(nome, pass);
+            utilizadores.put(nome, u);
+        }
+
     }
 
     public List<Musica> getMusicasPar(String str){

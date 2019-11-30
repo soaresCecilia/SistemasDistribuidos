@@ -91,9 +91,14 @@ public class Cliente {
                         break;
                     case "logout":
                         System.out.println("Adeus");
+
+
+
                         System.exit(0);
                         break;
 
+
+                        //falta download, upload e procurar
                     default:
                         System.out.println("Comando introduzido não existe. Volte a tentar");
                         comandos();
