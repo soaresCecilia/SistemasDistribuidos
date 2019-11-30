@@ -7,6 +7,7 @@ public class Utilizador {
     private String nome;
     private String email;
     private String password;
+    private String caminhoFicheiro;
 
 
     public Utilizador(int id, String nome, String email, String pass) {

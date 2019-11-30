@@ -106,14 +106,7 @@ public class ClienteSTUB implements SoundCloud {
         }
     }
 
-    public void connect() throws IOException{
 
-        this.socket = new Socket(this.ip,this.porto);
-
-        out= new PrintWriter(socket.getOutputStream());
-        inBuffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-    }
 
     public void procuraMusica (String m) throws IOException, UtilizadorNaoAutenticadoException, MusicaInexistenteException{
 
@@ -136,6 +129,16 @@ public class ClienteSTUB implements SoundCloud {
         else{
             throw new IOException();
         }
+    }
+
+
+    public void connect() throws IOException{
+
+        this.socket = new Socket(this.ip,this.porto);
+
+        out= new PrintWriter(socket.getOutputStream());
+        inBuffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
     }
 
 
