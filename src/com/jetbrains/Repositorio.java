@@ -61,9 +61,10 @@ public class Repositorio {
         return lista;
     }
 
-    public void adicionaM(Musica m){
-        int id = funcaoHash(m);
-        this.musicas.put(id,m);
+    public void adicionaM(String m){
+        Musica mu = new Musica(1,"a","b","0","r","p");
+        int id = funcaoHash(mu);
+        this.musicas.put(id,mu);
 
     }
 

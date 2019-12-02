@@ -1,11 +1,15 @@
 package com.jetbrains;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.Socket;
 
 public class ServidorStub {
     private Repositorio repositorio;
+    public static String FILE_TO_SEND = "/home/luisabreu/Desktop/trabalhoSD";
 
-
+    public ServidorStub(Repositorio r){
+        this.repositorio = r;
+    }
 
     public void login(String email, String Password) throws IOException, CredenciaisInvalidasException {
 
@@ -17,16 +21,22 @@ public class ServidorStub {
     }
 
 
-    public void registarUtilizador(String email, String password) throws IOException, UtilizadorJaExisteException {
-        //tem de imprimir para o canal para falar com o ClienteStub;
+    public void registarUtilizador(String dados) throws IOException, UtilizadorJaExisteException {
 
-
-       // this.repositorio.adicionaUtilizador(email, password);
 
     }
 
 
-    public void download(Integer id) throws IOException, MusicaInexistenteException, UtilizadorNaoAutenticadoException {
+    public byte[] download(Integer id) throws IOException, MusicaInexistenteException, UtilizadorNaoAutenticadoException {
+
+        String n = FILE_TO_SEND+id+".mp3";
+
+        File myFile = new File(FILE_TO_SEND);
+        byte [] mybytearray  = new byte [(int)myFile.length()];
+
+        return mybytearray;
+
+
 
     }
 
