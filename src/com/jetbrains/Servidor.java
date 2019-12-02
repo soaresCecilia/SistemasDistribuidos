@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public class Servidor {
     public static void main(String[] args){
-        short port = 12345;
+        short port = 12346;
         //int idThread=0;
         Repositorio repositorio = new Repositorio();
 

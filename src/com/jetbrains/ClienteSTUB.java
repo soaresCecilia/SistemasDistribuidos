@@ -35,13 +35,15 @@ public class ClienteSTUB implements SoundCloud {
         }
 
     }
-    public void logout() throws IOException{
+
+
+    public void logout(String s) throws IOException{
         try{
-            out.println("logout");
+            out.println(s);
             out.flush();
         }
         finally {
-            socket.close();
+            this.disconnect();
         }
     }
     public void registarUtilizador(String email, String password) throws IOException,UtilizadorJaExisteException{
@@ -63,8 +65,8 @@ public class ClienteSTUB implements SoundCloud {
             throw new IOException();
         }
     }
-    public void download(Integer id) throws IOException, MusicaInexistenteException, UtilizadorNaoAutenticadoException{
-        out.println("download "+id);
+    public void download(String d) throws IOException, MusicaInexistenteException, UtilizadorNaoAutenticadoException{
+        out.println(d);
         out.flush();
 
         String le =inBuffer.readLine();
@@ -110,7 +112,7 @@ public class ClienteSTUB implements SoundCloud {
 
     public void procuraMusica (String m) throws IOException, UtilizadorNaoAutenticadoException, MusicaInexistenteException{
 
-        out.println("procura "+m);
+        out.println(m);
         out.flush();
 
         String le =inBuffer.readLine();
@@ -139,6 +141,13 @@ public class ClienteSTUB implements SoundCloud {
         out= new PrintWriter(socket.getOutputStream());
         inBuffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+    }
+
+    public void disconnect()throws  IOException{
+
+        this.socket.shutdownOutput();
+        this.socket.shutdownInput();
+        this.socket.close();
     }
 
 

@@ -67,6 +67,9 @@ public class Repositorio {
 
     }
 
+    public void registar(String s,String d){}
+    public void login(String s, String d){}
+
     public int funcaoHash(Musica m){
         //fazer lock
 

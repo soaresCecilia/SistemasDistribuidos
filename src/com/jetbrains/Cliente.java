@@ -15,7 +15,7 @@ public class Cliente {
 
 
     private void caminhoServidor(String ip, Integer port){
-        cStub = new ClienteSTUB("127.0.0.1", 12345);
+        cStub = new ClienteSTUB("127.0.0.1", 12346);
     }
 
 
@@ -38,30 +38,36 @@ public class Cliente {
         System.out.println("password");
         String password = terminal.readLine();
 
-        cStub.connect();
-
         try {
             if (querRegistar) { //querRegistar = true se se quer registar, querRegistar = false se só quer o login
                 cStub.registarUtilizador(email,password);
+                System.out.println("Utilizador registado com sucesso");
             }
             cStub.login(email,password);
 
-            System.out.println("Utilizador autenticado");
-        } catch (CredenciaisInvalidasException e) {
+            System.out.println("Utilizador autenticado, bem vindo");
+        }
+        catch (CredenciaisInvalidasException e) {
             System.out.println("Credenciais Inválidas");
-        } catch (UtilizadorJaExisteException e) {
+        }
+        catch (UtilizadorJaExisteException e) {
             System.out.println("Utilizador já existe");
         }
     }
+    private void logout(String s){
+        System.out.println("Adeus");
+        try{cStub.logout(s);
+        System.exit(0);}
+        catch (IOException e){
+            System.out.println("Logout não executado, tente de novo");
+        }
+    }
 
-    public void download(Integer id) throws  IOException{
-        BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
-
-        cStub.connect();
+    public void download(String s) throws  IOException{
 
         try{
 
-            cStub.download(id);
+            cStub.download(s);
         }
         catch (MusicaInexistenteException e){
             System.out.println("Musica pretendida inexistente");
@@ -82,8 +88,6 @@ public class Cliente {
         String caminho = terminal.readLine();
 
         String metaCam = (new StringBuilder()).append(metadados).append(caminho).toString();
-
-        cStub.connect();
 
         try{
 
@@ -130,10 +134,9 @@ public class Cliente {
 
         BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
 
+        comando = terminal.readLine();
 
         while (true) {
-            comando = terminal.readLine();
-
 
             arrayComandos = comando.split(" ",2);
 
@@ -142,23 +145,28 @@ public class Cliente {
             try {
                 switch (arrayComandos[0]) {
                     case "login":
-                        autenticacao(arrayComandos[1], false);
+                        try{autenticacao(arrayComandos[1], false);}
+                        catch (IOException e){
+                            System.out.println("Algo correu mal, tente de novo");
+                        }
                         break;
                     case "registar":
                         autenticacao(arrayComandos[1], true);
                         break;
                     case "logout":
-                        System.out.println("Adeus");
-                        System.exit(0);
+                        logout(arrayComandos[0]);
                         break;
                     case "download":
-                        download(Integer.parseInt(arrayComandos[1]));
+                        download(comando);
                         break;
                     case "upload":
-                        upload(arrayComandos[1]);
+                        upload(comando);
                         break;
-                    case "procura":
-                        procuraMusica(arrayComandos[1]);
+                    case "procuraID":
+                        procuraMusica(comando);
+                        break;
+                    case "procuraPar":
+                        procuraMusica(comando);
                         break;
                     default:
                         System.out.println("Comando introduzido não existe. Volte a tentar");
@@ -174,10 +182,12 @@ public class Cliente {
                 comandos();
             }
 
+            comando = terminal.readLine();
+
         }
+
+
     }
-
-
 
     public static void main(String[] args) throws IOException, InterruptedException, UtilizadorNaoAutenticadoException {
         Cliente.start("127.0.0.1", 12345);
