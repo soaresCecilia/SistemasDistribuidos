@@ -1,25 +1,19 @@
 package com.jetbrains;
 
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-
 
 
 public class Cliente {
     ClienteSTUB cStub;
-
-
+    BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
 
     private void caminhoServidor(String ip, Integer port){
         cStub = new ClienteSTUB("127.0.0.1", 12346);
     }
 
-
-    private synchronized void connect() throws IOException, InterruptedException {
+    private synchronized void connect() throws ClientesSTUBException {
         boolean connected = false;
         while (!connected) {
             try {
@@ -32,29 +26,31 @@ public class Cliente {
         }
     }
 
+    private void autenticacao(String email, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException{
 
-    private void autenticacao(String email, boolean querRegistar) throws IOException {
-        BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("password");
+        System.out.println("introduza a password");
         String password = terminal.readLine();
-
+        int pass = Integer.parseInt(password);
         try {
             if (querRegistar) { //querRegistar = true se se quer registar, querRegistar = false se só quer o login
-                cStub.registarUtilizador(email,password);
+                cStub.registarUtilizador(email,pass);
                 System.out.println("Utilizador registado com sucesso");
             }
-            cStub.login(email,password);
+            cStub.login(email,pass);
 
             System.out.println("Utilizador autenticado, bem vindo");
         }
         catch (CredenciaisInvalidasException e) {
-            System.out.println("Credenciais Inválidas");
+            e.printStackTrace();
         }
         catch (UtilizadorJaExisteException e) {
-            System.out.println("Utilizador já existe");
+           e.printStackTrace();
+        }
+        catch (ClientesSTUBException e){
+            e.printStackTrace();
         }
     }
-    private void logout(String s){
+    private void logout(String s) {
         System.out.println("Adeus");
         try{cStub.logout(s);
         System.exit(0);}
@@ -63,46 +59,60 @@ public class Cliente {
         }
     }
 
-    public void download(String s) throws  IOException{
+    public void download(int s) {
 
         try{
-
             cStub.download(s);
+            System.out.println("Download concluido com sucesso");
         }
         catch (MusicaInexistenteException e){
-            System.out.println("Musica pretendida inexistente");
+            e.printStackTrace();
         }
         catch (UtilizadorNaoAutenticadoException e){
-            System.out.println("Por favor aguarde...");
+            e.printStackTrace();
         }
-
+        catch (ClientesSTUBException e){
+            e.printStackTrace();
+        }
     }
 
+    public void upload() throws  IOException{
 
-    public void upload(String metadados) throws  IOException{
+        System.out.println("Insira o nome da musica");
+        String nome = terminal.readLine();
 
-        BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Insira o interprete da musica");
+        String interprete = terminal.readLine();
 
-        System.out.println("Insira o caminho para o ficheiro");
+        System.out.println("Insira o ano da musica");
+        String a = terminal.readLine();
+        int ano = Integer.parseInt(a);
 
+        System.out.println("Insira o caminho para o ficheiro a fazer upload");
         String caminho = terminal.readLine();
 
-        String metaCam = (new StringBuilder()).append(metadados).append(caminho).toString();
-
         try{
-
-            cStub.upload( metaCam );
+            cStub.upload( nome, interprete, ano,caminho);
         }
         catch (UtilizadorNaoAutenticadoException e){
             System.out.println("Por favor aguarde...");
         }
+        catch (ClientesSTUBException e){
+            e.printStackTrace();
+        }
 
     }
 
-    public void procuraMusica(String s){
-        try{
+    public void procuraMusica(String s) throws IOException {
 
-            cStub.procuraMusica(s);
+        try{
+            System.out.println("Insira a etiqueta a procurar");
+            String etiqueta = terminal.readLine();
+
+            System.out.println("Insira o que procurar");
+            String oQp = terminal.readLine();
+
+            cStub.procuraMusica(etiqueta,oQp);
         }
         catch (UtilizadorNaoAutenticadoException e){
             System.out.println("Por favor aguarde...");
@@ -111,10 +121,12 @@ public class Cliente {
             System.out.println("Não existe...");
 
         }
-        catch (IOException e){}
+        catch (ClientesSTUBException e){
+            e.printStackTrace();
+        }
     }
 
-    public static void start(String ip, Integer porto) throws IOException, UtilizadorNaoAutenticadoException, InterruptedException{
+    public static void start(String ip, Integer porto) throws ClientesSTUBException{
 
         Cliente cliente = new Cliente();
         cliente.caminhoServidor(ip,porto);
@@ -128,27 +140,22 @@ public class Cliente {
     }
 
 
-    private void comandos() throws IOException, UtilizadorNaoAutenticadoException {
+    private void comandos() throws IOException{
         String comando;
         String[] arrayComandos;
-
-        BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
 
         comando = terminal.readLine();
 
         while (true) {
 
-            arrayComandos = comando.split(" ",2);
+            arrayComandos = comando.split(" ");
 
             int tam = arrayComandos.length;
 
             try {
                 switch (arrayComandos[0]) {
                     case "login":
-                        try{autenticacao(arrayComandos[1], false);}
-                        catch (IOException e){
-                            System.out.println("Algo correu mal, tente de novo");
-                        }
+                        autenticacao(arrayComandos[1], false);
                         break;
                     case "registar":
                         autenticacao(arrayComandos[1], true);
@@ -157,10 +164,11 @@ public class Cliente {
                         logout(arrayComandos[0]);
                         break;
                     case "download":
-                        download(comando);
+                        int id= Integer.parseInt(arrayComandos[1]);
+                        download(id);
                         break;
                     case "upload":
-                        upload(comando);
+                        upload();
                         break;
                     case "procuraID":
                         procuraMusica(comando);
@@ -189,8 +197,13 @@ public class Cliente {
 
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException, UtilizadorNaoAutenticadoException {
-        Cliente.start("127.0.0.1", 12345);
+    public static void main(String[] args) throws InterruptedException, UtilizadorNaoAutenticadoException {
+       try {
+           Cliente.start("127.0.0.1", 12345);
+       }
+       catch (ClientesSTUBException e){
+           System.out.println("Erro conecção");
 
+       }
     }
 }

@@ -15,26 +15,28 @@ public class ClienteSTUB implements SoundCloud {
         this.porto = porto;
     }
 
-    public void login(String email, String password) throws IOException, CredenciaisInvalidasException{
+    public void login(String email, int password) throws CredenciaisInvalidasException, ClientesSTUBException{
+
         out.println("login "+email+" "+password);
         out.flush();
 
-        String le = inBuffer.readLine();
-        if(le!=null) {
+        try {
+            String le = inBuffer.readLine();
+
             String[] rsp = le.split(" ");
-            switch (rsp[0]){
+            switch (rsp[0]) {
                 case "1": //correu tudo bem
                     break;
                 default:
-                    throw new CredenciaisInvalidasException();
+                    throw new CredenciaisInvalidasException("Credenciais inválidas");
 
             }
         }
-        else{
-            throw new IOException();
+        catch (IOException e){
+            throw new ClientesSTUBException("Ocorreu um erro na ligação");
         }
-
     }
+
 
 
     public void logout(String s) throws IOException{
@@ -46,33 +48,37 @@ public class ClienteSTUB implements SoundCloud {
             this.disconnect();
         }
     }
-    public void registarUtilizador(String email, String password) throws IOException,UtilizadorJaExisteException{
+    public void registarUtilizador(String email, int password) throws UtilizadorJaExisteException, ClientesSTUBException{
         out.println("registarUtilizador "+email+" "+password);
         out.flush();
 
-        String le =inBuffer.readLine();
-        if(le!=null) {
-            String[] rsp = le.split(" ");
-            switch (rsp[0]){
-                case "1":
-                    break;
-                default:
-                    throw new UtilizadorJaExisteException();
+        try {
+            String le = inBuffer.readLine();
 
-            }
+                String[] rsp = le.split(" ");
+                switch (rsp[0]) {
+                    case "1":
+                        break;
+                    default:
+                        throw new UtilizadorJaExisteException();
+
+                }
+
         }
-        else{
-            throw new IOException();
+        catch (IOException e){
+            throw new ClientesSTUBException("Erro na ligação com o servidor");
         }
     }
-    public void download(String d) throws IOException, MusicaInexistenteException, UtilizadorNaoAutenticadoException{
-        out.println(d);
+    public void download(int id) throws MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClientesSTUBException{
+        String idM ="download"+id;
+        out.println(idM);
         out.flush();
 
-        String le =inBuffer.readLine();
-        if(le!=null) {
+        try {
+            String le = inBuffer.readLine();
+
             String[] rsp = le.split(" ");
-            switch (rsp[0]){
+            switch (rsp[0]) {
                 case "0":
                     throw new UtilizadorNaoAutenticadoException();
 
@@ -81,19 +87,21 @@ public class ClienteSTUB implements SoundCloud {
 
                 default:
                     throw new MusicaInexistenteException();
-
             }
         }
-        else{
-            throw new IOException();
+        catch (IOException e){
+            throw  new ClientesSTUBException("Ocorreu um erro na ligaçao");
         }
+
     }
-    public void upload(String musica) throws IOException, UtilizadorNaoAutenticadoException{
-        out.println("upload "+musica);
+    public void upload(String nome, String interprete, int ano, String caminho) throws UtilizadorNaoAutenticadoException, ClientesSTUBException{
+
+        out.println("upload "+nome+" "+interprete+" "+ano+" "+caminho+" ");
         out.flush();
 
+        try {
         String le =inBuffer.readLine();
-        if(le!=null) {
+
             String[] rsp = le.split(" ");
             switch (rsp[0]){
                 case "1":
@@ -103,20 +111,24 @@ public class ClienteSTUB implements SoundCloud {
 
             }
         }
-        else{
-            throw new IOException();
+        catch (IOException e){
+            throw new ClientesSTUBException( "Ocorreu um erro com o servidor");
         }
+
     }
 
 
 
-    public void procuraMusica (String m) throws IOException, UtilizadorNaoAutenticadoException, MusicaInexistenteException{
+    public void procuraMusica (String etiqueta, String queProcurar) throws ClientesSTUBException, UtilizadorNaoAutenticadoException, MusicaInexistenteException{
 
-        out.println(m);
+        String prM = "procura "+etiqueta+" "+queProcurar;
+
+        out.println(prM);
         out.flush();
 
+        try{
         String le =inBuffer.readLine();
-        if(le!=null) {
+
             String[] rsp = le.split(" ");
             switch (rsp[0]){
                 case "1":
@@ -128,8 +140,8 @@ public class ClienteSTUB implements SoundCloud {
 
             }
         }
-        else{
-            throw new IOException();
+        catch (IOException e){
+            throw new ClientesSTUBException("Ocorreu um erro com o servidor");
         }
     }
 

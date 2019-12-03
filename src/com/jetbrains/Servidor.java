@@ -5,8 +5,33 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Servidor {
+
+    private void caminhoServidor(Integer port){
+        cStub = new servidorSTUB(port);
+    }
+
+    public static void start(Integer porto){
+
+        Servidor servidor = new Servidor();
+        servidor.caminhoServidor(porto);
+        servidor.connect();
+
+        try {
+            cliente.comandos();
+        } catch (IOException e) {
+            cliente.connect();
+        }
+    }
+
     public static void main(String[] args){
-        short port = 12346;
+
+       Servidor.start(12346);
+
+    }
+}
+
+
+/* short port = 12346;
         //int idThread=0;
         Repositorio repositorio = new Repositorio();
 
@@ -28,6 +53,4 @@ public class Servidor {
         catch (IOException e ){
             e.printStackTrace();
         }
-
-    }
-}
+        */
