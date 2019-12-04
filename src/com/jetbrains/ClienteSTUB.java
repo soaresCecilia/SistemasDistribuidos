@@ -15,6 +15,17 @@ public class ClienteSTUB implements SoundCloud {
         this.porto = porto;
     }
 
+    public String testeF(){
+        try {
+            out.println("teste");
+            out.flush();
+
+        String r= inBuffer.readLine();
+        return r;
+        }
+        catch (IOException e){return "correu mal";}
+    }
+
     public void login(String email, int password) throws CredenciaisInvalidasException, ClientesSTUBException{
 
         out.println("login "+email+" "+password);

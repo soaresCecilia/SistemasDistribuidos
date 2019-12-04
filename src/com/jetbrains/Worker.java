@@ -26,7 +26,7 @@ public class Worker implements Runnable {
     public Musica procuraMusicaID(int i){return null;}
     public List<Musica> procuraMusicaPAR(String s){ return null;}
 
-    public void comandos(String s){
+    public void responde(String s){
         String result;
         String[] comandos = s.split(" ");
 
@@ -106,20 +106,22 @@ public class Worker implements Runnable {
         try {
             if (clSock == null) System.out.println("clSock null");
 
-            //lê do canal
-            BufferedReader in = new BufferedReader(new InputStreamReader(this.clSock.getInputStream()));
             //escreve no canal
             PrintWriter out = new PrintWriter(clSock.getOutputStream());
+            //lê do canal
+            BufferedReader in = new BufferedReader(new InputStreamReader(this.clSock.getInputStream()));
+
 
             //passa o que li do canal para uma string
             String inComing=in.readLine();
 
-
+            System.out.println(inComing);
             while(inComing!=null){
 
-                /*String result = comandos(inComing);
+                //if(inComing.equals("teste"))
+                //responde(inComing);
 
-                out.println(result);*/
+                out.println();
                 out.flush();
 
                 inComing = in.readLine();

@@ -15,8 +15,10 @@ public class Servidor {
 
             while (!serverSocket.isClosed()) {
                 Socket clSocket = serverSocket.accept();
+                System.out.println("liguei!");
                 Thread t = new Thread( new Worker(clSocket, repositorio));
-
+                t.start();
+                System.out.println("passei pela thread");
             }
 
 

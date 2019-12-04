@@ -139,6 +139,11 @@ public class Cliente {
         }
     }
 
+    public void testeF(){
+
+        String s = cStub.testeF();
+        System.out.println(s);
+    }
 
     private void comandos() throws IOException{
         String comando;
@@ -154,6 +159,8 @@ public class Cliente {
 
             try {
                 switch (arrayComandos[0]) {
+                    case "teste":
+                        testeF();
                     case "login":
                         autenticacao(arrayComandos[1], false);
                         break;
