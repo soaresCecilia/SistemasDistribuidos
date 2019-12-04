@@ -146,12 +146,16 @@ public class ClienteSTUB implements SoundCloud {
     }
 
 
-    public void connect() throws IOException{
-
+    public void connect() throws ClientesSTUBException {
+        try{
         this.socket = new Socket(this.ip,this.porto);
 
         out= new PrintWriter(socket.getOutputStream());
         inBuffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        }
+        catch (IOException e){
+            throw new ClientesSTUBException("Ocorreu um erro na ligação com o servidor");
+        }
 
     }
 

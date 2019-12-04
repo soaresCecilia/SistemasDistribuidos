@@ -13,13 +13,13 @@ public class Cliente {
         cStub = new ClienteSTUB("127.0.0.1", 12346);
     }
 
-    private synchronized void connect() throws ClientesSTUBException {
+    private synchronized void connect() {
         boolean connected = false;
         while (!connected) {
             try {
                 cStub.connect(); //connect do stub
                 connected = true;
-            } catch (IOException e) {
+            } catch (ClientesSTUBException e) {
              e.printStackTrace();
             }
 
@@ -193,8 +193,6 @@ public class Cliente {
             comando = terminal.readLine();
 
         }
-
-
     }
 
     public static void main(String[] args) throws InterruptedException, UtilizadorNaoAutenticadoException {

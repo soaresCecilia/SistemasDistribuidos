@@ -1,11 +1,12 @@
 package com.jetbrains;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Repositorio {
+public class Repositorio implements SoundCloud{
 
     private Map<String, Utilizador> utilizadores; //nome, utilizador
 
@@ -38,38 +39,21 @@ public class Repositorio {
         return (this.musicas.get(id));
     }
 
-    public void adicionaUtilizador(String nome, String pass) throws UtilizadorJaExisteException {
-        if(!utilizadores.containsKey(nome)) {
-            throw new UtilizadorJaExisteException("Impossivel adicionar utilizador com mesmo nome");
-        }
-        else {
-            Utilizador u = new Utilizador(nome, pass);
-            utilizadores.put(nome, u);
-        }
 
-    }
 
-    public List<Musica> getMusicasPar(String str){
 
-        List<Musica> lista = new ArrayList<Musica>();
 
-        for(Musica m: musicas.values()){
 
-            if(m.toString().contains(str))
-                lista.add(m);
-        }
-        return lista;
-    }
-
-    public void adicionaM(String m){
-        Musica mu = new Musica(1,"a","b","0","r","p");
+    public void login(String email, int password) throws IOException, CredenciaisInvalidasException, ClientesSTUBException{}
+    public void logout(String s) throws  IOException, ClientesSTUBException{}
+    public void registarUtilizador(String email, int password) throws UtilizadorJaExisteException,ClientesSTUBException{}
+    public void download(int idMusica) throws IOException,MusicaInexistenteException, UtilizadorNaoAutenticadoException,ClientesSTUBException{}
+    public void upload( String nome, String interprete, int ano, String caminho) throws IOException, UtilizadorNaoAutenticadoException,ClientesSTUBException{
+        Musica mu = new Musica(1,"a","b",1,"r","p");
         int id = funcaoHash(mu);
         this.musicas.put(id,mu);
-
     }
-
-    public void registar(String s,String d){}
-    public void login(String s, String d){}
+    public void procuraMusica (String etiqueta, String oQueProcurar) throws IOException, UtilizadorNaoAutenticadoException, MusicaInexistenteException, ClientesSTUBException{}
 
     public int funcaoHash(Musica m){
         //fazer lock

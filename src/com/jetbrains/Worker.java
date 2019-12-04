@@ -12,13 +12,11 @@ public class Worker implements Runnable {
     private Socket clSock;
     private int id;
     private Repositorio repositorio;
-    ServidorStub sStub;
 
-    public Worker(Socket clsock, Repositorio repositorio) throws IOException{
-        this.clSock =  clsock;
+
+    public Worker(Socket clisock, Repositorio repositorio) throws IOException{
+        this.clSock =  clisock;
         this.repositorio= repositorio;
-
-        this.sStub = new ServidorStub(this.repositorio);
     }
 
     public void logout(String s) throws IOException{}
@@ -26,9 +24,83 @@ public class Worker implements Runnable {
     public byte[] download(String s) throws  IOException{ return  null;}
     public void upload(String metadados) throws  IOException{}
     public Musica procuraMusicaID(int i){return null;}
-    public List<Musica> procuraMusicaPAR(String s){
+    public List<Musica> procuraMusicaPAR(String s){ return null;}
 
-        return null;}
+    public void comandos(String s){
+        String result;
+        String[] comandos = s.split(" ");
+
+        switch (comandos[0]){
+            case "login":
+                int id = Integer.parseInt(comandos[2]);
+                try{
+                repositorio.login(comandos[1],id);}
+                catch (IOException e ){}
+                catch(CredenciaisInvalidasException e){}
+                catch(ClientesSTUBException e){}
+                break;
+
+            case "logout":
+                //vale a pena manter no repositorio quem está login?
+                try{
+                repositorio.logout(comandos[0]);}
+                catch (IOException e){}
+                catch (ClientesSTUBException e){}
+
+                break;
+
+            case "registar":
+                try{
+                int pass=Integer.parseInt(comandos[2]);
+                repositorio.registarUtilizador(comandos[1],pass);}
+                catch (ClientesSTUBException e){}
+                catch (UtilizadorJaExisteException e){}
+
+                break;
+
+            case "upload":
+                try{
+                int ano=Integer.parseInt(comandos[3]);
+                repositorio.upload(comandos[1],comandos[2],ano,comandos[4]);}
+                catch (IOException e){}
+                catch (ClientesSTUBException e){}
+                catch (UtilizadorNaoAutenticadoException e){}
+
+                break;
+            case "download":
+                try{
+                    int nrm= Integer.parseInt(comandos[1]);
+                    repositorio.download(nrm);
+                }
+                catch (MusicaInexistenteException e){}
+                catch (IOException e){}
+                catch (ClientesSTUBException e){}
+                catch (UtilizadorNaoAutenticadoException e){}
+
+
+
+                break;
+            case "procurarMusica":
+                try{
+                    repositorio.procuraMusica(comandos[1],comandos[2]);
+                }
+                catch (MusicaInexistenteException e){}
+                catch (IOException e){}
+                catch (ClientesSTUBException e){}
+                catch (UtilizadorNaoAutenticadoException e){}
+
+
+                break;
+
+
+
+            default:
+                System.out.println ("Opcao invalida");
+
+        }
+
+    }
+
 
     public void run(){
         try {
@@ -42,91 +114,16 @@ public class Worker implements Runnable {
             //passa o que li do canal para uma string
             String inComing=in.readLine();
 
-             String[] comandos = inComing.split(" ");
-
-
 
             while(inComing!=null){
 
-                switch (comandos[0]){
-                    case "login":
-                        //como faço login no repositorio??
-                        autenticacao(comandos[1],false);
+                /*String result = comandos(inComing);
 
-                        out.println("1");
-                        out.flush();
-                        break;
-
-                    case "logout":
-                        //vale a pena manter no repositorio quem está login?
-                        logout(comandos[0]);
-                        out.println("1");
-                        out.flush();
-                        break;
-
-                    case "registar":
-                        autenticacao(comandos[1],true);
-                        out.println("1");
-                        out.flush();
-                        break;
-
-                    case "procurarID":
-
-                        int idM= Integer.parseInt(comandos[1]);
-                        Musica m = procuraMusicaID(idM);
-                        out.println(m.toString());
-                        out.flush();
-                        break;
-                    case "procurarPar":
-
-                        List<Musica> lm=procuraMusicaPAR(comandos[1]);
-                        int tam = lm.size();
-
-                        out.println(""+tam);
-
-                        for(Musica musica: lm){
-                            out.println(musica.toString());
-                        }
-
-                        out.flush();
-
-                        break;
-
-                    case "upload":
-                            upload(comandos[1]);
-                            out.println("1");
-                            out.flush();
-                            break;
-                    case "download":
-
-                        FileInputStream fis = null;
-                        BufferedInputStream bis = null;
-                        OutputStream os = null;
-/*
-                        //File myFile = new File (FILE_TO_SEND);
-                       // byte [] mybytearray  = new byte [(int)myFile.length()];
-                        fis = new FileInputStream(myFile);
-                        bis = new BufferedInputStream(fis);
-                        bis.read(mybytearray,0,mybytearray.length);
-                        os = clSock.getOutputStream();
-
-                        os.write(mybytearray,0,mybytearray.length);
-                        byte[] musica= download(comandos[1]);
-
-                        //in.read(musica,0,musica.length);
-                        //out.write(musica,0,musica.length);
-*/
-                        out.println("ServidorWorker encontrou ??? asdad");
-                        out.flush();
-                        break;
-
-                    default:
-                        out.println("Opcao invalida");
-                        out.flush();
-                }
+                out.println(result);*/
+                out.flush();
 
                 inComing = in.readLine();
-                comandos = inComing.split(" ");
+
             }
             clSock.shutdownOutput();
             clSock.shutdownInput();
