@@ -1,4 +1,4 @@
-package com.jetbrains;
+package com.jetbrains.Exceptions;
 
 public class MusicaInexistenteException extends Exception{
     public MusicaInexistenteException(){

@@ -1,4 +1,4 @@
-package com.jetbrains;
+package com.jetbrains.Exceptions;
 
 public class ClientesSTUBException extends Exception {
     public ClientesSTUBException(){

@@ -1,12 +1,10 @@
-package com.jetbrains;
-
-import java.util.Map;
+package com.jetbrains.Server;
 
 public class Utilizador {
 
     private String nome;
     private String password;
-    private String caminhoFicheiro;
+    private String caminhoFicheiro; //uploads
 
 
     public Utilizador(String nome, String pass) {

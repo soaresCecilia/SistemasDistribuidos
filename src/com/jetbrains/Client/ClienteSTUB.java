@@ -1,4 +1,7 @@
-package com.jetbrains;
+package com.jetbrains.Client;
+
+import com.jetbrains.*;
+import com.jetbrains.Exceptions.*;
 
 import java.io.*;
 import java.net.Socket;
@@ -20,13 +23,13 @@ public class ClienteSTUB implements SoundCloud {
             out.println("teste");
             out.flush();
 
-        String r= inBuffer.readLine();
+        String r = inBuffer.readLine();
         return r;
         }
         catch (IOException e){return "correu mal";}
     }
 
-    public void login(String email, int password) throws CredenciaisInvalidasException, ClientesSTUBException{
+    public void login(String email, int password) throws CredenciaisInvalidasException, ClientesSTUBException {
 
         out.println("login "+email+" "+password);
         out.flush();
@@ -68,10 +71,10 @@ public class ClienteSTUB implements SoundCloud {
 
                 String[] rsp = le.split(" ");
                 switch (rsp[0]) {
-                    case "1":
+                    case "1": //correu tudo bem
                         break;
                     default:
-                        throw new UtilizadorJaExisteException();
+                        throw new UtilizadorJaExisteException("Não pode registar esse utilizador porque ele já existe");
 
                 }
 
@@ -91,13 +94,11 @@ public class ClienteSTUB implements SoundCloud {
             String[] rsp = le.split(" ");
             switch (rsp[0]) {
                 case "0":
-                    throw new UtilizadorNaoAutenticadoException();
-
-                case "1":
+                    throw new UtilizadorNaoAutenticadoException("Utilizador não autenticado.");
+                case "1": //correu tudo bem
                     break;
-
                 default:
-                    throw new MusicaInexistenteException();
+                    throw new MusicaInexistenteException("Não existe esse id nas musicas");
             }
         }
         catch (IOException e){
@@ -115,10 +116,10 @@ public class ClienteSTUB implements SoundCloud {
 
             String[] rsp = le.split(" ");
             switch (rsp[0]){
-                case "1":
+                case "1": //correu tudo bem
                     break;
                 default:
-                    throw new UtilizadorNaoAutenticadoException();
+                    throw new UtilizadorNaoAutenticadoException("Utilizador não autenticado.");
 
             }
         }
@@ -130,11 +131,11 @@ public class ClienteSTUB implements SoundCloud {
 
 
 
-    public void procuraMusica (String etiqueta, String queProcurar) throws ClientesSTUBException, UtilizadorNaoAutenticadoException, MusicaInexistenteException{
+    public void procuraMusica (String etiqueta) throws ClientesSTUBException, UtilizadorNaoAutenticadoException, MusicaInexistenteException{
 
-        String prM = "procura "+etiqueta+" "+queProcurar;
+        String procuraEtiqueta = "procura "+ etiqueta;
 
-        out.println(prM);
+        out.println(procuraEtiqueta);
         out.flush();
 
         try{
@@ -142,12 +143,12 @@ public class ClienteSTUB implements SoundCloud {
 
             String[] rsp = le.split(" ");
             switch (rsp[0]){
-                case "1":
+                case "1": //correu tudo bem
                     break;
-                case "2":
-                    throw new MusicaInexistenteException();
+                case "0":
+                    throw new MusicaInexistenteException("Não existe musica com essa etiqueta."); //ver se é excecão
                 default:
-                    throw new UtilizadorNaoAutenticadoException();
+                    throw new UtilizadorNaoAutenticadoException("Utilizador não autenticado.");
 
             }
         }

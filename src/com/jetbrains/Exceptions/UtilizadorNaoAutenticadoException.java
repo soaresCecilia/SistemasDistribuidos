@@ -1,4 +1,4 @@
-package com.jetbrains;
+package com.jetbrains.Exceptions;
 
 public class UtilizadorNaoAutenticadoException extends Exception {
     public UtilizadorNaoAutenticadoException(){

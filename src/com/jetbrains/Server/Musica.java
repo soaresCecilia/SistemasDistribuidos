@@ -1,6 +1,4 @@
-package com.jetbrains;
-
-import java.util.Arrays;
+package com.jetbrains.Server;
 
 public class Musica {
 

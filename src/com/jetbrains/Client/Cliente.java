@@ -1,4 +1,6 @@
-package com.jetbrains;
+package com.jetbrains.Client;
+
+import com.jetbrains.Exceptions.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,7 +28,7 @@ public class Cliente {
         }
     }
 
-    private void autenticacao(String email, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException{
+    private void autenticacao(String email, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException {
 
         System.out.println("introduza a password");
         String password = terminal.readLine();
@@ -112,13 +114,13 @@ public class Cliente {
             System.out.println("Insira o que procurar");
             String oQp = terminal.readLine();
 
-            cStub.procuraMusica(etiqueta,oQp);
+            cStub.procuraMusica(etiqueta);
         }
         catch (UtilizadorNaoAutenticadoException e){
             System.out.println("Por favor aguarde...");
         }
         catch (MusicaInexistenteException e){
-            System.out.println("Não existe...");
+            System.out.println(e.getMessage());
 
         }
         catch (ClientesSTUBException e){

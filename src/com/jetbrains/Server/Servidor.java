@@ -1,4 +1,4 @@
-package com.jetbrains;
+package com.jetbrains.Server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -7,7 +7,7 @@ import java.net.Socket;
 public class Servidor {
 
 
-   public static void start(Integer port, int nThreads, Repositorio repositorio) {
+   public static void start(Integer port, int nThreads, ServerHelper serverHelper) {
         try {
             System.out.println("Servidor esta a ligar...");
             ServerSocket serverSocket = new ServerSocket(port);
@@ -16,7 +16,7 @@ public class Servidor {
             while (!serverSocket.isClosed()) {
                 Socket clSocket = serverSocket.accept();
                 System.out.println("liguei!");
-                Thread t = new Thread( new Worker(clSocket, repositorio));
+                Thread t = new Thread( new Worker(clSocket, serverHelper));
                 t.start();
                 System.out.println("passei pela thread");
             }
@@ -34,8 +34,8 @@ public class Servidor {
 
     public static void main(String[] args){
 
-        Repositorio repositorio = new Repositorio();
-        Servidor.start(12346, 10, repositorio);
+        ServerHelper serverHelper = new ServerHelper();
+        Servidor.start(12346, 10, serverHelper);
 
     }
 }
