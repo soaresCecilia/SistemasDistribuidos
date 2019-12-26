@@ -22,7 +22,7 @@ public class Worker implements Runnable {
     public void responde(String s){
         String result;
         String[] comandos = s.split(" ");
-
+        System.out.println("o que tenho e, comandos[0} "+comandos[0]);
         switch (comandos[0]){
             case "login":
                 int id = Integer.parseInt(comandos[2]);
@@ -111,11 +111,11 @@ public class Worker implements Runnable {
             //System.out.println(inComing);
             while(inComing!=null){
 
-                if(inComing.equals("teste"))
-                //responde(inComing);
+                //if(inComing.equals("teste"))
+                responde(inComing);
 
-                out.println("teste");
-                out.flush();
+                //out.println("teste");
+                //out.flush();
 
                 inComing = in.readLine();
 

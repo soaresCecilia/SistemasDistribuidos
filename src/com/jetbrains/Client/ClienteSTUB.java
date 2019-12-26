@@ -6,12 +6,14 @@ import com.jetbrains.Exceptions.*;
 import java.io.*;
 import java.net.Socket;
 
-public class ClienteSTUB implements SoundCloud {
+public class ClienteSTUB implements SoundCloud, Serializable {
     private Socket socket;
     private final String ip;
     private final Integer porto;
     private PrintWriter out;
     private BufferedReader inBuffer;
+    public final static int FILE_SIZE = 6022386;
+    public static String FILE_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/2.mp3";
 
     public ClienteSTUB(String ip, Integer porto){
         this.ip = ip;
@@ -84,11 +86,12 @@ public class ClienteSTUB implements SoundCloud {
         }
     }
     public void download(int id) throws MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClientesSTUBException{
-        String idM ="download"+id;
+        String idM ="download "+id;
         out.println(idM);
         out.flush();
 
         try {
+            /*
             String le = inBuffer.readLine();
 
             String[] rsp = le.split(" ");
@@ -99,8 +102,26 @@ public class ClienteSTUB implements SoundCloud {
                     break;
                 default:
                     throw new MusicaInexistenteException("Não existe esse id nas musicas");
+            }*/
+
+            int bytesRead;
+
+            int current = 0;
+
+            FileOutputStream fos = null;
+            BufferedOutputStream bos = null;
+            Socket sock = socket;
+
+            try {
+
+                System.out.println("File "+FILE_TO_RECEIVE+" downloaded (" + current + " bytes read)");
             }
-        }
+            finally {
+                if (fos != null) fos.close();
+                if (bos != null) bos.close();
+                if (sock != null) sock.close();
+            }
+         }
         catch (IOException e){
             throw  new ClientesSTUBException("Ocorreu um erro na ligaçao");
         }

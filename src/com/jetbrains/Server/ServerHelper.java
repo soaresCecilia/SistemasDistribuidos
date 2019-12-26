@@ -4,34 +4,23 @@ import com.jetbrains.*;
 import com.jetbrains.Exceptions.*;
 
 import java.io.*;
+import java.net.Socket;
 
-public class ServerHelper implements SoundCloud {
+/*out = new PrintWriter(clSock.getOutputStream());*/
+
+public class ServerHelper implements SoundCloud, Serializable {
+    private Socket clSock;
     private Repositorio repositorio;
-    public static String FILE_TO_SEND = "/home/luisabreu/Desktop/trabalhoSD";
+    PrintWriter out ;
 
-    public ServerHelper(Repositorio r){
+    public static String FILE_TO_SEND = "/home/luisabreu/Desktop/musicaS/2.mp3";
+
+
+    public ServerHelper(Socket cliSock, Repositorio r){
         this.repositorio = r;
+        this.clSock = cliSock;
     }
 
-    public ServerHelper() {
-        this.repositorio = new Repositorio();
-    }
-
-
-
-
-    public byte[] download(Integer id) throws IOException, MusicaInexistenteException, UtilizadorNaoAutenticadoException {
-
-        String n = FILE_TO_SEND+id+".mp3";
-
-        File myFile = new File(FILE_TO_SEND);
-        byte [] mybytearray  = new byte [(int)myFile.length()];
-
-        return mybytearray;
-
-
-
-    }
 
 
 
@@ -57,6 +46,8 @@ public class ServerHelper implements SoundCloud {
 
     @Override
     public void download(int idMusica) throws IOException, MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClientesSTUBException {
+
+
 
     }
 
