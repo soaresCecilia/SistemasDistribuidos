@@ -18,9 +18,9 @@ public class Servidor {
             while (!serverSocket.isClosed()) {
                 Socket clSocket = serverSocket.accept();
 
-                serverHelper = new ServerHelper(clSocket, repositorio);
-
-                Thread t = new Thread( new Worker(clSocket, serverHelper));
+                System.out.println("liguei!");
+                ServerHelper serverHelper = new ServerHelper(clSocket, repositorio);
+                Thread t = new Thread( new Worker(clSocket, serverHelper)); //cria uma thread por cliente
                 t.start();
 
             }
@@ -38,7 +38,7 @@ public class Servidor {
 
     public static void main(String[] args){
 
-       Repositorio repositorio = new Repositorio();
+        Repositorio repositorio = new Repositorio();
 
         Servidor.start(12346, 10, repositorio);
 

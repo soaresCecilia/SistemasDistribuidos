@@ -31,9 +31,9 @@ public class ClienteSTUB implements SoundCloud, Serializable {
         catch (IOException e){return "correu mal";}
     }
 
-    public void login(String email, int password) throws CredenciaisInvalidasException, ClientesSTUBException {
+    public void login(String nome, String password) throws CredenciaisInvalidasException, ClientesSTUBException {
 
-        out.println("login "+email+" "+password);
+        out.println("login "+nome+" "+password);
         out.flush();
 
         try {
@@ -54,7 +54,6 @@ public class ClienteSTUB implements SoundCloud, Serializable {
     }
 
 
-
     public void logout(String s) throws IOException{
         try{
             out.println(s);
@@ -64,7 +63,7 @@ public class ClienteSTUB implements SoundCloud, Serializable {
             this.disconnect();
         }
     }
-    public void registarUtilizador(String email, int password) throws UtilizadorJaExisteException, ClientesSTUBException{
+    public void registarUtilizador(String email, String password) throws UtilizadorJaExisteException, ClientesSTUBException{
         out.println("registarUtilizador "+email+" "+password);
         out.flush();
 
@@ -74,6 +73,7 @@ public class ClienteSTUB implements SoundCloud, Serializable {
                 String[] rsp = le.split(" ");
                 switch (rsp[0]) {
                     case "1": //correu tudo bem
+                        System.out.println("Ola");
                         break;
                     default:
                         throw new UtilizadorJaExisteException("Não pode registar esse utilizador porque ele já existe");

@@ -6,11 +6,11 @@ import java.io.IOException;
 
 public interface SoundCloud {
 
-   void login(String email, int password) throws IOException, CredenciaisInvalidasException, ClientesSTUBException;
+   void login(String email, String password) throws IOException, CredenciaisInvalidasException, ClientesSTUBException;
 
    void logout(String s) throws  IOException, ClientesSTUBException;
 
-   void registarUtilizador(String email, int password) throws UtilizadorJaExisteException,ClientesSTUBException;
+   void registarUtilizador(String email, String password) throws UtilizadorJaExisteException,ClientesSTUBException;
 
    void download(int idMusica) throws IOException, MusicaInexistenteException, UtilizadorNaoAutenticadoException,ClientesSTUBException;
 

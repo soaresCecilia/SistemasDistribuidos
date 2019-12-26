@@ -4,24 +4,27 @@ import com.jetbrains.*;
 import com.jetbrains.Exceptions.*;
 
 import java.io.*;
+
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
-/*out = new PrintWriter(clSock.getOutputStream());*/
-
-public class ServerHelper implements SoundCloud, Serializable {
-    private Socket clSock;
+public class ServerHelper implements SoundCloud {
     private Repositorio repositorio;
-    PrintWriter out ;
+    private Socket clSock;
+    public static String FILE_TO_SEND = "/home/luisabreu/Desktop/trabalhoSD";
+    private PrintWriter out;
+    private Worker w;
 
-    public static String FILE_TO_SEND = "/home/luisabreu/Desktop/musicaS/2.mp3";
-
-
-    public ServerHelper(Socket cliSock, Repositorio r){
+    public ServerHelper(Socket clsock, Repositorio r) throws IOException {
         this.repositorio = r;
-        this.clSock = cliSock;
+        this.clSock = clsock;
+
     }
 
-
+    public ServerHelper() throws IOException {
+        this.repositorio = new Repositorio();
+    }
 
 
     public void connect() throws IOException {
@@ -30,17 +33,34 @@ public class ServerHelper implements SoundCloud, Serializable {
 
 
     @Override
-    public void login(String email, int password) throws IOException, CredenciaisInvalidasException, ClientesSTUBException {
+    public void login(String nome, String password) throws IOException, CredenciaisInvalidasException, ClientesSTUBException {
+            Utilizador user;
+
+            user = repositorio.getUtilizadores().get(nome);
+
+            this.out = new PrintWriter(clSock.getOutputStream());
+
+            if (user == null || !user.autentica(nome, password)) {
+                throw new CredenciaisInvalidasException("Utilizador não está registado");
+            }
+            else if (!user.getActivo() && user.autentica(nome, password)){
+                user.setActivo();
+            }
+
 
     }
 
     @Override
-    public void logout(String s) throws IOException, ClientesSTUBException {
+    public void logout(String nome) throws IOException, ClientesSTUBException {
+        Utilizador u = repositorio.getUtilizadores().get(nome);
+
+        if ( u != null && u.getActivo())
+            u.setInactivo();
 
     }
 
     @Override
-    public void registarUtilizador(String email, int password) throws UtilizadorJaExisteException, ClientesSTUBException {
+    public void registarUtilizador(String email, String password) throws UtilizadorJaExisteException, ClientesSTUBException {
 
     }
 
