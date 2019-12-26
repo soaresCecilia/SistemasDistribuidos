@@ -4,6 +4,7 @@ public class Utilizador {
 
     private String nome;
     private String password;
+    private boolean activo = false;
     private String caminhoFicheiro; //uploads
 
 
@@ -46,5 +47,19 @@ public class Utilizador {
 
     public boolean autentica(String nome, String password) {
         return (this.nome.equals(nome) && this.password.equals(password));
+    }
+
+
+    public boolean getActivo() {
+        return this.activo;
+    }
+
+
+    public void setActivo() {
+        this.activo = true;
+    }
+
+    public void setInactivo() {
+        this.activo = false;
     }
 }

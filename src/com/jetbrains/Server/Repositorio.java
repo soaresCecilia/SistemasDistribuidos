@@ -1,6 +1,7 @@
 package com.jetbrains.Server;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Repositorio{
@@ -26,6 +27,7 @@ public class Repositorio{
     public Map<String, Utilizador> getUtilizadores() {
         return utilizadores;
     }
+
 
     public Map<Integer, Musica> getMusicas() {
         return musicas;

@@ -9,12 +9,11 @@ import java.net.Socket;
 public class Worker implements Runnable {
 
     private Socket clSock;
-    private int id;
     private ServerHelper serverhelper;
 
 
-    public Worker(Socket clisock, ServerHelper helper) throws IOException{
-        this.clSock =  clisock;
+    public Worker(Socket clientesock, ServerHelper helper) throws IOException{
+        this.clSock =  clientesock;
         this.serverhelper = helper;
     }
 
@@ -25,9 +24,10 @@ public class Worker implements Runnable {
 
         switch (comandos[0]){
             case "login":
-                int id = Integer.parseInt(comandos[2]);
+                String pass = (comandos[2]);
                 try{
-                serverhelper.login(comandos[1],id);}
+                serverhelper.login(comandos[1],pass);
+                }
                 catch (IOException e ){}
                 catch(CredenciaisInvalidasException e){}
                 catch(ClientesSTUBException e){}
@@ -44,8 +44,8 @@ public class Worker implements Runnable {
 
             case "registar":
                 try{
-                int pass=Integer.parseInt(comandos[2]);
-                serverhelper.registarUtilizador(comandos[1],pass);}
+                String password = (comandos[2]);
+                serverhelper.registarUtilizador(comandos[1],password);}
                 catch (ClientesSTUBException e){}
                 catch (UtilizadorJaExisteException e){}
 
@@ -53,8 +53,8 @@ public class Worker implements Runnable {
 
             case "upload":
                 try{
-                int ano=Integer.parseInt(comandos[3]);
-                serverhelper.upload(comandos[1],comandos[2],ano,comandos[4]);}
+                int ano = Integer.parseInt(comandos[3]);
+                serverhelper.upload(comandos[1],comandos[2], ano ,comandos[4]);}
                 catch (IOException e){}
                 catch (ClientesSTUBException e){}
                 catch (UtilizadorNaoAutenticadoException e){}
@@ -100,7 +100,7 @@ public class Worker implements Runnable {
             if (clSock == null) System.out.println("clSock null");
 
             //escreve no canal
-            PrintWriter out = new PrintWriter(clSock.getOutputStream());
+            //PrintWriter out = new PrintWriter(clSock.getOutputStream());
             //lê do canal
             BufferedReader in = new BufferedReader(new InputStreamReader(this.clSock.getInputStream()));
 
@@ -111,11 +111,10 @@ public class Worker implements Runnable {
             //System.out.println(inComing);
             while(inComing!=null){
 
-                if(inComing.equals("teste"))
-                //responde(inComing);
+                responde(inComing);
 
-                out.println("teste");
-                out.flush();
+               // out.println();
+              //  out.flush();
 
                 inComing = in.readLine();
 

@@ -1,5 +1,7 @@
 package com.jetbrains.Server;
 
+import javax.xml.crypto.Data;
+
 public class Musica {
 
 
@@ -7,12 +9,12 @@ public class Musica {
     private int id;
     private String titulo;
     private String interprete;
-    private int ano;
+    private String ano;
     private String genero;
     private String caminhoFicheiro;
     private int nDownloads;
 
-    public Musica(int id, String titulo, String interprete, int ano, String genero, String ficheiro) {
+    public Musica(int id, String titulo, String interprete, String ano, String genero, String ficheiro) {
         this.id = id;
         this.titulo = titulo;
         this.interprete = interprete;
@@ -38,7 +40,7 @@ public class Musica {
         return this.interprete;
     }
 
-    public int getAno() {
+    public String getAno() {
         return this.ano;
     }
 
@@ -64,7 +66,7 @@ public class Musica {
         return super.equals(aux) && this.id == aux.getId()
                 && this.titulo.equals(aux.getTitulo())
                 && this.interprete.equals(aux.getInterprete())
-                && this.ano == aux.getAno()
+                && this.ano.equals(aux.getAno())
                 && this.genero.equals(aux.getGenero())
                 && this.caminhoFicheiro.equals((aux.getCaminhoFicheiro()));
     }

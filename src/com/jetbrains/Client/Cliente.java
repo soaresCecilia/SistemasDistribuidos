@@ -21,6 +21,8 @@ public class Cliente {
             try {
                 cStub.connect(); //connect do stub
                 connected = true;
+
+                System.out.println("Valor do connected " + connected);
             } catch (ClientesSTUBException e) {
              e.printStackTrace();
             }
@@ -28,17 +30,16 @@ public class Cliente {
         }
     }
 
-    private void autenticacao(String email, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException {
+    private void autenticacao(String nome, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException {
 
         System.out.println("introduza a password");
         String password = terminal.readLine();
-        int pass = Integer.parseInt(password);
         try {
             if (querRegistar) { //querRegistar = true se se quer registar, querRegistar = false se só quer o login
-                cStub.registarUtilizador(email,pass);
+                cStub.registarUtilizador(nome,password);
                 System.out.println("Utilizador registado com sucesso");
             }
-            cStub.login(email,pass);
+            cStub.login(nome,password);
 
             System.out.println("Utilizador autenticado, bem vindo");
         }
