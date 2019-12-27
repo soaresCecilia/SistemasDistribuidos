@@ -20,16 +20,19 @@ public class Repositorio{
         this.musicas = new HashMap<Integer, Musica>();
     }
 
+
     public void setUtilizadores(Map<String, Utilizador> utilizadores) {
+
         this.utilizadores = utilizadores;
     }
 
     public Map<String, Utilizador> getUtilizadores() {
+
         return utilizadores;
     }
 
-
     public Map<Integer, Musica> getMusicas() {
+
         return musicas;
     }
 
@@ -38,10 +41,10 @@ public class Repositorio{
         return (this.musicas.get(id));
     }
 
-
-
-
-
+    public void addMusica(Musica m){
+        funcaoHash(m);
+        musicas.put(m.getId(),m);
+    }
 
     public int funcaoHash(Musica m){
         //fazer lock
@@ -50,8 +53,6 @@ public class Repositorio{
 
         m.setId(idMusica);
         return idMusica;
-
-
     }
 
 

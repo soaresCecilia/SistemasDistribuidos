@@ -88,14 +88,17 @@ public class Cliente {
         String interprete = terminal.readLine();
 
         System.out.println("Insira o ano da musica");
-        String a = terminal.readLine();
-        int ano = Integer.parseInt(a);
+        String ano = terminal.readLine();
+
+        System.out.println("Insira o género musical");
+        String genero = terminal.readLine();
 
         System.out.println("Insira o caminho para o ficheiro a fazer upload");
         String caminho = terminal.readLine();
 
         try{
-            cStub.upload( nome, interprete, ano,caminho);
+            cStub.upload( caminho,nome, interprete, ano, genero);
+            System.out.println("Upload concluido com sucesso");
         }
         catch (UtilizadorNaoAutenticadoException e){
             System.out.println("Por favor aguarde...");
@@ -175,7 +178,9 @@ public class Cliente {
                         break;
                     case "download":
                         int id= Integer.parseInt(arrayComandos[1]);
+                        System.out.println("Estou comando download e o id da musica pretendida: "+arrayComandos[1]+" parse integer :"+id);
                         download(id);
+                        System.out.println("Passei o download");
                         break;
                     case "upload":
                         upload();

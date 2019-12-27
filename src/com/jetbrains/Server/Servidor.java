@@ -40,6 +40,10 @@ public class Servidor {
 
         Repositorio repositorio = new Repositorio();
 
+        Musica m = new Musica("Somebody to love", "Queen","1990","Rock","/home/luisabreu/Desktop/musicaS/2.mp3");
+
+        repositorio.addMusica(m);
+
         Servidor.start(12346, 10, repositorio);
 
     }

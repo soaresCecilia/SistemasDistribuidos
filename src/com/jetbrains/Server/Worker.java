@@ -10,6 +10,7 @@ public class Worker implements Runnable {
 
     private Socket clSock;
     private ServerHelper serverhelper;
+    private PrintWriter out;
 
 
     public Worker(Socket clientesock, ServerHelper helper) throws IOException{
@@ -22,6 +23,8 @@ public class Worker implements Runnable {
         String result;
         String[] comandos = s.split(" ");
         System.out.println("o que tenho e, comandos[0} "+comandos[0]);
+
+
         switch (comandos[0]){
             case "login":
                 String pass = (comandos[2]);
@@ -53,8 +56,10 @@ public class Worker implements Runnable {
 
             case "upload":
                 try{
-                int ano = Integer.parseInt(comandos[3]);
-                serverhelper.upload(comandos[1],comandos[2], ano ,comandos[4]);}
+
+                serverhelper.upload(comandos[1],comandos[2], comandos[3], comandos[4] ,comandos[5]);
+
+                }
                 catch (IOException e){}
                 catch (ClientesSTUBException e){}
                 catch (UtilizadorNaoAutenticadoException e){}
@@ -63,10 +68,17 @@ public class Worker implements Runnable {
             case "download":
                 try{
                     int nrm= Integer.parseInt(comandos[1]);
+                    System.out.println("id da musica reecebida: "+nrm);
                     serverhelper.download(nrm);
+                    System.out.println("ServerHelper funcionou!");
                 }
-                catch (MusicaInexistenteException e){}
-                catch (IOException e){}
+                catch (MusicaInexistenteException e){
+                    out.println("2");
+                    out.flush();
+                }
+                catch (IOException e){
+                    out.println("0");
+                }
                 catch (ClientesSTUBException e){}
                 catch (UtilizadorNaoAutenticadoException e){}
 

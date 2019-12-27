@@ -6,14 +6,14 @@ import com.jetbrains.Exceptions.*;
 import java.io.*;
 import java.net.Socket;
 
-public class ClienteSTUB implements SoundCloud, Serializable {
+public class ClienteSTUB implements SoundCloud {
     private Socket socket;
     private final String ip;
     private final Integer porto;
     private PrintWriter out;
     private BufferedReader inBuffer;
     public final static int FILE_SIZE = 6022386;
-    public static String FILE_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/2.mp3";
+    public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
 
     public ClienteSTUB(String ip, Integer porto){
         this.ip = ip;
@@ -90,47 +90,82 @@ public class ClienteSTUB implements SoundCloud, Serializable {
         out.println(idM);
         out.flush();
 
+
+        System.out.println("do que eu fiz flush: "+idM);
+
         try {
-            /*
+
+
+
             String le = inBuffer.readLine();
 
             String[] rsp = le.split(" ");
             switch (rsp[0]) {
-                case "0":
+                case "0": // PRECISAMOS DE VER SE O UTILIZADOR ESTA AUTENTICADO??????????
                     throw new UtilizadorNaoAutenticadoException("Utilizador não autenticado.");
                 case "1": //correu tudo bem
+
+                    String pathSaveMusica = PATH_TO_RECEIVE+rsp[2]+".mp3";
+
+                    int tamanhoFile = Integer.parseInt(rsp[1]);
+
+                    byte[] mybytearray = new byte[1024];
+
+                    InputStream is = socket.getInputStream();
+
+                    FileOutputStream fos = new FileOutputStream(pathSaveMusica);
+
+                    BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+                    int bytesIni=0;
+
+                    while (bytesIni<tamanhoFile)       {
+
+                        int bytesRead = is.read(mybytearray, 0, mybytearray.length);
+
+                        bos.write(mybytearray, 0, bytesRead);
+
+                        bytesIni+= bytesRead;
+                    }
+
+                    bos.close();
+
                     break;
                 default:
                     throw new MusicaInexistenteException("Não existe esse id nas musicas");
-            }*/
-
-            int bytesRead;
-
-            int current = 0;
-
-            FileOutputStream fos = null;
-            BufferedOutputStream bos = null;
-            Socket sock = socket;
-
-            try {
-
-                System.out.println("File "+FILE_TO_RECEIVE+" downloaded (" + current + " bytes read)");
             }
-            finally {
-                if (fos != null) fos.close();
-                if (bos != null) bos.close();
-                if (sock != null) sock.close();
-            }
+
+
          }
         catch (IOException e){
             throw  new ClientesSTUBException("Ocorreu um erro na ligaçao");
         }
 
     }
-    public void upload(String nome, String interprete, int ano, String caminho) throws UtilizadorNaoAutenticadoException, ClientesSTUBException{
+    public void upload(String caminho, String titulo, String interprete, String ano, String genero) throws UtilizadorNaoAutenticadoException, ClientesSTUBException{
+        try {
 
-        out.println("upload "+nome+" "+interprete+" "+ano+" "+caminho+" ");
-        out.flush();
+
+            File myFile = new File(caminho);
+
+            byte[] mybytearray = new byte[(int) myFile.length()];
+
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
+
+            bis.read(mybytearray, 0, mybytearray.length);
+
+            OutputStream os = socket.getOutputStream();
+
+            out.println("upload " + mybytearray.length + " " + titulo + " " + interprete + " " + ano + " " + genero);
+            out.flush();
+
+
+            os.write(mybytearray, 0, mybytearray.length);
+            os.flush();
+        }
+        catch (IOException e){};
+
+
 
         try {
         String le =inBuffer.readLine();

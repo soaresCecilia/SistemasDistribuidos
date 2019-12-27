@@ -14,8 +14,8 @@ public class Musica {
     private String caminhoFicheiro;
     private int nDownloads;
 
-    public Musica(int id, String titulo, String interprete, String ano, String genero, String ficheiro) {
-        this.id = id;
+    public Musica(String titulo, String interprete, String ano, String genero, String ficheiro) {
+        this.id = 0;
         this.titulo = titulo;
         this.interprete = interprete;
         this.ano = ano;
