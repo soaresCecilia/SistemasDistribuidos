@@ -7,6 +7,7 @@ import java.io.*;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ServerHelper implements SoundCloud {
@@ -15,7 +16,6 @@ public class ServerHelper implements SoundCloud {
     public static String PATH_TO_RECORD = "/home/luisabreu/Desktop/musicaS/";
     private PrintWriter out;
     private BufferedReader in;
-    private Worker w;
 
     public ServerHelper(Socket clsock, Repositorio r) throws IOException {
         this.repositorio = r;
@@ -24,41 +24,27 @@ public class ServerHelper implements SoundCloud {
         this.in = new BufferedReader(new InputStreamReader(clSock.getInputStream()));
     }
 
-    public ServerHelper() throws IOException {
-        this.repositorio = new Repositorio();
-    }
-
-
-    public void connect() throws IOException {
-
-    }
-
-
     @Override
     public void login(String nome, String password) throws IOException, CredenciaisInvalidasException, ClientesSTUBException {
-            Utilizador user;
+            Utilizador utilizador;
 
-            user = repositorio.getUtilizadores().get(nome);
+            utilizador = repositorio.getUtilizadores().get(nome);
 
-            this.out = new PrintWriter(clSock.getOutputStream());
-
-            if (user == null || !user.autentica(nome, password)) {
+            if (utilizador == null || !utilizador.autentica(nome, password)) {
                 throw new CredenciaisInvalidasException("Utilizador não está registado");
             }
-            else if (!user.getActivo() && user.autentica(nome, password)){
-                user.setActivo();
+            else if (!utilizador.getActivo() && utilizador.autentica(nome, password)) {
+                utilizador.setActivo();
             }
-
-
     }
 
     @Override
     public void logout(String nome) throws IOException, ClientesSTUBException {
-        Utilizador u = repositorio.getUtilizadores().get(nome);
+        Utilizador utilizador = repositorio.getUtilizadores().get(nome);
 
-        if ( u != null && u.getActivo())
-            u.setInactivo();
-
+        if (utilizador != null && utilizador.getActivo()) {
+            utilizador.setInactivo();
+        }
     }
 
     @Override
@@ -142,8 +128,8 @@ public class ServerHelper implements SoundCloud {
     }
 
     @Override
-    public void procuraMusica(String etiqueta) throws IOException, UtilizadorNaoAutenticadoException, MusicaInexistenteException, ClientesSTUBException {
-
+    public List<Musica> procuraMusica(String etiqueta) throws IOException, UtilizadorNaoAutenticadoException, MusicaInexistenteException, ClientesSTUBException {
+        return new ArrayList<>();
     }
 
 

@@ -1,7 +1,6 @@
 package com.jetbrains.Server;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Repositorio{
@@ -14,39 +13,33 @@ public class Repositorio{
 
     private static int idMusica = 0;
 
-
-    public Repositorio(){
+    public Repositorio() {
         this.utilizadores = new HashMap<String, Utilizador>();
         this.musicas = new HashMap<Integer, Musica>();
     }
 
-
     public void setUtilizadores(Map<String, Utilizador> utilizadores) {
-
         this.utilizadores = utilizadores;
     }
 
     public Map<String, Utilizador> getUtilizadores() {
-
         return utilizadores;
     }
 
     public Map<Integer, Musica> getMusicas() {
-
         return musicas;
     }
 
     public Musica getMusicaId(int id){
-
         return (this.musicas.get(id));
     }
 
     public void addMusica(Musica m){
-        funcaoHash(m);
-        musicas.put(m.getId(),m);
+        defineIdMusica(m);
+        musicas.put(m.getId(), m);
     }
 
-    public int funcaoHash(Musica m){
+    public int defineIdMusica(Musica m){
         //fazer lock
 
         idMusica++;

@@ -11,32 +11,28 @@ public class Cliente {
     ClienteSTUB cStub;
     BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
 
-    private void caminhoServidor(String ip, Integer port){
+    private void caminhoServidor(String ip, Integer port) {
         cStub = new ClienteSTUB("127.0.0.1", 12346);
     }
 
-    private synchronized void connect() {
+    private synchronized void conectar() {
         boolean connected = false;
         while (!connected) {
             try {
-                cStub.connect(); //connect do stub
+                cStub.conectar(); //connect do stub
                 connected = true;
-
-                System.out.println("Valor do connected " + connected);
             } catch (ClientesSTUBException e) {
-             e.printStackTrace();
+                e.printStackTrace();
             }
-
         }
     }
 
     private void autenticacao(String nome, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException {
-
         System.out.println("introduza a password");
         String password = terminal.readLine();
         try {
             if (querRegistar) { //querRegistar = true se se quer registar, querRegistar = false se só quer o login
-                cStub.registarUtilizador(nome,password);
+                cStub.registarUtilizador(nome, password);
                 System.out.println("Utilizador registado com sucesso");
             }
             cStub.login(nome,password);
@@ -53,19 +49,21 @@ public class Cliente {
             e.printStackTrace();
         }
     }
+
     private void logout(String s) {
         System.out.println("Adeus");
-        try{cStub.logout(s);
-        System.exit(0);}
+        try{
+            cStub.logout(s);
+            System.exit(0);
+        }
         catch (IOException e){
             System.out.println("Logout não executado, tente de novo");
         }
     }
 
-    public void download(int s) {
-
+    public void download(int id) {
         try{
-            cStub.download(s);
+            cStub.download(id);
             System.out.println("Download concluido com sucesso");
         }
         catch (MusicaInexistenteException e){
@@ -97,7 +95,7 @@ public class Cliente {
         String caminho = terminal.readLine();
 
         try{
-            cStub.upload( caminho,nome, interprete, ano, genero);
+            cStub.upload(caminho, nome, interprete, ano, genero);
             System.out.println("Upload concluido com sucesso");
         }
         catch (UtilizadorNaoAutenticadoException e){
@@ -106,17 +104,16 @@ public class Cliente {
         catch (ClientesSTUBException e){
             e.printStackTrace();
         }
-
     }
 
-    public void procuraMusica(String s) throws IOException {
+    public void procuraMusica() throws IOException {
 
         try{
             System.out.println("Insira a etiqueta a procurar");
             String etiqueta = terminal.readLine();
 
-            System.out.println("Insira o que procurar");
-            String oQp = terminal.readLine();
+            //System.out.println("Insira o que procurar");
+            //String oQp = terminal.readLine();
 
             cStub.procuraMusica(etiqueta);
         }
@@ -125,7 +122,6 @@ public class Cliente {
         }
         catch (MusicaInexistenteException e){
             System.out.println(e.getMessage());
-
         }
         catch (ClientesSTUBException e){
             e.printStackTrace();
@@ -133,15 +129,14 @@ public class Cliente {
     }
 
     public static void start(String ip, Integer porto) throws ClientesSTUBException{
-
         Cliente cliente = new Cliente();
-        cliente.caminhoServidor(ip,porto);
-        cliente.connect();
+        cliente.caminhoServidor(ip, porto);
+        cliente.conectar();
 
         try {
-            cliente.comandos();
+            cliente.executaComandos();
         } catch (IOException e) {
-            cliente.connect();
+            System.out.println("Erro ao executar comando");
         }
     }
 
@@ -151,17 +146,15 @@ public class Cliente {
         System.out.println(s);
     }
 
-    private void comandos() throws IOException{
+    private void executaComandos() throws IOException{
         String comando;
         String[] arrayComandos;
 
-        comando = terminal.readLine();
-
         while (true) {
 
-            arrayComandos = comando.split(" ");
+            comando = terminal.readLine();
 
-            int tam = arrayComandos.length;
+            arrayComandos = comando.split(" ");
 
             try {
                 switch (arrayComandos[0]) {
@@ -177,7 +170,7 @@ public class Cliente {
                         logout(arrayComandos[0]);
                         break;
                     case "download":
-                        int id= Integer.parseInt(arrayComandos[1]);
+                        int id = Integer.parseInt(arrayComandos[1]);
                         System.out.println("Estou comando download e o id da musica pretendida: "+arrayComandos[1]+" parse integer :"+id);
                         download(id);
                         System.out.println("Passei o download");
@@ -185,28 +178,21 @@ public class Cliente {
                     case "upload":
                         upload();
                         break;
-                    case "procuraID":
-                        procuraMusica(comando);
+                    case "procurarMusica":
+                        procuraMusica();
                         break;
-                    case "procuraPar":
-                        procuraMusica(comando);
-                        break;
+                    case "sair":
+                        System.exit(0);
                     default:
                         System.out.println("Comando introduzido não existe. Volte a tentar");
-                        comandos();
                 }
 
             } catch (UtilizadorNaoAutenticadoException e) {
                 System.out.println("Utilizador não está autenticado");
-                //comandos();
             }
             catch (Exception e) {
-
-                comandos();
+                System.out.println("Excepção desconhecida.");
             }
-
-            comando = terminal.readLine();
-
         }
     }
 
@@ -215,8 +201,7 @@ public class Cliente {
            Cliente.start("127.0.0.1", 12345);
        }
        catch (ClientesSTUBException e){
-           System.out.println("Erro conecção");
-
+           System.out.println("Erro na conexão");
        }
     }
 }
