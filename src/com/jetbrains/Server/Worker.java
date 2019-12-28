@@ -11,6 +11,7 @@ public class Worker implements Runnable {
     private Socket clSock;
     private ServerHelper serverhelper;
     private PrintWriter out;
+    private String nome;
 
     public Worker(Socket clientesock, Repositorio repositorio) throws IOException{
         this.clSock = clientesock;
@@ -20,23 +21,28 @@ public class Worker implements Runnable {
     public void responde(String s){
         String result;
         String[] comandos = s.split(" ");
-        System.out.println("o que tenho e, comandos[0} "+comandos[0]);
+
+
+        System.out.println("o que tenho e, comandos[0] é " +comandos[0]);
 
         switch (comandos[0]){
             case "login":
+                String nome = (comandos[1]);
                 String pass = (comandos[2]);
                 try {
-                    serverhelper.login(comandos[1],pass);
+                    serverhelper.login(nome, pass);
+                    this.nome = nome;
                 }
                 catch (IOException e ){}
-                catch(CredenciaisInvalidasException e){}
+                catch(CredenciaisInvalidasException e){
+                }
                 catch(ClientesSTUBException e){}
                 break;
 
             case "logout":
-                //vale a pena manter no repositorio quem está login?
                 try {
-                    serverhelper.logout(comandos[0]);}
+                    serverhelper.logout(this.nome);
+                }
                 catch (IOException e){}
                 catch (ClientesSTUBException e){}
 
@@ -47,7 +53,11 @@ public class Worker implements Runnable {
                 String password = (comandos[2]);
                 serverhelper.registarUtilizador(comandos[1],password);}
                 catch (ClientesSTUBException e){}
-                catch (UtilizadorJaExisteException e){}
+                catch (UtilizadorJaExisteException e) {
+                    out.println("0");
+                    out.flush();
+                }
+                catch (CredenciaisInvalidasException e){}
 
                 break;
 
@@ -58,8 +68,12 @@ public class Worker implements Runnable {
 
                 }
                 catch (IOException e){}
-                catch (ClientesSTUBException e){}
-                catch (UtilizadorNaoAutenticadoException e){}
+                catch (ClientesSTUBException e){
+                }
+                catch (UtilizadorNaoAutenticadoException e){
+                    out.println("0");
+                    out.flush();
+                }
 
                 break;
             case "download":
@@ -79,11 +93,14 @@ public class Worker implements Runnable {
                 catch (ClientesSTUBException e){}
                 catch (UtilizadorNaoAutenticadoException e){}
                 break;
-            case "procurarMusica":
+            case "procura":
                 try{
                     serverhelper.procuraMusica(comandos[1]);
                 }
-                catch (MusicaInexistenteException e){}
+                catch (MusicaInexistenteException e){
+                    out.println("2");
+                    out.flush();
+                }
                 catch (IOException e){}
                 catch (UtilizadorNaoAutenticadoException e){}
                 catch (ClientesSTUBException e) {}
@@ -96,7 +113,7 @@ public class Worker implements Runnable {
     }
 
 
-    //O wrker so fala com o stub quando dá erro
+    //O worker so fala com o stub quando dá erro
     public void run(){
         try {
             if (clSock == null) {

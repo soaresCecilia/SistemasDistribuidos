@@ -3,9 +3,6 @@ package com.jetbrains.Server;
 import javax.xml.crypto.Data;
 
 public class Musica {
-
-
-
     private int id;
     private String titulo;
     private String interprete;
@@ -14,6 +11,16 @@ public class Musica {
     private String caminhoFicheiro;
     private int nDownloads;
 
+    public Musica(int id, String titulo, String interprete, String ano, String genero, String ficheiro, int nDownloads) {
+        this.id = id;
+        this.titulo = titulo;
+        this.interprete = interprete;
+        this.ano = ano;
+        this.genero = genero;
+        this.caminhoFicheiro = ficheiro;
+        this.nDownloads = nDownloads;
+    }
+
     public Musica(String titulo, String interprete, String ano, String genero, String ficheiro) {
         this.id = 0;
         this.titulo = titulo;
@@ -21,7 +28,7 @@ public class Musica {
         this.ano = ano;
         this.genero = genero;
         this.caminhoFicheiro = ficheiro;
-        this.nDownloads=0;
+        this.nDownloads = 0;
     }
 
     public int getId() {
@@ -29,7 +36,7 @@ public class Musica {
     }
 
     public void setId(int id){
-        this.id=id;
+        this.id = id;
     }
 
     public String getTitulo() {
@@ -75,16 +82,18 @@ public class Musica {
         StringBuilder sb = new StringBuilder();
 
         sb.append("ID: ");
-        sb.append(this.id+" ");
+        sb.append(this.id + " ");
         sb.append("Título: ");
-        sb.append(this.titulo+" ");
+        sb.append(this.titulo + " ");
         sb.append("Interprete: ");
         sb.append(this.interprete+" ");
         sb.append("Ano: ");
-        sb.append(this.ano+" ");
+        sb.append(this.ano + " ");
         sb.append("Genero: ");
-        sb.append(this.genero+" ");
-        sb.append("Numero de downloads: ");
+        sb.append(this.genero + " ");
+        sb.append("Caminho: ");
+        sb.append(this.caminhoFicheiro + " ");
+        sb.append("Numero_downloads: ");
         sb.append(this.nDownloads);
 
         return sb.toString();
@@ -93,5 +102,11 @@ public class Musica {
     public void addNDownload(){
 
         this.nDownloads++;
+    }
+
+
+    public boolean procuraEtiqueta(String etiqueta) {
+        return (this.titulo.contains(etiqueta) || this.interprete.contains(etiqueta)
+            || this.ano.equals(etiqueta) || this.genero.equals(etiqueta));
     }
 }

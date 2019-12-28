@@ -12,7 +12,7 @@ public interface SoundCloud {
 
    void logout(String s) throws  IOException, ClientesSTUBException;
 
-   void registarUtilizador(String email, String password) throws UtilizadorJaExisteException,ClientesSTUBException;
+   void registarUtilizador(String email, String password) throws UtilizadorJaExisteException, ClientesSTUBException,CredenciaisInvalidasException;
 
    void download(int idMusica) throws IOException, MusicaInexistenteException, UtilizadorNaoAutenticadoException,ClientesSTUBException;
 

@@ -32,9 +32,26 @@ public class Servidor {
 
     }
 
+    public static void teste(Repositorio repositorio) {
+        Musica m1 = new Musica (1, "ola", "viva", "1982","rock", "ficheiro", 9);
+        Musica m2 = new Musica (2, "vi", "Ze Cabra", "1999","pimba", "ficheiro", 19);
+        Musica m3 = new Musica (3, "vida bandida", "Ana Carolina", "2002","soul", "ficheiro", 9);
+        Musica m4 = new Musica (4, "vira do minho", "Grupo os amores", "2010","pimba", "ficheiro", 19);
+
+        repositorio.addMusica(m1);
+        repositorio.addMusica(m2);
+        repositorio.addMusica(m3);
+        repositorio.addMusica(m4);
+
+        for(Musica m : repositorio.getMusicas().values())
+            System.out.println(m.toString());
+    }
+
     public static void main(String[] args){
 
         Repositorio repositorio = new Repositorio();
+
+        //teste(repositorio);
 
         Servidor.start(12346, 10, repositorio);
     }

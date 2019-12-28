@@ -1,10 +1,13 @@
 package com.jetbrains.Client;
 
 import com.jetbrains.Exceptions.*;
+import com.jetbrains.Server.Musica;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Cliente {
@@ -27,7 +30,7 @@ public class Cliente {
         }
     }
 
-    private void autenticacao(String nome, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException {
+    private void autenticacao(String nome, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException, CredenciaisInvalidasException {
         System.out.println("introduza a password");
         String password = terminal.readLine();
         try {
@@ -35,7 +38,7 @@ public class Cliente {
                 cStub.registarUtilizador(nome, password);
                 System.out.println("Utilizador registado com sucesso");
             }
-            cStub.login(nome,password);
+            cStub.login(nome, password);
 
             System.out.println("Utilizador autenticado, bem vindo");
         }
@@ -50,10 +53,10 @@ public class Cliente {
         }
     }
 
-    private void logout(String s) {
+    private void logout() {
         System.out.println("Adeus");
         try{
-            cStub.logout(s);
+            cStub.logout(null);
             System.exit(0);
         }
         catch (IOException e){
@@ -106,7 +109,8 @@ public class Cliente {
         }
     }
 
-    public void procuraMusica() throws IOException {
+    public List<Musica> procuraMusica() throws IOException {
+        List<Musica> m = new ArrayList<>();
 
         try{
             System.out.println("Insira a etiqueta a procurar");
@@ -115,7 +119,9 @@ public class Cliente {
             //System.out.println("Insira o que procurar");
             //String oQp = terminal.readLine();
 
-            cStub.procuraMusica(etiqueta);
+            m = cStub.procuraMusica(etiqueta);
+
+            System.out.println(m);
         }
         catch (UtilizadorNaoAutenticadoException e){
             System.out.println("Por favor aguarde...");
@@ -126,6 +132,8 @@ public class Cliente {
         catch (ClientesSTUBException e){
             e.printStackTrace();
         }
+
+        return m;
     }
 
     public static void start(String ip, Integer porto) throws ClientesSTUBException{
@@ -140,11 +148,6 @@ public class Cliente {
         }
     }
 
-    public void testeF(){
-
-        String s = cStub.testeF();
-        System.out.println(s);
-    }
 
     private void executaComandos() throws IOException{
         String comando;
@@ -158,8 +161,6 @@ public class Cliente {
 
             try {
                 switch (arrayComandos[0]) {
-                    case "teste":
-                        testeF();
                     case "login":
                         autenticacao(arrayComandos[1], false);
                         break;
@@ -167,7 +168,7 @@ public class Cliente {
                         autenticacao(arrayComandos[1], true);
                         break;
                     case "logout":
-                        logout(arrayComandos[0]);
+                        logout();
                         break;
                     case "download":
                         int id = Integer.parseInt(arrayComandos[1]);

@@ -11,6 +11,8 @@ public class Utilizador {
     public Utilizador(String nome, String pass) {
         this.nome = nome;
         this.password = pass;
+        this.activo = false;
+        this.caminhoFicheiro = null;
     }
 
 

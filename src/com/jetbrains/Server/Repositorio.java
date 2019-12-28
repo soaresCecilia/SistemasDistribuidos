@@ -35,12 +35,10 @@ public class Repositorio{
     }
 
     public void addMusica(Musica m){
-        defineIdMusica(m);
-        musicas.put(m.getId(), m);
+        musicas.put(defineIdMusica(m), m);
     }
 
-    public int defineIdMusica(Musica m){
-        //fazer lock
+    public synchronized int defineIdMusica(Musica m){
 
         idMusica++;
 
