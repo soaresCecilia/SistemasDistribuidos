@@ -16,12 +16,18 @@ public class ClienteSTUB implements SoundCloud {
     private final Integer porto;
     private PrintWriter out;
     private BufferedReader inBuffer;
-    public final static int FILE_SIZE = 6022386;
+
+    private boolean activo;
+
     public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
+    //public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
+    //public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
+    //public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
 
     public ClienteSTUB(String ip, Integer porto){
         this.ip = ip;
         this.porto = porto;
+        this.activo = false;
     }
 
 
@@ -41,6 +47,9 @@ public class ClienteSTUB implements SoundCloud {
             String[] rsp = le.split(" ");
             switch (rsp[0]) {
                 case "1": //correu tudo bem
+
+                    this.activo = true;
+
                     break;
                 default:
                     throw new CredenciaisInvalidasException("Credenciais inválidas");
@@ -59,6 +68,7 @@ public class ClienteSTUB implements SoundCloud {
         }
         finally {
             this.desconectar();
+            this.activo = false;
         }
     }
 
@@ -94,90 +104,109 @@ public class ClienteSTUB implements SoundCloud {
 
     @Override
     public void download(int id) throws MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClientesSTUBException{
-        final String idM = "download " + id;
-        out.println(idM);
-        out.flush();
 
-        System.out.println("do que eu fiz flush: " + idM);
+        if( this.activo ) {
+            final String idM = "download " + id;
 
-        try {
-            String le = inBuffer.readLine();
+            out.println(idM);
+            out.flush();
 
-            String[] rsp = le.split(" ");
-            switch (rsp[0]) {
-                case "0": // PRECISAMOS DE VER SE O UTILIZADOR ESTA AUTENTICADO??????????
-                    throw new UtilizadorNaoAutenticadoException("Utilizador não autenticado.");
-                case "1": //correu tudo bem
+            System.out.println("do que eu fiz flush: " + idM);
 
-                    final int tamanhoFile = Integer.parseInt(rsp[1]);
+            try {
 
-                    String caminhoGuardarMusica = PATH_TO_RECEIVE + rsp[2] + ".mp3";
+                String le = inBuffer.readLine();
 
-                    byte[] mybytearray = new byte[MAX_SIZE];
+                String[] rsp = le.split(" ");
+                switch (rsp[0]) {
 
-                    InputStream is = socket.getInputStream();
+                    case "1": //correu tudo bem
 
-                    FileOutputStream fos = new FileOutputStream(caminhoGuardarMusica);
+                        final int tamanhoFile = Integer.parseInt(rsp[1]);
 
-                    BufferedOutputStream bos = new BufferedOutputStream(fos);
+                        String caminhoGuardarMusica = PATH_TO_RECEIVE + rsp[2] + ".mp3";
 
-                    int bytesIni = 0;
-                    while (bytesIni < tamanhoFile)       {
+                        byte[] mybytearray = new byte[MAX_SIZE];
 
-                        int bytesRead = is.read(mybytearray, 0, mybytearray.length);
+                        InputStream is = socket.getInputStream();
 
-                        bos.write(mybytearray, 0, bytesRead);
+                        FileOutputStream fos = new FileOutputStream(caminhoGuardarMusica);
 
-                        bytesIni += bytesRead;
-                    }
+                        BufferedOutputStream bos = new BufferedOutputStream(fos);
 
-                    bos.close();
+                        int bytesIni = 0;
+                        while (bytesIni < tamanhoFile) {
 
-                    break;
-                default:
-                    throw new MusicaInexistenteException("Não existe esse id nas musicas");
+                            int bytesRead = is.read(mybytearray, 0, mybytearray.length);
+
+                            bos.write(mybytearray, 0, bytesRead);
+
+                            bytesIni += bytesRead;
+                        }
+
+                        bos.close();
+
+                        break;
+                    default:
+                        throw new MusicaInexistenteException("Não existe esse id nas musicas");
+                }
+            } catch (IOException e) {
+                throw new ClientesSTUBException("Ocorreu um erro na ligaçao");
             }
-         }
-        catch (IOException e){
-            throw  new ClientesSTUBException("Ocorreu um erro na ligaçao");
+        }
+        else {
+                throw new UtilizadorNaoAutenticadoException("Utilizador não autenticado.");
         }
     }
 
     @Override
     public void upload(String caminho, String titulo, String interprete, String ano, String genero) throws UtilizadorNaoAutenticadoException, ClientesSTUBException{
-        try {
 
-            File myFile = new File(caminho);
+        if( this.activo ) {
+            try {
 
-            byte[] mybytearray = new byte[(int) myFile.length()];  //mudar isso para fazer upload de MAX_SIZE de cada vez
+                File myFile = new File(caminho);
 
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
+                int tamFile = (int) myFile.length();
 
-            bis.read(mybytearray, 0, mybytearray.length);
+                byte[] mybytearray = new byte[MAX_SIZE];  //mudar isso para fazer upload de MAX_SIZE de cada vez
 
-            OutputStream os = socket.getOutputStream();
+                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
 
-            out.println("upload " + mybytearray.length + " " + titulo + " " + interprete + " " + ano + " " + genero);
-            out.flush();
+                OutputStream os = socket.getOutputStream();
 
-            os.write(mybytearray, 0, mybytearray.length);
-            os.flush();
-        }
-        catch (IOException e){};
+                int bytesIni = 0;
+                int bytesRead;
 
-        try {
-            String le =inBuffer.readLine();
+                out.println("upload " + tamFile + " " + titulo + " " + interprete + " " + ano + " " + genero);
+                out.flush();
 
-            String[] rsp = le.split(" ");
-            switch (rsp[0]){
-                case "1": //correu tudo bem
-                    break;
-                default:
-                    throw new UtilizadorNaoAutenticadoException("Utilizador não autenticado.");
+                while (bytesIni < tamFile) {
+                    bytesRead = bis.read(mybytearray, 0, mybytearray.length);
+                    os.write(mybytearray, 0, mybytearray.length);
+                    os.flush();
+                    bytesIni += bytesRead;
+                }
+            } catch (IOException e) {
+            }
+            ;
+
+            try {
+                String le = inBuffer.readLine();
+
+                String[] rsp = le.split(" ");
+                switch (rsp[0]) {
+                    case "1": //correu tudo bem
+                        break;
+                    default:
+                        throw new ClientesSTUBException("Erro indefinido");
+                }
+            } catch (IOException e) {
+                throw new ClientesSTUBException("Ocorreu um erro com o servidor");
             }
         }
-        catch (IOException e){
-            throw new ClientesSTUBException( "Ocorreu um erro com o servidor");
+        else {
+            throw new UtilizadorNaoAutenticadoException("Utilizador não autenticado.");
         }
     }
 
@@ -188,28 +217,31 @@ public class ClienteSTUB implements SoundCloud {
     Finalmente, caso tenham sido encontradas músicas devolve uma lista com os metadados das mesmas.
      */
     public List<Musica> procuraMusica (String etiqueta) throws ClientesSTUBException, UtilizadorNaoAutenticadoException, MusicaInexistenteException{
+        if(this.activo) {
+            String procuraEtiqueta = "procura " + etiqueta;
 
-        String procuraEtiqueta = "procura " + etiqueta;
+            out.println(procuraEtiqueta);
+            out.flush();
 
-        out.println(procuraEtiqueta);
-        out.flush();
+            try {
+                String le = inBuffer.readLine();
 
-        try {
-            String le =inBuffer.readLine();
+                String[] rsp = le.split(" ");
 
-            String[] rsp = le.split(" ");
-
-            switch (rsp[0]){
-                case "1": //correu tudo bem
-                    return transformaString(rsp);//manda a lista das musicas
-                case "2":
-                    throw new MusicaInexistenteException("Não existe musica com essa etiqueta.");
-                default:
-                    throw new UtilizadorNaoAutenticadoException("Utilizador não autenticado.");
+                switch (rsp[0]) {
+                    case "1": //correu tudo bem
+                        return transformaString(rsp);//manda a lista das musicas
+                    case "2":
+                        throw new MusicaInexistenteException("Não existe musica com essa etiqueta.");
+                    default:
+                        throw new ClientesSTUBException("Erro indefinido");
+                }
+            } catch (IOException e) {
+                throw new ClientesSTUBException("Ocorreu um erro com o servidor");
             }
         }
-        catch (IOException e){
-            throw new ClientesSTUBException("Ocorreu um erro com o servidor");
+        else {
+            throw new UtilizadorNaoAutenticadoException("Utilizador não autenticado.");
         }
     }
 

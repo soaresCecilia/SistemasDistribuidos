@@ -16,6 +16,7 @@ public class ServerHelper implements SoundCloud {
     public static String PATH_TO_RECORD = "/home/luisabreu/Desktop/musicaS/";
     private PrintWriter out;
     private BufferedReader in;
+    public static final int MAX_SIZE = 1024;
 
     public ServerHelper(Socket clsock, Repositorio r) throws IOException {
         this.repositorio = r;
@@ -81,36 +82,47 @@ public class ServerHelper implements SoundCloud {
 
     @Override
     public void download(int idMusica) throws IOException, MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClientesSTUBException {
+
         boolean n = repositorio.getMusicas().containsKey(idMusica);
 
-        System.out.println("Existe ou não: "+n);
-
-        if(repositorio.getMusicas().containsKey(idMusica)){
+        if( n ){
 
             Musica m = repositorio.getMusicaId(idMusica);
 
             File myFile = new File(m.getCaminhoFicheiro());
 
-            byte[] mybytearray = new byte[(int) myFile.length()];
+            int tamFile = (int) myFile.length();
+
+            byte[] mybytearray = new byte[MAX_SIZE];
 
             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
 
-            bis.read(mybytearray, 0, mybytearray.length);
-
             OutputStream os = clSock.getOutputStream();
 
-            //envia a string "1 tamanhaFicheiroAler"
-            System.out.println("tamanho do ficheiro lido: "+ mybytearray.length);
+            //envia a string "1 tamanhaFicheiroAler nomeFicheiro"
+            String okTam = "1 "+tamFile+" "+m.getTitulo();
 
-            String okTam = "1 "+mybytearray.length+" "+m.getTitulo();
-            System.out.println(okTam);
             out.println(okTam);
             out.flush();
-            System.out.println("fez bem o flucsh");
-            //envia ficheiro pedido
-            os.write(mybytearray, 0, mybytearray.length);
 
-            os.flush();
+            //envia ficheiro pedido
+
+            int bytesIni=0;
+            int bytesRead;
+
+            while (bytesIni<tamFile){
+
+                bytesRead = bis.read(mybytearray, 0, mybytearray.length);
+
+                os.write(mybytearray, 0, mybytearray.length);
+                os.flush();
+
+                bytesIni+=bytesRead;
+            }
+
+            //aumenta o numero de downloads da musica
+            repositorio.growNDownloads(idMusica);
+
         }
         else{
             throw new MusicaInexistenteException();
@@ -122,6 +134,8 @@ public class ServerHelper implements SoundCloud {
 
     @Override
     public void upload(String tamanho, String titulo, String interprete,  String ano, String genero) throws IOException, UtilizadorNaoAutenticadoException, ClientesSTUBException {
+
+
 
         String caminho = PATH_TO_RECORD+titulo+".mp3";
 
@@ -148,6 +162,7 @@ public class ServerHelper implements SoundCloud {
         bos.flush();
 
         Musica m= new Musica(titulo,interprete,ano,genero, caminho);
+
         repositorio.addMusica(m);
 
         out.println("1");

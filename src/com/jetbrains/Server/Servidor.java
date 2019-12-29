@@ -6,6 +6,10 @@ import java.net.Socket;
 
 public class Servidor {
     private static ServerHelper serverHelper;
+    private static String caminhoFicheiro = "/home/luisabreu/Desktop/musicaS/";
+    //private static String caminhoFicheiro = null;
+    //private static String caminhoFicheiro = null;
+    //private static String caminhoFicheiro = "null";
 
 
    public static void start(Integer port, int nThreads, Repositorio repositorio) {
@@ -33,15 +37,25 @@ public class Servidor {
     }
 
     public static void teste(Repositorio repositorio) {
-        Musica m1 = new Musica (1, "ola", "viva", "1982","rock", "ficheiro", 9);
-        Musica m2 = new Musica (2, "vi", "Ze Cabra", "1999","pimba", "ficheiro", 19);
-        Musica m3 = new Musica (3, "vida bandida", "Ana Carolina", "2002","soul", "ficheiro", 9);
-        Musica m4 = new Musica (4, "vira do minho", "Grupo os amores", "2010","pimba", "ficheiro", 19);
+        Musica m1 = new Musica (1, "ola", "viva", "1982","rock", caminhoFicheiro+"ola.mp3", 9);
+        Musica m2 = new Musica (2, "vi", "Ze Cabra", "1999","pimba", caminhoFicheiro+"vi.mp3", 19);
+        Musica m3 = new Musica (3, "vida bandida", "Ana Carolina", "2002","soul", caminhoFicheiro+"vida bandida.mp3", 9);
+        Musica m4 = new Musica (4, "vira do minho", "Grupo os amores", "2010","pimba", caminhoFicheiro+"vira do minho.mp3", 19);
+
+        Utilizador luis = new Utilizador("luis","102030");
+        Utilizador cecilia = new Utilizador("cecilia", "102030");
+        Utilizador alexandre = new Utilizador("alexandre","102030");
+        Utilizador miriam = new Utilizador("miriam", "102030");
 
         repositorio.addMusica(m1);
         repositorio.addMusica(m2);
         repositorio.addMusica(m3);
         repositorio.addMusica(m4);
+
+        repositorio.addUtilizador(luis);
+        repositorio.addUtilizador(cecilia);
+        repositorio.addUtilizador(alexandre);
+        repositorio.addUtilizador(miriam);
 
         for(Musica m : repositorio.getMusicas().values())
             System.out.println(m.toString());

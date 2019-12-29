@@ -38,6 +38,15 @@ public class Repositorio{
         musicas.put(defineIdMusica(m), m);
     }
 
+    public  void addUtilizador(Utilizador u){
+        utilizadores.put(u.getNome(),u);
+    }
+
+    public void growNDownloads(int idMusica){
+
+        this.musicas.get(idMusica).growNDowloads();
+    }
+
     public synchronized int defineIdMusica(Musica m){
 
         idMusica++;

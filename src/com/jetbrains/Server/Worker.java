@@ -101,6 +101,7 @@ public class Worker implements Runnable {
                 }
                 catch (IOException e){
                     out.println("0");
+                    out.flush();
                 }
                 catch (ClientesSTUBException e){}
                 catch (UtilizadorNaoAutenticadoException e){}

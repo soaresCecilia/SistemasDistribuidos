@@ -61,6 +61,10 @@ public class Musica {
         return this.nDownloads;
     }
 
+    public void growNDowloads(){
+        this.nDownloads++;
+    }
+
 
     public boolean equals(Object o){
         if(this == o){

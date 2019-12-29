@@ -44,7 +44,7 @@ public class Cliente {
             System.out.println("Utilizador autenticado, bem vindo");
             System.out.println("Se quiser procurar alguma música escreva: procurarMusica ");
             System.out.println("Se quiser fazer upload de uma música escreva: upload ");
-            System.out.println("Se quiser fazer o download de uma música escreva: download ");
+            System.out.println("Se quiser fazer o download de uma música escreva: download  idMusica");
         }
         catch (CredenciaisInvalidasException e) {
             e.printStackTrace();
