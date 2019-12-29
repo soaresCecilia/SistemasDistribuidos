@@ -43,11 +43,11 @@ public class Cliente {
         }
         catch (UtilizadorJaExisteException e) {
            System.out.println(e.getMessage());
-            cStub.desconectar();
+            cStub.desconectar(); //quando dá erro desliga o socket
         }
         catch (ClientesSTUBException e){
             e.printStackTrace();
-            cStub.desconectar();
+            cStub.desconectar();  //quando dá erro desliga o socket
         }
     }
 

@@ -25,18 +25,11 @@ public class Worker implements Runnable {
     public void responde(String s){
         String[] comandos = s.split(" ");
 
-
-        System.out.println("o que tenho e, comandos[0] é " +comandos[0]);
-
         switch (comandos[0]) {
 
             case "login":
                 String nome = (comandos[1]);
-
                 String pass = (comandos[2]);
-
-                System.out.println("A minha pass " + pass);
-                System.out.println("O meu nome é " + nome);
 
                 try {
                     serverhelper.login(nome, pass);
@@ -88,17 +81,16 @@ public class Worker implements Runnable {
             case "download":
                 try {
                     int nrm = Integer.parseInt(comandos[1]);
-                    System.out.println("id da musica reecebida: " + nrm);
+                    //System.out.println("id da musica reecebida: " + nrm);
                     serverhelper.download(nrm);
-                    System.out.println("ServerHelper funcionou!");
+                    //System.out.println("ServerHelper funcionou!");
                 } catch (MusicaInexistenteException e) {
                     out.println("2");
                     out.flush();
                 } catch (IOException e) {
                     out.println("0");
                     out.flush();
-                } catch (ClientesSTUBException e) {
-                }
+                } catch (ClientesSTUBException e) {}
                 break;
             case "procura":
                 try {

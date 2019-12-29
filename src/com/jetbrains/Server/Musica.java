@@ -62,6 +62,10 @@ public class Musica {
         return this.nDownloads;
     }
 
+
+    /*
+    Aumenta o numero de downloads
+     */
     public void growNDowloads(){
         this.nDownloads++;
     }
@@ -83,6 +87,11 @@ public class Musica {
                 && this.caminhoFicheiro.equals((aux.getCaminhoFicheiro()));
     }
 
+
+    /*
+    Método que imprime uma música com o simbolo % entre cada uma das variáveis da classe música.
+    Este método auxilia na procura das músicas por uma etiqueta.
+     */
     public String toStringPlus() {
         StringBuilder sb = new StringBuilder();
 
@@ -105,7 +114,9 @@ public class Musica {
     }
 
 
-
+    /*
+    Método que imprime uma música.
+     */
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
@@ -128,13 +139,6 @@ public class Musica {
     }
 
 
-
-    public void addNDownload(){
-
-        this.nDownloads++;
-    }
-
-
     /*
     Método que verifica se a string passada como parametro está contida em alguma variável da classe. Não é
     case sensitive.
@@ -142,7 +146,7 @@ public class Musica {
     public boolean procuraEtiqueta(String etiqueta) {
         return (Pattern.compile(Pattern.quote(etiqueta), Pattern.CASE_INSENSITIVE).matcher(this.titulo).find()
                 || Pattern.compile(Pattern.quote(etiqueta), Pattern.CASE_INSENSITIVE).matcher(this.interprete).find()
-                || Pattern.compile(Pattern.quote(etiqueta), Pattern.CASE_INSENSITIVE).matcher(this.ano).find()
+                || this.ano.equals(etiqueta)
                 || Pattern.compile(Pattern.quote(etiqueta), Pattern.CASE_INSENSITIVE).matcher(this.genero).find());
     }
 }
