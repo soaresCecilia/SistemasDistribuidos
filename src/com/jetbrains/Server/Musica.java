@@ -1,6 +1,7 @@
 package com.jetbrains.Server;
 
 import javax.xml.crypto.Data;
+import java.util.regex.Pattern;
 
 public class Musica {
     private int id;
@@ -78,6 +79,29 @@ public class Musica {
                 && this.caminhoFicheiro.equals((aux.getCaminhoFicheiro()));
     }
 
+    public String toStringPlus() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("ID:%");
+        sb.append(this.id + "%");
+        sb.append("Título:%");
+        sb.append(this.titulo + "%");
+        sb.append("Interprete:%");
+        sb.append(this.interprete+"%");
+        sb.append("Ano:%");
+        sb.append(this.ano + "%");
+        sb.append("Genero:%");
+        sb.append(this.genero + "%");
+        sb.append("Caminho:%");
+        sb.append(this.caminhoFicheiro + "%");
+        sb.append("Numero_downloads:%");
+        sb.append(this.nDownloads);
+
+        return sb.toString();
+    }
+
+
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
@@ -86,7 +110,7 @@ public class Musica {
         sb.append("Título: ");
         sb.append(this.titulo + " ");
         sb.append("Interprete: ");
-        sb.append(this.interprete+" ");
+        sb.append(this.interprete + " ");
         sb.append("Ano: ");
         sb.append(this.ano + " ");
         sb.append("Genero: ");
@@ -99,14 +123,24 @@ public class Musica {
         return sb.toString();
     }
 
+
+
     public void addNDownload(){
 
         this.nDownloads++;
     }
 
 
+    /*
+    Método que verifica se a string passada como parametro está contida em alguma variável da classe. Não é
+    case sensitive.
+     */
     public boolean procuraEtiqueta(String etiqueta) {
-        return (this.titulo.contains(etiqueta) || this.interprete.contains(etiqueta)
-            || this.ano.equals(etiqueta) || this.genero.equals(etiqueta));
+        return (Pattern.compile(Pattern.quote(etiqueta), Pattern.CASE_INSENSITIVE).matcher(this.titulo).find()
+                || Pattern.compile(Pattern.quote(etiqueta), Pattern.CASE_INSENSITIVE).matcher(this.interprete).find()
+                || Pattern.compile(Pattern.quote(etiqueta), Pattern.CASE_INSENSITIVE).matcher(this.ano).find()
+                || Pattern.compile(Pattern.quote(etiqueta), Pattern.CASE_INSENSITIVE).matcher(this.genero).find());
     }
 }
+
+

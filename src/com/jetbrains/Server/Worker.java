@@ -45,8 +45,13 @@ public class Worker implements Runnable {
                 }
                 catch (IOException e ){}
                 catch(CredenciaisInvalidasException e){
+                    out.println("0");
+                    out.flush();
                 }
-                catch(ClientesSTUBException e){}
+                catch(ClientesSTUBException e){
+                    out.println("0");
+                    out.flush();
+                }
                 break;
 
             case "logout":
@@ -61,17 +66,20 @@ public class Worker implements Runnable {
             case "registar":
                 try{
                     String password = (comandos[2]);
-                    System.out.println("A minha pass " + password);
                     nome = comandos[1];
-                    System.out.println("O meu nome é " + nome);
-
                     serverhelper.registarUtilizador(nome,password);}
-                catch (ClientesSTUBException e){}
+                catch (ClientesSTUBException e){
+                    out.println(e);
+                    out.flush();
+                }
                 catch (UtilizadorJaExisteException e) {
                     out.println("0");
                     out.flush();
                 }
-                catch (CredenciaisInvalidasException e){}
+                catch (CredenciaisInvalidasException e){
+                    out.println("2");
+                    out.flush();
+                }
 
                 break;
 
@@ -101,9 +109,13 @@ public class Worker implements Runnable {
                 }
                 catch (IOException e){
                     out.println("0");
+                    out.flush();
                 }
                 catch (ClientesSTUBException e){}
-                catch (UtilizadorNaoAutenticadoException e){}
+                catch (UtilizadorNaoAutenticadoException e){
+                    out.println("0");
+                    out.flush();
+                }
                 break;
             case "procura":
                 try{
@@ -114,7 +126,10 @@ public class Worker implements Runnable {
                     out.flush();
                 }
                 catch (IOException e){}
-                catch (UtilizadorNaoAutenticadoException e){}
+                catch (UtilizadorNaoAutenticadoException e){
+                    out.println("Utizaldor nao autenticado");
+                    out.flush();
+                }
                 catch (ClientesSTUBException e) {}
 
                 break;

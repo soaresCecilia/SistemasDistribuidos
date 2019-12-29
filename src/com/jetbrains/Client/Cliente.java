@@ -18,22 +18,13 @@ public class Cliente {
         cStub = new ClienteSTUB("127.0.0.1", 12346);
     }
 
-    private synchronized void conectar() {
-        boolean connected = false;
-        while (!connected) {
-            try {
-                cStub.conectar(); //connect do stub
-                connected = true;
-            } catch (ClientesSTUBException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private void autenticacao(String nome, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException, CredenciaisInvalidasException {
-        System.out.println("Agora introduza a sua password");
+        System.out.println("Agora introduza a sua password. Atenção!!! A password não pode conter espaços.");
         String password = terminal.readLine();
+
         try {
+            cStub.conectar();
+
             if (querRegistar) { //querRegistar = true se se quer registar, querRegistar = false se só quer o login
                 cStub.registarUtilizador(nome, password);
                 System.out.println("Utilizador registado com sucesso");
@@ -47,13 +38,17 @@ public class Cliente {
             System.out.println("Se quiser fazer o download de uma música escreva: download ");
         }
         catch (CredenciaisInvalidasException e) {
+            System.out.println("EsTOU AQUI!!!!");
             e.printStackTrace();
+            cStub.desconectar();
         }
         catch (UtilizadorJaExisteException e) {
            e.printStackTrace();
+            cStub.desconectar();
         }
         catch (ClientesSTUBException e){
             e.printStackTrace();
+            cStub.desconectar();
         }
     }
 
@@ -128,7 +123,9 @@ public class Cliente {
             System.out.println(m);
         }
         catch (UtilizadorNaoAutenticadoException e){
-            System.out.println("Por favor aguarde...");
+            System.out.println("Utilizador não autenticado por favor faça login");
+            opcoes();
+
         }
         catch (MusicaInexistenteException e){
             System.out.println(e.getMessage());
@@ -146,8 +143,6 @@ public class Cliente {
     public static void start(String ip, Integer porto) throws ClientesSTUBException{
         Cliente cliente = new Cliente();
         cliente.caminhoServidor(ip, porto);
-        cliente.conectar();
-
         cliente.opcoes();
 
         try {
@@ -160,7 +155,7 @@ public class Cliente {
     private void opcoes() {
         System.out.println("Para fazer login escreva login e o seu nome: ");
 
-        System.out.println("Para criar uma conta escreva registar e o nome do utilizador: ");
+        System.out.println("Para criar uma conta escreva registar e o nome do utilizador. Atenção!!! O nome não pode conter espaços. ");
     }
 
 
@@ -180,7 +175,7 @@ public class Cliente {
                         autenticacao(arrayComandos[1], false);
                         break;
                     case "registar":
-                        autenticacao(arrayComandos[1], true);
+                        autenticacao(arrayComandos[1], true); //o nome não permite espaços
                         break;
                     case "logout":
                         logout();
@@ -207,6 +202,7 @@ public class Cliente {
                 System.out.println("Utilizador não está autenticado");
             }
             catch (Exception e) {
+                e.printStackTrace();
                 System.out.println("Excepção desconhecida.");
             }
         }

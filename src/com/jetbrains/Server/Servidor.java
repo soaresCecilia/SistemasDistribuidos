@@ -5,7 +5,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Servidor {
-    private static ServerHelper serverHelper;
 
 
    public static void start(Integer port, int nThreads, Repositorio repositorio) {
@@ -18,7 +17,6 @@ public class Servidor {
                 Socket clSocket = serverSocket.accept();
 
                 System.out.println("liguei!");
-                ServerHelper serverHelper = new ServerHelper(clSocket, repositorio);
                 Thread t = new Thread(new Worker(clSocket, repositorio)); //tirar o socket do worker cria uma thread por cliente
                 t.start();
             }
@@ -36,7 +34,7 @@ public class Servidor {
         Musica m1 = new Musica (1, "ola", "viva", "1982","rock", "ficheiro", 9);
         Musica m2 = new Musica (2, "vi", "Ze Cabra", "1999","pimba", "ficheiro", 19);
         Musica m3 = new Musica (3, "vida bandida", "Ana Carolina", "2002","soul", "ficheiro", 9);
-        Musica m4 = new Musica (4, "vira do minho", "Grupo os amores", "2010","pimba", "ficheiro", 19);
+        Musica m4 = new Musica (4, "vira do minho", "Elton John", "2010","pimba", "ficheiro", 19);
 
         repositorio.addMusica(m1);
         repositorio.addMusica(m2);
