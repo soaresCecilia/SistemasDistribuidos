@@ -37,11 +37,16 @@ public class Utilizador {
         return super.equals(aux) && this.nome.equals(aux.getNome());
     }
 
+
+
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
         sb.append("Nome: ");
         sb.append(this.nome+" ");
+        sb.append("Estado: ");
+        sb.append(this.activo + " ");
 
 
         return sb.toString();

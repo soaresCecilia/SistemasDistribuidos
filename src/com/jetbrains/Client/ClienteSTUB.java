@@ -111,7 +111,6 @@ public class ClienteSTUB implements SoundCloud {
             out.println(idM);
             out.flush();
 
-            System.out.println("do que eu fiz flush: " + idM);
 
             try {
 
@@ -217,16 +216,18 @@ public class ClienteSTUB implements SoundCloud {
     Finalmente, caso tenham sido encontradas músicas devolve uma lista com os metadados das mesmas.
      */
     public List<Musica> procuraMusica (String etiqueta) throws ClientesSTUBException, UtilizadorNaoAutenticadoException, MusicaInexistenteException{
-        if(this.activo) {
+
             String procuraEtiqueta = "procura " + etiqueta;
 
             out.println(procuraEtiqueta);
             out.flush();
 
-            try {
-                String le = inBuffer.readLine();
 
-                String[] rsp = le.split(" ");
+        try {
+            String le =inBuffer.readLine();
+
+            String[] rsp = le.split("%");
+
 
                 switch (rsp[0]) {
                     case "1": //correu tudo bem
@@ -239,10 +240,7 @@ public class ClienteSTUB implements SoundCloud {
             } catch (IOException e) {
                 throw new ClientesSTUBException("Ocorreu um erro com o servidor");
             }
-        }
-        else {
-            throw new UtilizadorNaoAutenticadoException("Utilizador não autenticado.");
-        }
+
     }
 
 
@@ -252,22 +250,22 @@ public class ClienteSTUB implements SoundCloud {
     private List<Musica> transformaString(String []s) {
         List<Musica> musicas = new ArrayList<Musica>();
         int id = 0, nDownloads = 0, i = 0;
-        String titulo= null, interprete = null, ano = null, genero = null, caminhoFicheiro = null;
+        String titulo = null, interprete = null, ano = null, genero = null, caminhoFicheiro = null;
 
         while( i < s.length-1) {
             while (!s[i].equals("-") && i < s.length-1) {
                 if (s[i].equals("ID:")) {
-                    id = Integer.parseInt(s[i + 1]);
+                    id = Integer.parseInt(s[i+1]);
                 } else if (s[i].equals("Título:")) {
-                    titulo = s[i + 1];
+                    titulo = s[i+1];
                 } else if (s[i].equals("Interprete:")) {
-                    interprete = s[i + 1];
+                   interprete = s[i+1];
                 } else if (s[i].equals("Ano:")) {
-                    ano = s[i + 1];
+                    ano = s[i+1];
                 } else if (s[i].equals("Genero:")) {
-                    genero = s[i + 1];
+                    genero = s[i+1];
                 } else if (s[i].equals("Caminho:")) {
-                    caminhoFicheiro = s[i + 1];
+                    caminhoFicheiro = s[i+1];
                 } else if (s[i].equals("Numero_downloads:")) {
                     nDownloads = Integer.parseInt(s[i + 1]);
                 }
@@ -284,7 +282,8 @@ public class ClienteSTUB implements SoundCloud {
     /*
     Este método cria os elementos necessários para ser estabelecida uma conexão.
      */
-    public void conectar() throws ClientesSTUBException {
+
+    public synchronized void conectar() throws ClientesSTUBException {
         try {
             this.socket = new Socket(this.ip,this.porto);
             out = new PrintWriter(socket.getOutputStream());
@@ -298,7 +297,7 @@ public class ClienteSTUB implements SoundCloud {
     /*
     Método que termina a conexão.
      */
-    private void desconectar()throws  IOException{
+    public void desconectar()throws  IOException{
         this.socket.shutdownOutput();
         this.socket.shutdownInput();
         this.socket.close();

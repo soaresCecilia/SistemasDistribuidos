@@ -5,11 +5,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Servidor {
+
     private static ServerHelper serverHelper;
     private static String caminhoFicheiro = "/home/luisabreu/Desktop/musicaS/";
     //private static String caminhoFicheiro = null;
     //private static String caminhoFicheiro = null;
     //private static String caminhoFicheiro = "null";
+
 
 
    public static void start(Integer port, int nThreads, Repositorio repositorio) {
@@ -22,7 +24,6 @@ public class Servidor {
                 Socket clSocket = serverSocket.accept();
 
                 System.out.println("liguei!");
-                ServerHelper serverHelper = new ServerHelper(clSocket, repositorio);
                 Thread t = new Thread(new Worker(clSocket, repositorio)); //tirar o socket do worker cria uma thread por cliente
                 t.start();
             }
@@ -37,6 +38,7 @@ public class Servidor {
     }
 
     public static void teste(Repositorio repositorio) {
+
         Musica m1 = new Musica (1, "ola", "viva", "1982","rock", caminhoFicheiro+"ola.mp3", 9);
         Musica m2 = new Musica (2, "vi", "Ze Cabra", "1999","pimba", caminhoFicheiro+"vi.mp3", 19);
         Musica m3 = new Musica (3, "vida bandida", "Ana Carolina", "2002","soul", caminhoFicheiro+"vida bandida.mp3", 9);
@@ -46,6 +48,7 @@ public class Servidor {
         Utilizador cecilia = new Utilizador("cecilia", "102030");
         Utilizador alexandre = new Utilizador("alexandre","102030");
         Utilizador miriam = new Utilizador("miriam", "102030");
+
 
         repositorio.addMusica(m1);
         repositorio.addMusica(m2);

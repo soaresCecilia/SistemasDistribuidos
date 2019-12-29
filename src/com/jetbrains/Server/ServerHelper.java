@@ -64,15 +64,11 @@ public class ServerHelper implements SoundCloud {
      */
     public void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClientesSTUBException, CredenciaisInvalidasException{
         if (!repositorio.getUtilizadores().containsKey(nome)) {
-            if(!nome.contains(" ") && !password.contains(" ")) {
                 Utilizador novoUtilizador = new Utilizador(nome, password);
                 repositorio.getUtilizadores().put(nome, novoUtilizador);
+                novoUtilizador.setActivo();
                 out.println("1");
                 out.flush();
-            }
-            else {
-                throw new CredenciaisInvalidasException("O nome ou a password não podem conter espaços");
-            }
         }
         else {
             throw new UtilizadorJaExisteException("Já se encontra registado um utilizador com esse mesmo nome.");
@@ -161,7 +157,8 @@ public class ServerHelper implements SoundCloud {
         bos.close();
         bos.flush();
 
-        Musica m= new Musica(titulo,interprete,ano,genero, caminho);
+
+        Musica m = new Musica(titulo, interprete, ano, genero, caminho);
 
         repositorio.addMusica(m);
 
@@ -181,7 +178,7 @@ public class ServerHelper implements SoundCloud {
 
         for(Musica m : repositorio.getMusicas().values()) {
             if (m.procuraEtiqueta(etiqueta)) {
-                musicasComEtiqueta.add(m.toString());
+                musicasComEtiqueta.add(m.toStringPlus());
             }
         }
 
@@ -190,7 +187,7 @@ public class ServerHelper implements SoundCloud {
         //sinal delimitador de que começa uma nova música
         String delim = " - ";
         String res = String.join(delim, musicasComEtiqueta);
-        String resultado = "1 " + res;
+        String resultado = "1%" + res;
 
 
         System.out.println(res);
