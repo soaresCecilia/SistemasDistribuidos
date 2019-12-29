@@ -16,7 +16,7 @@ public class ServerHelper implements SoundCloud {
     public static String PATH_TO_RECORD = "/home/luisabreu/Desktop/musicaS/";
     private PrintWriter out;
     private BufferedReader in;
-    public static final int MAX_SIZE = 1024;
+    public static final int MAX_SIZE = 1024; //tamanho de transferência de ficheiros limitado
 
     public ServerHelper(Socket clsock, Repositorio r) throws IOException {
         this.repositorio = r;
@@ -77,7 +77,7 @@ public class ServerHelper implements SoundCloud {
     }
 
     @Override
-    public void download(int idMusica) throws IOException, MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClientesSTUBException {
+    public void download(int idMusica) throws IOException, MusicaInexistenteException, ClientesSTUBException {
 
         boolean n = repositorio.getMusicas().containsKey(idMusica);
 
@@ -129,7 +129,7 @@ public class ServerHelper implements SoundCloud {
     }
 
     @Override
-    public void upload(String tamanho, String titulo, String interprete,  String ano, String genero) throws IOException, UtilizadorNaoAutenticadoException, ClientesSTUBException {
+    public void upload(String tamanho, String titulo, String interprete,  String ano, String genero) throws IOException, ClientesSTUBException {
 
 
 
@@ -171,7 +171,7 @@ public class ServerHelper implements SoundCloud {
     A função procura uma música devolve uma lista vazias e envia para o ClienteStub
     uma String com todas as músicas que tenham em algum dos seus metadados a String passada como parâmetro.
      */
-    public List<Musica> procuraMusica(String etiqueta) throws IOException, UtilizadorNaoAutenticadoException, MusicaInexistenteException, ClientesSTUBException {
+    public List<Musica> procuraMusica(String etiqueta) throws IOException, MusicaInexistenteException, ClientesSTUBException {
         List<String> musicasComEtiqueta = new ArrayList<>();
         List<Musica> vazia = new ArrayList<Musica>(); //lista vazia que vai ser devolvida apenas para obedecer ao interface
         this.out = new PrintWriter(clSock.getOutputStream());

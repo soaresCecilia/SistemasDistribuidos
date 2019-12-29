@@ -99,7 +99,7 @@ public class Musica {
         sb.append("Caminho:%");
         sb.append(this.caminhoFicheiro + "%");
         sb.append("Numero_downloads:%");
-        sb.append(this.nDownloads);
+        sb.append(this.nDownloads + "%");
 
         return sb.toString();
     }

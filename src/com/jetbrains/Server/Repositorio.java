@@ -7,8 +7,6 @@ public class Repositorio{
 
     private Map<String, Utilizador> utilizadores; //nome, utilizador
 
-    //private List<Utilizador> utilizadorAutenticado;
-
     private Map<Integer, Musica> musicas;
 
     private static int idMusica = 0;

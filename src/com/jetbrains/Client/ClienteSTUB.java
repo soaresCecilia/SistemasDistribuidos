@@ -94,7 +94,7 @@ public class ClienteSTUB implements SoundCloud {
                     case "0":
                         throw new UtilizadorJaExisteException("Já existe utilizador com esse login");
                     default:
-                        throw new CredenciaisInvalidasException("Já se encontra registado um utilizador com esse mesmo nome.");
+                        throw new CredenciaisInvalidasException("O utilizador inseriu credenciais erradas.");
                 }
         }
         catch (IOException e){
@@ -105,7 +105,7 @@ public class ClienteSTUB implements SoundCloud {
     @Override
     public void download(int id) throws MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClientesSTUBException{
 
-        if( this.activo ) {
+        if( this.activo ) {   //JÁ NÃO É PRECISO!!!
             final String idM = "download " + id;
 
             out.println(idM);
@@ -215,7 +215,7 @@ public class ClienteSTUB implements SoundCloud {
     consoante tenham sido encontradas músicas ou não) e uma String que contém todas as músicas com a referida etiqueta.
     Finalmente, caso tenham sido encontradas músicas devolve uma lista com os metadados das mesmas.
      */
-    public List<Musica> procuraMusica (String etiqueta) throws ClientesSTUBException, UtilizadorNaoAutenticadoException, MusicaInexistenteException{
+    public List<Musica> procuraMusica (String etiqueta) throws ClientesSTUBException, MusicaInexistenteException{
 
             String procuraEtiqueta = "procura " + etiqueta;
 
@@ -228,12 +228,11 @@ public class ClienteSTUB implements SoundCloud {
 
             String[] rsp = le.split("%");
 
-
                 switch (rsp[0]) {
                     case "1": //correu tudo bem
                         return transformaString(rsp);//manda a lista das musicas
                     case "2":
-                        throw new MusicaInexistenteException("Não existe musica com essa etiqueta.");
+                        throw new MusicaInexistenteException("Não existe nenhuma musica com essa etiqueta.");
                     default:
                         throw new ClientesSTUBException("Erro indefinido");
                 }

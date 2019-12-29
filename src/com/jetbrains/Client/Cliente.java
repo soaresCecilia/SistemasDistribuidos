@@ -38,12 +38,11 @@ public class Cliente {
             System.out.println("Se quiser fazer o download de uma música escreva: download  idMusica");
         }
         catch (CredenciaisInvalidasException e) {
-            System.out.println("EsTOU AQUI!!!!");
-            e.printStackTrace();
+            System.out.println(e.getMessage());
             cStub.desconectar();
         }
         catch (UtilizadorJaExisteException e) {
-           e.printStackTrace();
+           System.out.println(e.getMessage());
             cStub.desconectar();
         }
         catch (ClientesSTUBException e){
@@ -58,8 +57,8 @@ public class Cliente {
             cStub.logout(null);
             System.exit(0);
         }
-        catch (IOException e){
-            System.out.println("Logout não executado, tente de novo");
+        catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -115,23 +114,13 @@ public class Cliente {
             System.out.println("Insira a etiqueta a procurar");
             String etiqueta = terminal.readLine();
 
-            //System.out.println("Insira o que procurar");
-            //String oQp = terminal.readLine();
-
             m = cStub.procuraMusica(etiqueta);
 
             System.out.println(m);
         }
-        catch (UtilizadorNaoAutenticadoException e){
-            System.out.println("Utilizador não autenticado por favor faça login");
-            opcoes();
-
-        }
         catch (MusicaInexistenteException e){
             System.out.println(e.getMessage());
-            System.out.println("Não existe nenhuma música com essa etiqueta");
-            System.out.println("Insira a etiqueta a procurar");
-            procuraMusica();
+            procuraMusica(); //Quando a música não existe volta a chamar a função para procurar algo novamente
         }
         catch (ClientesSTUBException e){
             e.printStackTrace();
