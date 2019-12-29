@@ -36,8 +36,10 @@ public class ServerHelper implements SoundCloud {
             if (utilizador == null || !utilizador.autentica(nome, password)) {
                 throw new CredenciaisInvalidasException("Utilizador não está registado");
             }
-            else if (!utilizador.getActivo() && utilizador.autentica(nome, password)) {
+            else if (utilizador.autentica(nome, password)) { //basta que a autenticação esteja correcta não importa se faz login já estando loggado
                 utilizador.setActivo();
+                out.println("1");
+                out.flush();
             }
     }
 

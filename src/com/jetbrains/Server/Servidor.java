@@ -51,7 +51,7 @@ public class Servidor {
 
         Repositorio repositorio = new Repositorio();
 
-        //teste(repositorio);
+        teste(repositorio);
 
         Servidor.start(12346, 10, repositorio);
     }

@@ -6,6 +6,10 @@ import com.jetbrains.Server.ServerHelper;
 import java.io.*;
 import java.net.Socket;
 
+
+/*
+O worker só envia mensagens ao Cliente quando algo correu mal
+ */
 public class Worker implements Runnable {
 
     private Socket clSock;
@@ -26,9 +30,15 @@ public class Worker implements Runnable {
         System.out.println("o que tenho e, comandos[0] é " +comandos[0]);
 
         switch (comandos[0]){
+
             case "login":
                 String nome = (comandos[1]);
+
                 String pass = (comandos[2]);
+
+                System.out.println("A minha pass " + pass);
+                System.out.println("O meu nome é " + nome);
+
                 try {
                     serverhelper.login(nome, pass);
                     this.nome = nome;
@@ -50,8 +60,12 @@ public class Worker implements Runnable {
 
             case "registar":
                 try{
-                String password = (comandos[2]);
-                serverhelper.registarUtilizador(comandos[1],password);}
+                    String password = (comandos[2]);
+                    System.out.println("A minha pass " + password);
+                    nome = comandos[1];
+                    System.out.println("O meu nome é " + nome);
+
+                    serverhelper.registarUtilizador(nome,password);}
                 catch (ClientesSTUBException e){}
                 catch (UtilizadorJaExisteException e) {
                     out.println("0");
@@ -63,9 +77,7 @@ public class Worker implements Runnable {
 
             case "upload":
                 try{
-
                 serverhelper.upload(comandos[1],comandos[2], comandos[3], comandos[4] ,comandos[5]);
-
                 }
                 catch (IOException e){}
                 catch (ClientesSTUBException e){
@@ -98,7 +110,7 @@ public class Worker implements Runnable {
                     serverhelper.procuraMusica(comandos[1]);
                 }
                 catch (MusicaInexistenteException e){
-                    out.println("2");
+                    out.println("2");  //saber se a não existir etiqueta é uma excepção!!!!!
                     out.flush();
                 }
                 catch (IOException e){}
@@ -108,7 +120,7 @@ public class Worker implements Runnable {
                 break;
 
             default:
-                System.out.println ("Opcao invalida"); //mandar para o cliente
+                System.out.println("Opcao invalida"); //mandar para o cliente
         }
     }
 

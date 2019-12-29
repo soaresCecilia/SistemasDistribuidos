@@ -71,7 +71,7 @@ public class ClienteSTUB implements SoundCloud {
      */
     public void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClientesSTUBException, CredenciaisInvalidasException{
 
-        out.println("registarUtilizador " + nome + " " + password);
+        out.println("registar " + nome + " " + password);
         out.flush();
 
         try {

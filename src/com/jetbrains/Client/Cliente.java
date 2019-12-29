@@ -31,16 +31,20 @@ public class Cliente {
     }
 
     private void autenticacao(String nome, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException, CredenciaisInvalidasException {
-        System.out.println("introduza a password");
+        System.out.println("Agora introduza a sua password");
         String password = terminal.readLine();
         try {
             if (querRegistar) { //querRegistar = true se se quer registar, querRegistar = false se só quer o login
                 cStub.registarUtilizador(nome, password);
                 System.out.println("Utilizador registado com sucesso");
             }
+
             cStub.login(nome, password);
 
             System.out.println("Utilizador autenticado, bem vindo");
+            System.out.println("Se quiser procurar alguma música escreva: procurarMusica ");
+            System.out.println("Se quiser fazer upload de uma música escreva: upload ");
+            System.out.println("Se quiser fazer o download de uma música escreva: download ");
         }
         catch (CredenciaisInvalidasException e) {
             e.printStackTrace();
@@ -128,6 +132,9 @@ public class Cliente {
         }
         catch (MusicaInexistenteException e){
             System.out.println(e.getMessage());
+            System.out.println("Não existe nenhuma música com essa etiqueta");
+            System.out.println("Insira a etiqueta a procurar");
+            procuraMusica();
         }
         catch (ClientesSTUBException e){
             e.printStackTrace();
@@ -141,11 +148,19 @@ public class Cliente {
         cliente.caminhoServidor(ip, porto);
         cliente.conectar();
 
+        cliente.opcoes();
+
         try {
             cliente.executaComandos();
         } catch (IOException e) {
             System.out.println("Erro ao executar comando");
         }
+    }
+
+    private void opcoes() {
+        System.out.println("Para fazer login escreva login e o seu nome: ");
+
+        System.out.println("Para criar uma conta escreva registar e o nome do utilizador: ");
     }
 
 
