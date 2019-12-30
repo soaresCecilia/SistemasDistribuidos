@@ -23,33 +23,23 @@ public class Worker implements Runnable {
     }
 
     public void responde(String s){
-        String result;
         String[] comandos = s.split(" ");
 
-
-        System.out.println("o que tenho e, comandos[0] é " +comandos[0]);
-
-        switch (comandos[0]){
+        switch (comandos[0]) {
 
             case "login":
                 String nome = (comandos[1]);
-
                 String pass = (comandos[2]);
-
-                System.out.println("A minha pass " + pass);
-                System.out.println("O meu nome é " + nome);
 
                 try {
                     serverhelper.login(nome, pass);
                     this.nome = nome;
-                }
-                catch (IOException e ){}
-                catch(CredenciaisInvalidasException e){
+                } catch (IOException e) {
+                } catch (CredenciaisInvalidasException e) {
                     out.println("0");
                     out.flush();
-                }
-                catch(ClientesSTUBException e){
-                    out.println("0");
+                } catch (ClientesSTUBException e) {
+                    out.println("3");
                     out.flush();
                 }
                 break;
@@ -57,81 +47,59 @@ public class Worker implements Runnable {
             case "logout":
                 try {
                     serverhelper.logout(this.nome);
+                } catch (IOException e) {
+                } catch (ClientesSTUBException e) {
                 }
-                catch (IOException e){}
-                catch (ClientesSTUBException e){}
 
                 break;
 
             case "registar":
-                try{
+                try {
                     String password = (comandos[2]);
                     nome = comandos[1];
-                    serverhelper.registarUtilizador(nome,password);}
-                catch (ClientesSTUBException e){
+                    serverhelper.registarUtilizador(nome, password);
+                } catch (ClientesSTUBException e) {
                     out.println(e);
                     out.flush();
-                }
-                catch (UtilizadorJaExisteException e) {
+                } catch (UtilizadorJaExisteException e) {
                     out.println("0");
                     out.flush();
-                }
-                catch (CredenciaisInvalidasException e){
+                } catch (CredenciaisInvalidasException e) {
                     out.println("2");
                     out.flush();
                 }
-
                 break;
 
             case "upload":
-                try{
-                serverhelper.upload(comandos[1],comandos[2], comandos[3], comandos[4] ,comandos[5]);
+                try {
+                    serverhelper.upload(comandos[1], comandos[2], comandos[3], comandos[4], comandos[5]);
+                } catch (IOException e) {
+                } catch (ClientesSTUBException e) {
                 }
-                catch (IOException e){}
-                catch (ClientesSTUBException e){
-                }
-                catch (UtilizadorNaoAutenticadoException e){
-                    out.println("0");
-                    out.flush();
-                }
-
                 break;
+
             case "download":
-                try{
+                try {
                     int nrm = Integer.parseInt(comandos[1]);
-                    System.out.println("id da musica reecebida: "+nrm);
+                    //System.out.println("id da musica reecebida: " + nrm);
                     serverhelper.download(nrm);
-                    System.out.println("ServerHelper funcionou!");
-                }
-                catch (MusicaInexistenteException e){
+                    //System.out.println("ServerHelper funcionou!");
+                } catch (MusicaInexistenteException e) {
                     out.println("2");
                     out.flush();
-                }
-                catch (IOException e){
+                } catch (IOException e) {
                     out.println("0");
                     out.flush();
-                }
-                catch (ClientesSTUBException e){}
-                catch (UtilizadorNaoAutenticadoException e){
-                    out.println("0");
-                    out.flush();
-                }
+                } catch (ClientesSTUBException e) {}
                 break;
             case "procura":
-                try{
+                try {
                     serverhelper.procuraMusica(comandos[1]);
-                }
-                catch (MusicaInexistenteException e){
+                } catch (MusicaInexistenteException e) {
                     out.println("2");  //saber se a não existir etiqueta é uma excepção!!!!!
                     out.flush();
+                } catch (IOException | ClientesSTUBException e) {
                 }
-                catch (IOException e){}
-                catch (UtilizadorNaoAutenticadoException e){
-                    out.println("Utizaldor nao autenticado");
-                    out.flush();
-                }
-                catch (ClientesSTUBException e) {}
-
                 break;
 
             default:
@@ -148,9 +116,8 @@ public class Worker implements Runnable {
                 return;
             }
 
-            //escreve no canal
-            //PrintWriter out = new PrintWriter(clSock.getOutputStream());
-            //lê do canal
+            out = new PrintWriter(clSock.getOutputStream());
+
             BufferedReader in = new BufferedReader(new InputStreamReader(this.clSock.getInputStream()));
 
             //passa o que li do canal para uma string
@@ -160,8 +127,6 @@ public class Worker implements Runnable {
             while(inComing != null) {
                 responde(inComing);
 
-               // out.println();
-              //  out.flush();
 
                 inComing = in.readLine();
             }
