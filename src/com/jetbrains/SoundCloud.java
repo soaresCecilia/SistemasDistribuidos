@@ -14,7 +14,9 @@ public interface SoundCloud {
 
    void registarUtilizador(String email, String password) throws UtilizadorJaExisteException, ClienteServerException,CredenciaisInvalidasException;
 
+
    void download(int idMusica) throws IOException, MusicaInexistenteException, UtilizadorNaoAutenticadoException,ClienteServerException;
+
 
    void upload(String tamanho, String titulo, String interprete, String ano, String genero) throws IOException, UtilizadorNaoAutenticadoException,ClienteServerException;
 

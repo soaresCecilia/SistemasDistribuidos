@@ -9,14 +9,22 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ServerHelper implements SoundCloud {
     private Repositorio repositorio;
     private Socket clSock;
-    public static String PATH_TO_RECORD = "/home/luisabreu/Desktop/musicaS/";
+    //public static String PATH_TO_RECORD = "/home/luisabreu/Desktop/musicaS/";
+    public static String PATH_TO_RECORD = "/Users/cecilia/Desktop/musicas/servidor/";
     private PrintWriter out;
     private BufferedReader in;
     public static final int MAX_SIZE = 1024; //tamanho de transferência de ficheiros limitado
+    private static final int MAXDOWN = 10; //limite de descargas de ficheiros em simultaneo
+    private static int n_Downloads = 0; //número de downloads a acontecer
+    private ReentrantLock lock =  new ReentrantLock();
+    private Condition esperaDownload = lock.newCondition();
+    //private Condition esperaParaSair = lock.newCondition();
 
     public ServerHelper(Socket clsock, Repositorio r) throws IOException {
         this.repositorio = r;
@@ -62,7 +70,9 @@ public class ServerHelper implements SoundCloud {
     registados. De notar que não podem existir dois utilizadores registados com o mesmo nome, nem o nome ou a password
     podem conter quaquer espaço, senão o nosso portocolo de transfeência de informação entre cliente e servidor não funciona.
      */
-    public void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClienteServerException, CredenciaisInvalidasException{
+
+    public synchronized void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClienteServerException, CredenciaisInvalidasException{
+
         if (!repositorio.getUtilizadores().containsKey(nome)) {
                 Utilizador novoUtilizador = new Utilizador(nome, password);
                 repositorio.getUtilizadores().put(nome, novoUtilizador);
@@ -83,6 +93,15 @@ public class ServerHelper implements SoundCloud {
 
         if( n ){
 
+           /* lock.lock();
+            n_Downloads++;
+
+            while (n_Downloads > MAXDOWN) {
+                esperaDownload.await();
+            }
+
+
+            */
             Musica m = repositorio.getMusicaId(idMusica);
 
             File myFile = new File(m.getCaminhoFicheiro());
@@ -119,6 +138,12 @@ public class ServerHelper implements SoundCloud {
             //aumenta o numero de downloads da musica
             repositorio.growNDownloads(idMusica);
 
+            /*
+            n_Downloads--;
+            lock.unlock();
+
+             */
+
         }
         else{
             throw new MusicaInexistenteException();
@@ -129,7 +154,9 @@ public class ServerHelper implements SoundCloud {
     }
 
     @Override
+
     public void upload(String tamanho, String titulo, String interprete,  String ano, String genero) throws IOException, ClienteServerException {
+
 
 
 
@@ -158,13 +185,16 @@ public class ServerHelper implements SoundCloud {
         bos.flush();
 
 
-        Musica m = new Musica(titulo, interprete, ano, genero, caminho);
+        Musica m = new Musica(0, titulo, interprete, ano, genero, caminho, 0);
 
         repositorio.addMusica(m);
+
 
         out.println("1");
         out.flush();
     }
+
+
 
     @Override
     /*
@@ -185,7 +215,7 @@ public class ServerHelper implements SoundCloud {
        // System.out.println("O tamanho da lista da etiqueta é " + musicasComEtiqueta.size());
 
         //sinal delimitador de que começa uma nova música
-        String delim = " - ";
+        String delim = "%-%";
         String res = String.join(delim, musicasComEtiqueta);
         String resultado = "1%" + res;
 

@@ -80,7 +80,7 @@ public class Cliente {
 
     public void upload() throws  IOException{
 
-        System.out.println("Insira o nome da musica");
+        System.out.println("Insira o nome da musica sem espaços");
         String nome = terminal.readLine();
 
         System.out.println("Insira o interprete da musica");

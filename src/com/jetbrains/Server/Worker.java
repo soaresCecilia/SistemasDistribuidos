@@ -7,9 +7,7 @@ import java.io.*;
 import java.net.Socket;
 
 
-/*
-O worker só envia mensagens ao Cliente quando algo correu mal
- */
+
 public class Worker implements Runnable {
 
     private Socket clSock;
@@ -43,7 +41,6 @@ public class Worker implements Runnable {
                     out.flush();
                 }
                 break;
-
             case "logout":
                 try {
                     serverhelper.logout(this.nome);
