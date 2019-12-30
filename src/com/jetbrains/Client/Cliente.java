@@ -71,10 +71,11 @@ public class Cliente {
             e.printStackTrace();
         }
         catch (UtilizadorNaoAutenticadoException e){
-            e.printStackTrace();
+
+            System.out.println(e.getMessage());
         }
         catch (ClienteServerException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 

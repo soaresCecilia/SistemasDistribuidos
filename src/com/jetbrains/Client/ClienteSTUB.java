@@ -10,15 +10,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteSTUB implements SoundCloud {
-    public static final int MAX_SIZE = 1024;
+    public static final int MAX_SIZE = 500000;
     private Socket socket;
     private final String ip;
     private final Integer porto;
     private PrintWriter out;
     private BufferedReader inBuffer;
+    private InputStream is;
+    private FileOutputStream fos;
+    private BufferedOutputStream bos;
+    private BufferedInputStream bis;
+    private OutputStream os;
 
-    //public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
-    public static String PATH_TO_RECEIVE = "/Users/cecilia/Desktop/musicas/cliente/";
+    public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
+    //public static String PATH_TO_RECEIVE = "/Users/cecilia/Desktop/musicas/cliente/";
     //public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
     //public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
 
@@ -99,17 +104,20 @@ public class ClienteSTUB implements SoundCloud {
 
     @Override
     public void download(int id) throws MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClienteServerException{
-
+        try {
             final String idM = "download " + id;
 
             out.println(idM);
             out.flush();
-
+        }
+        catch (Exception e){
+            throw new UtilizadorNaoAutenticadoException("Não esta autenticado, repita");
+        }
 
             try {
 
                 String le = inBuffer.readLine();
-
+                System.out.println(le);
                 String[] rsp = le.split(" ");
                 switch (rsp[0]) {
 
@@ -121,29 +129,36 @@ public class ClienteSTUB implements SoundCloud {
 
                         byte[] mybytearray = new byte[MAX_SIZE];
 
-                        InputStream is = socket.getInputStream();
+                        is = socket.getInputStream();
 
-                        FileOutputStream fos = new FileOutputStream(caminhoGuardarMusica);
+                        fos = new FileOutputStream(caminhoGuardarMusica);
 
-                        BufferedOutputStream bos = new BufferedOutputStream(fos);
+                        bos = new BufferedOutputStream(fos);
 
                         int bytesIni = 0;
+                        int bytesRead=0;
 
                         while (bytesIni < tamanhoFile) {
 
-                            int bytesRead = is.read(mybytearray, 0, mybytearray.length);
+                            bytesRead = Integer.min(tamanhoFile - bytesIni, mybytearray.length);
+                            bytesRead = is.read(mybytearray, 0, bytesRead);
 
                             bos.write(mybytearray, 0, bytesRead);
 
                             bytesIni += bytesRead;
                         }
 
+                        System.out.println("tamanho do ficheiro enviado"+bytesRead);
+
                         bos.flush();
 
                         bos.close();
 
                         break;
+                    case "-1":
+                        throw new ClienteServerException("Deu merda no servidor");
                     default:
+                        System.out.println(rsp);
                         throw new MusicaInexistenteException("Não existe esse id nas musicas");
                 }
             } catch (IOException e) {
@@ -159,24 +174,29 @@ public class ClienteSTUB implements SoundCloud {
 
                 File myFile = new File(caminho);
 
-                int tamFile = (int) myFile.length();
+                int tamanhoFile = (int) myFile.length();
 
                 byte[] mybytearray = new byte[MAX_SIZE];
 
-                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
+                bis = new BufferedInputStream(new FileInputStream(myFile));
 
-                OutputStream os = socket.getOutputStream();
+                os = socket.getOutputStream();
 
                 int bytesIni = 0;
-                int bytesRead;
+                int bytesRead=0;
 
-                out.println("upload " + tamFile + " " + titulo + " " + interprete + " " + ano + " " + genero);
+                out.println("upload " + tamanhoFile + " " + titulo + " " + interprete + " " + ano + " " + genero);
                 out.flush();
 
-                while (bytesIni < tamFile) {
-                    bytesRead = bis.read(mybytearray, 0, mybytearray.length);
-                    os.write(mybytearray, 0, mybytearray.length);
+
+                while (bytesIni < tamanhoFile) {
+
+                    bytesRead = Integer.min(tamanhoFile -bytesIni, mybytearray.length);
+                    bytesRead = bis.read(mybytearray, 0, bytesRead);
+
+                    os.write(mybytearray, 0, bytesRead);
                     os.flush();
+
                     bytesIni += bytesRead;
                 }
             } catch (IOException e) {}

@@ -87,7 +87,10 @@ public class Worker implements Runnable {
                 } catch (IOException e) {
                     out.println("0");
                     out.flush();
-                } catch (ClienteServerException e) {}
+                } catch (ClienteServerException e) {
+                    out.println("-1");
+                    out.flush();
+                }
                 break;
             case "procura":
                 try {

@@ -15,16 +15,22 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ServerHelper implements SoundCloud {
     private Repositorio repositorio;
     private Socket clSock;
-    //public static String PATH_TO_RECORD = "/home/luisabreu/Desktop/musicaS/";
-    public static String PATH_TO_RECORD = "/Users/cecilia/Desktop/musicas/servidor/";
+    public static String PATH_TO_RECORD = "/home/luisabreu/Desktop/musicaS/";
+    //public static String PATH_TO_RECORD = "/Users/cecilia/Desktop/musicas/servidor/";
     private PrintWriter out;
     private BufferedReader in;
-    public static final int MAX_SIZE = 1024; //tamanho de transferência de ficheiros limitado
+    public static final int MAX_SIZE = 500000; //tamanho de transferência de ficheiros limitado
     private static final int MAXDOWN = 10; //limite de descargas de ficheiros em simultaneo
     private static int n_Downloads = 0; //número de downloads a acontecer
     private ReentrantLock lock =  new ReentrantLock();
     private Condition esperaDownload = lock.newCondition();
     //private Condition esperaParaSair = lock.newCondition();
+    InputStream is;
+    FileOutputStream fos;
+    BufferedOutputStream bos;
+    BufferedInputStream bis ;
+
+    OutputStream os;
 
     public ServerHelper(Socket clsock, Repositorio r) throws IOException {
         this.repositorio = r;
@@ -106,16 +112,16 @@ public class ServerHelper implements SoundCloud {
 
             File myFile = new File(m.getCaminhoFicheiro());
 
-            int tamFile = (int) myFile.length();
+            int tamanhoFile = (int) myFile.length();
 
             byte[] mybytearray = new byte[MAX_SIZE];
 
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
+            bis = new BufferedInputStream(new FileInputStream(myFile));
 
-            OutputStream os = clSock.getOutputStream();
+            os = clSock.getOutputStream();
 
             //envia a string "1 tamanhaFicheiroAler nomeFicheiro"
-            String okTam = "1 "+tamFile+" "+m.getTitulo();
+            String okTam = "1 "+tamanhoFile+" "+m.getTitulo();
 
             out.println(okTam);
             out.flush();
@@ -125,11 +131,12 @@ public class ServerHelper implements SoundCloud {
             int bytesIni=0;
             int bytesRead;
 
-            while (bytesIni<tamFile){
+            while (bytesIni < tamanhoFile){
 
-                bytesRead = bis.read(mybytearray, 0, mybytearray.length);
+                bytesRead = Integer.min(tamanhoFile - bytesIni, mybytearray.length);
+                bytesRead = bis.read(mybytearray, 0, bytesRead);
 
-                os.write(mybytearray, 0, mybytearray.length);
+                os.write(mybytearray, 0, bytesRead);
                 os.flush();
 
                 bytesIni+=bytesRead;
@@ -157,33 +164,33 @@ public class ServerHelper implements SoundCloud {
 
     public void upload(String tamanho, String titulo, String interprete,  String ano, String genero) throws IOException, ClienteServerException {
 
-
-
-
         String caminho = PATH_TO_RECORD+titulo+".mp3";
 
         int tamanhoFile =  Integer.parseInt(tamanho);
 
-        byte[] mybytearray = new byte[1024];
+        byte[] mybytearray = new byte[MAX_SIZE];
 
-        InputStream is = clSock.getInputStream();
+         is = clSock.getInputStream();
 
-        FileOutputStream fos = new FileOutputStream(caminho);
+         fos = new FileOutputStream(caminho);
 
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
+         bos = new BufferedOutputStream(fos);
 
         int bytesIni=0;
+        int bytesRead=0;
 
         while (bytesIni<tamanhoFile)       {
-            int bytesRead = is.read(mybytearray, 0, mybytearray.length);
+
+            bytesRead = Integer.min(tamanhoFile - bytesIni,mybytearray.length);
+            bytesRead = is.read(mybytearray, 0, bytesRead);
+
             bos.write(mybytearray, 0, bytesRead);
 
             bytesIni+= bytesRead;
         }
 
-        bos.close();
         bos.flush();
-
+        bos.close();
 
         Musica m = new Musica(0, titulo, interprete, ano, genero, caminho, 0);
 

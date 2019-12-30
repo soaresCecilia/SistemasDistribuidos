@@ -7,8 +7,8 @@ import java.net.Socket;
 public class Servidor {
 
     private static ServerHelper serverHelper;
-    //private static String caminhoFicheiro = "/home/luisabreu/Desktop/musicaS/";
-    private static String caminhoFicheiro = "/Users/cecilia/Desktop/musicas/servidor/";
+    private static String caminhoFicheiro = "/home/luisabreu/Desktop/musicaS/";
+    //private static String caminhoFicheiro = "/Users/cecilia/Desktop/musicas/servidor/";
     //private static String caminhoFicheiro = null;
     //private static String caminhoFicheiro = "null";
 
