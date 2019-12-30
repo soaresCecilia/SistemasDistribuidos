@@ -29,7 +29,7 @@ public class ServerHelper implements SoundCloud {
     /*
     A função login verifica se o utilizador inseriu os dados correctos e se o mesmo deve ser autenticado.
      */
-    public void login(String nome, String password) throws IOException, CredenciaisInvalidasException, ClientesSTUBException {
+    public void login(String nome, String password) throws IOException, CredenciaisInvalidasException, ClienteServerException {
             Utilizador utilizador;
 
             utilizador = repositorio.getUtilizadores().get(nome);
@@ -48,7 +48,7 @@ public class ServerHelper implements SoundCloud {
     /*
     A função logout altera o estado do utilizador para inactivo.
      */
-    public void logout(String nome) throws IOException, ClientesSTUBException {
+    public void logout(String nome) throws IOException, ClienteServerException {
         Utilizador utilizador = repositorio.getUtilizadores().get(nome);
 
         if (utilizador != null && utilizador.getActivo()) {
@@ -62,7 +62,7 @@ public class ServerHelper implements SoundCloud {
     registados. De notar que não podem existir dois utilizadores registados com o mesmo nome, nem o nome ou a password
     podem conter quaquer espaço, senão o nosso portocolo de transfeência de informação entre cliente e servidor não funciona.
      */
-    public void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClientesSTUBException, CredenciaisInvalidasException{
+    public void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClienteServerException, CredenciaisInvalidasException{
         if (!repositorio.getUtilizadores().containsKey(nome)) {
                 Utilizador novoUtilizador = new Utilizador(nome, password);
                 repositorio.getUtilizadores().put(nome, novoUtilizador);
@@ -77,7 +77,7 @@ public class ServerHelper implements SoundCloud {
     }
 
     @Override
-    public void download(int idMusica) throws IOException, MusicaInexistenteException, ClientesSTUBException {
+    public void download(int idMusica) throws IOException, MusicaInexistenteException, ClienteServerException {
 
         boolean n = repositorio.getMusicas().containsKey(idMusica);
 
@@ -129,7 +129,7 @@ public class ServerHelper implements SoundCloud {
     }
 
     @Override
-    public void upload(String tamanho, String titulo, String interprete,  String ano, String genero) throws IOException, ClientesSTUBException {
+    public void upload(String tamanho, String titulo, String interprete,  String ano, String genero) throws IOException, ClienteServerException {
 
 
 
@@ -171,7 +171,7 @@ public class ServerHelper implements SoundCloud {
     A função procura uma música devolve uma lista vazias e envia para o ClienteStub
     uma String com todas as músicas que tenham em algum dos seus metadados a String passada como parâmetro.
      */
-    public List<Musica> procuraMusica(String etiqueta) throws IOException, MusicaInexistenteException, ClientesSTUBException {
+    public List<Musica> procuraMusica(String etiqueta) throws IOException, MusicaInexistenteException, ClienteServerException {
         List<String> musicasComEtiqueta = new ArrayList<>();
         List<Musica> vazia = new ArrayList<Musica>(); //lista vazia que vai ser devolvida apenas para obedecer ao interface
         this.out = new PrintWriter(clSock.getOutputStream());

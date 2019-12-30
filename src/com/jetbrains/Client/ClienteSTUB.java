@@ -36,7 +36,7 @@ public class ClienteSTUB implements SoundCloud {
      Método que comunica ao servidor que um utilizador quer fazer login e que verifica se
     essa operação foi ou não bem sucedida.
      */
-    public void login(String nome, String password) throws CredenciaisInvalidasException, ClientesSTUBException {
+    public void login(String nome, String password) throws CredenciaisInvalidasException, ClienteServerException {
         // os nomes e password não podem ter espaços
         out.println("login " + nome + " " + password);
         out.flush();
@@ -56,7 +56,7 @@ public class ClienteSTUB implements SoundCloud {
             }
         }
         catch (IOException e){
-            throw new ClientesSTUBException("Ocorreu um erro na ligação");
+            throw new ClienteServerException("Ocorreu um erro na ligação");
         }
     }
 
@@ -79,7 +79,7 @@ public class ClienteSTUB implements SoundCloud {
     O nosso protocolo utiliza números inteiros para indicar o estado de uma operação. 1 - Se tudo correu bem e 0 - quando
     a operação não foi concluída.
      */
-    public void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClientesSTUBException, CredenciaisInvalidasException{
+    public void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClienteServerException, CredenciaisInvalidasException{
 
         out.println("registar " + nome + " " + password);
         out.flush();
@@ -98,12 +98,12 @@ public class ClienteSTUB implements SoundCloud {
                 }
         }
         catch (IOException e){
-            throw new ClientesSTUBException("Erro na ligação com o servidor");
+            throw new ClienteServerException("Erro na ligação com o servidor");
         }
     }
 
     @Override
-    public void download(int id) throws MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClientesSTUBException{
+    public void download(int id) throws MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClienteServerException{
 
         if( this.activo ) {   //JÁ NÃO É PRECISO!!!
             final String idM = "download " + id;
@@ -150,7 +150,7 @@ public class ClienteSTUB implements SoundCloud {
                         throw new MusicaInexistenteException("Não existe esse id nas musicas");
                 }
             } catch (IOException e) {
-                throw new ClientesSTUBException("Ocorreu um erro na ligaçao");
+                throw new ClienteServerException("Ocorreu um erro na ligaçao");
             }
         }
         else {
@@ -159,7 +159,7 @@ public class ClienteSTUB implements SoundCloud {
     }
 
     @Override
-    public void upload(String caminho, String titulo, String interprete, String ano, String genero) throws UtilizadorNaoAutenticadoException, ClientesSTUBException{
+    public void upload(String caminho, String titulo, String interprete, String ano, String genero) throws UtilizadorNaoAutenticadoException, ClienteServerException{
 
         if( this.activo ) {
             try {
@@ -198,10 +198,10 @@ public class ClienteSTUB implements SoundCloud {
                     case "1": //correu tudo bem
                         break;
                     default:
-                        throw new ClientesSTUBException("Erro indefinido");
+                        throw new ClienteServerException("Erro indefinido");
                 }
             } catch (IOException e) {
-                throw new ClientesSTUBException("Ocorreu um erro com o servidor");
+                throw new ClienteServerException("Ocorreu um erro com o servidor");
             }
         }
         else {
@@ -215,7 +215,7 @@ public class ClienteSTUB implements SoundCloud {
     consoante tenham sido encontradas músicas ou não) e uma String que contém todas as músicas com a referida etiqueta.
     Finalmente, caso tenham sido encontradas músicas devolve uma lista com os metadados das mesmas.
      */
-    public List<Musica> procuraMusica (String etiqueta) throws ClientesSTUBException, MusicaInexistenteException{
+    public List<Musica> procuraMusica (String etiqueta) throws ClienteServerException, MusicaInexistenteException{
 
             String procuraEtiqueta = "procura " + etiqueta;
 
@@ -234,10 +234,10 @@ public class ClienteSTUB implements SoundCloud {
                     case "2":
                         throw new MusicaInexistenteException("Não existe nenhuma musica com essa etiqueta.");
                     default:
-                        throw new ClientesSTUBException("Erro indefinido");
+                        throw new ClienteServerException("Erro indefinido");
                 }
             } catch (IOException e) {
-                throw new ClientesSTUBException("Ocorreu um erro com o servidor");
+                throw new ClienteServerException("Ocorreu um erro com o servidor");
             }
 
     }
@@ -282,14 +282,14 @@ public class ClienteSTUB implements SoundCloud {
     Este método cria os elementos necessários para ser estabelecida uma conexão.
      */
 
-    public synchronized void conectar() throws ClientesSTUBException {
+    public synchronized void conectar() throws ClienteServerException {
         try {
             this.socket = new Socket(this.ip,this.porto);
             out = new PrintWriter(socket.getOutputStream());
             inBuffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         }
         catch (IOException e){
-            throw new ClientesSTUBException("Ocorreu um erro na ligação com o servidor");
+            throw new ClienteServerException("Ocorreu um erro na ligação com o servidor");
         }
     }
 

@@ -38,7 +38,7 @@ public class Worker implements Runnable {
                 } catch (CredenciaisInvalidasException e) {
                     out.println("0");
                     out.flush();
-                } catch (ClientesSTUBException e) {
+                } catch (ClienteServerException e) {
                     out.println("3");
                     out.flush();
                 }
@@ -48,7 +48,7 @@ public class Worker implements Runnable {
                 try {
                     serverhelper.logout(this.nome);
                 } catch (IOException e) {
-                } catch (ClientesSTUBException e) {
+                } catch (ClienteServerException e) {
                 }
 
                 break;
@@ -58,7 +58,7 @@ public class Worker implements Runnable {
                     String password = (comandos[2]);
                     nome = comandos[1];
                     serverhelper.registarUtilizador(nome, password);
-                } catch (ClientesSTUBException e) {
+                } catch (ClienteServerException e) {
                     out.println(e);
                     out.flush();
                 } catch (UtilizadorJaExisteException e) {
@@ -74,7 +74,7 @@ public class Worker implements Runnable {
                 try {
                     serverhelper.upload(comandos[1], comandos[2], comandos[3], comandos[4], comandos[5]);
                 } catch (IOException e) {
-                } catch (ClientesSTUBException e) {
+                } catch (ClienteServerException e) {
                 }
                 break;
 
@@ -90,7 +90,7 @@ public class Worker implements Runnable {
                 } catch (IOException e) {
                     out.println("0");
                     out.flush();
-                } catch (ClientesSTUBException e) {}
+                } catch (ClienteServerException e) {}
                 break;
             case "procura":
                 try {
@@ -98,7 +98,7 @@ public class Worker implements Runnable {
                 } catch (MusicaInexistenteException e) {
                     out.println("2");  //saber se a não existir etiqueta é uma excepção!!!!!
                     out.flush();
-                } catch (IOException | ClientesSTUBException e) {
+                } catch (IOException | ClienteServerException e) {
                 }
                 break;
 
