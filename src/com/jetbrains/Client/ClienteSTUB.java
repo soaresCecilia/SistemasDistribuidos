@@ -17,17 +17,14 @@ public class ClienteSTUB implements SoundCloud {
     private PrintWriter out;
     private BufferedReader inBuffer;
 
-    private boolean activo;
-
-    public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
     //public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
+    public static String PATH_TO_RECEIVE = "/Users/cecilia/Desktop/musicas/cliente/";
     //public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
     //public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
 
     public ClienteSTUB(String ip, Integer porto){
         this.ip = ip;
         this.porto = porto;
-        this.activo = false;
     }
 
 
@@ -47,9 +44,6 @@ public class ClienteSTUB implements SoundCloud {
             String[] rsp = le.split(" ");
             switch (rsp[0]) {
                 case "1": //correu tudo bem
-
-                    this.activo = true;
-
                     break;
                 default:
                     throw new CredenciaisInvalidasException("Credenciais inválidas");
@@ -68,7 +62,6 @@ public class ClienteSTUB implements SoundCloud {
         }
         finally {
             this.desconectar();
-            this.activo = false;
         }
     }
 
@@ -79,7 +72,7 @@ public class ClienteSTUB implements SoundCloud {
     O nosso protocolo utiliza números inteiros para indicar o estado de uma operação. 1 - Se tudo correu bem e 0 - quando
     a operação não foi concluída.
      */
-    public void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClientesSTUBException, CredenciaisInvalidasException{
+    public synchronized void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClientesSTUBException, CredenciaisInvalidasException{
 
         out.println("registar " + nome + " " + password);
         out.flush();
@@ -105,7 +98,6 @@ public class ClienteSTUB implements SoundCloud {
     @Override
     public void download(int id) throws MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClientesSTUBException{
 
-        if( this.activo ) {   //JÁ NÃO É PRECISO!!!
             final String idM = "download " + id;
 
             out.println(idM);
@@ -134,6 +126,7 @@ public class ClienteSTUB implements SoundCloud {
                         BufferedOutputStream bos = new BufferedOutputStream(fos);
 
                         int bytesIni = 0;
+
                         while (bytesIni < tamanhoFile) {
 
                             int bytesRead = is.read(mybytearray, 0, mybytearray.length);
@@ -142,6 +135,8 @@ public class ClienteSTUB implements SoundCloud {
 
                             bytesIni += bytesRead;
                         }
+
+                        bos.flush();
 
                         bos.close();
 
@@ -152,23 +147,19 @@ public class ClienteSTUB implements SoundCloud {
             } catch (IOException e) {
                 throw new ClientesSTUBException("Ocorreu um erro na ligaçao");
             }
-        }
-        else {
-                throw new UtilizadorNaoAutenticadoException("Utilizador não autenticado.");
-        }
+
     }
 
     @Override
     public void upload(String caminho, String titulo, String interprete, String ano, String genero) throws UtilizadorNaoAutenticadoException, ClientesSTUBException{
 
-        if( this.activo ) {
             try {
 
                 File myFile = new File(caminho);
 
                 int tamFile = (int) myFile.length();
 
-                byte[] mybytearray = new byte[MAX_SIZE];  //mudar isso para fazer upload de MAX_SIZE de cada vez
+                byte[] mybytearray = new byte[MAX_SIZE];
 
                 BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
 
@@ -186,9 +177,7 @@ public class ClienteSTUB implements SoundCloud {
                     os.flush();
                     bytesIni += bytesRead;
                 }
-            } catch (IOException e) {
-            }
-            ;
+            } catch (IOException e) {}
 
             try {
                 String le = inBuffer.readLine();
@@ -203,10 +192,7 @@ public class ClienteSTUB implements SoundCloud {
             } catch (IOException e) {
                 throw new ClientesSTUBException("Ocorreu um erro com o servidor");
             }
-        }
-        else {
-            throw new UtilizadorNaoAutenticadoException("Utilizador não autenticado.");
-        }
+
     }
 
     @Override
@@ -249,7 +235,7 @@ public class ClienteSTUB implements SoundCloud {
     private List<Musica> transformaString(String []s) {
         List<Musica> musicas = new ArrayList<Musica>();
         int id = 0, nDownloads = 0, i = 0;
-        String titulo = null, interprete = null, ano = null, genero = null, caminhoFicheiro = null;
+        String titulo = null, interprete = null, ano = null, genero = null;
 
         while( i < s.length-1) {
             while (!s[i].equals("-") && i < s.length-1) {
@@ -263,15 +249,14 @@ public class ClienteSTUB implements SoundCloud {
                     ano = s[i+1];
                 } else if (s[i].equals("Genero:")) {
                     genero = s[i+1];
-                } else if (s[i].equals("Caminho:")) {
-                    caminhoFicheiro = s[i+1];
                 } else if (s[i].equals("Numero_downloads:")) {
                     nDownloads = Integer.parseInt(s[i + 1]);
                 }
                 i++;
             }
-            Musica m = new Musica(id, titulo, interprete, ano, genero, caminhoFicheiro, nDownloads);
+            Musica m = new Musica(id, titulo, interprete, ano, genero, nDownloads);
             musicas.add(m);
+
             i++;
         }
         return musicas;

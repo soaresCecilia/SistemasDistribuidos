@@ -32,15 +32,15 @@ public class Repositorio{
         return (this.musicas.get(id));
     }
 
-    public void addMusica(Musica m){
+    public synchronized void addMusica(Musica m){
         musicas.put(defineIdMusica(m), m);
     }
 
-    public  void addUtilizador(Utilizador u){
+    public synchronized void addUtilizador(Utilizador u){
         utilizadores.put(u.getNome(),u);
     }
 
-    public void growNDownloads(int idMusica){
+    public synchronized void growNDownloads(int idMusica){
 
         this.musicas.get(idMusica).growNDowloads();
     }
@@ -52,7 +52,6 @@ public class Repositorio{
         m.setId(idMusica);
         return idMusica;
     }
-
 
 
 

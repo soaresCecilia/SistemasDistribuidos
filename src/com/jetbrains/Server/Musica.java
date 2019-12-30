@@ -12,6 +12,15 @@ public class Musica {
     private String caminhoFicheiro;
     private int nDownloads;
 
+    public Musica(int id, String titulo, String interprete, String ano, String genero, int nDownloads) {
+        this.id = id;
+        this.titulo = titulo;
+        this.interprete = interprete;
+        this.ano = ano;
+        this.genero = genero;
+        this.nDownloads = nDownloads;
+    }
+
     public Musica(int id, String titulo, String interprete, String ano, String genero, String ficheiro, int nDownloads) {
         this.id = id;
         this.titulo = titulo;
@@ -20,16 +29,6 @@ public class Musica {
         this.genero = genero;
         this.caminhoFicheiro = ficheiro;
         this.nDownloads = nDownloads;
-    }
-
-    public Musica(String titulo, String interprete, String ano, String genero, String ficheiro) {
-        this.id = 0;
-        this.titulo = titulo;
-        this.interprete = interprete;
-        this.ano = ano;
-        this.genero = genero;
-        this.caminhoFicheiro = ficheiro;
-        this.nDownloads = 0;
     }
 
     public int getId() {
@@ -58,15 +57,11 @@ public class Musica {
         return this.caminhoFicheiro;
     }
 
-    public int getNDownloads(){
-        return this.nDownloads;
-    }
-
 
     /*
     Aumenta o numero de downloads
      */
-    public void growNDowloads(){
+    public synchronized void growNDowloads(){
         this.nDownloads++;
     }
 
@@ -105,8 +100,6 @@ public class Musica {
         sb.append(this.ano + "%");
         sb.append("Genero:%");
         sb.append(this.genero + "%");
-        sb.append("Caminho:%");
-        sb.append(this.caminhoFicheiro + "%");
         sb.append("Numero_downloads:%");
         sb.append(this.nDownloads + "%");
 
@@ -130,8 +123,6 @@ public class Musica {
         sb.append(this.ano + " ");
         sb.append("Genero: ");
         sb.append(this.genero + " ");
-        sb.append("Caminho: ");
-        sb.append(this.caminhoFicheiro + " ");
         sb.append("Numero_downloads: ");
         sb.append(this.nDownloads);
 
