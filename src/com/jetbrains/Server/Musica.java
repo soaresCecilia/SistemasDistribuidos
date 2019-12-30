@@ -101,11 +101,8 @@ public class Musica {
         sb.append("Genero:%");
         sb.append(this.genero + "%");
         sb.append("Numero_downloads:%");
-<<<<<<< HEAD
         sb.append(this.nDownloads+"%");
-=======
-        sb.append(this.nDownloads + "%");
->>>>>>> d91012b2563380c79575b7556bdee1f197785b94
+
 
         return sb.toString();
     }
