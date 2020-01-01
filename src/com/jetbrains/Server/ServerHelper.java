@@ -15,20 +15,16 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ServerHelper implements SoundCloud {
     private Repositorio repositorio;
     private Socket clSock;
-    public static String PATH_TO_RECORD = "/home/luisabreu/Desktop/musicaS/";
-    //public static String PATH_TO_RECORD = "/Users/cecilia/Desktop/musicas/servidor/";
+    public static String PATH_TO_RECORD = "/tmp/servidor_soundcloud/";
     private PrintWriter out;
     private BufferedReader in;
     public static final int MAX_SIZE = 500000; //tamanho de transferência de ficheiros limitado
     private static final int MAXDOWN = 10; //limite de descargas de ficheiros em simultaneo
     private static int n_Downloads = 0; //número de downloads a acontecer
-    private ReentrantLock lock =  new ReentrantLock();
-    private Condition esperaDownload = lock.newCondition();
-    //private Condition esperaParaSair = lock.newCondition();
-    InputStream is;
-    FileOutputStream fos;
-    BufferedOutputStream bos;
-    BufferedInputStream bis ;
+    private InputStream is;
+    private FileOutputStream fos;
+    private BufferedOutputStream bos;
+    private BufferedInputStream bis ;
 
     OutputStream os;
 
@@ -100,15 +96,6 @@ public class ServerHelper implements SoundCloud {
 
         if( n ){
 
-           /* lock.lock();
-            n_Downloads++;
-
-            while (n_Downloads > MAXDOWN) {
-                esperaDownload.await();
-            }
-
-
-            */
             Musica m = repositorio.getMusicaId(idMusica);
 
             File myFile = new File(m.getCaminhoFicheiro());
@@ -146,11 +133,6 @@ public class ServerHelper implements SoundCloud {
             //aumenta o numero de downloads da musica
             repositorio.growNDownloads(idMusica);
 
-            /*
-            n_Downloads--;
-            lock.unlock();
-
-             */
 
         }
         else{

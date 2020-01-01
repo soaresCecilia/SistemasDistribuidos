@@ -22,10 +22,8 @@ public class ClienteSTUB implements SoundCloud {
     private BufferedInputStream bis;
     private OutputStream os;
 
-    public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
-    //public static String PATH_TO_RECEIVE = "/Users/cecilia/Desktop/musicas/cliente/";
-    //public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
-    //public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
+    public static String PATH_TO_RECEIVE = "/tmp/cliente_soundcloud/";
+
 
     public ClienteSTUB(String ip, Integer porto){
         this.ip = ip;

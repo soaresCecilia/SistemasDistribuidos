@@ -8,13 +8,7 @@ import java.util.concurrent.Executors;
 
 public class Servidor {
 
-
-    //private static String caminhoFicheiro = "/home/luisabreu/Desktop/musicaS/";
-    private static String caminhoFicheiro = "/Users/cecilia/Desktop/musicas/servidor/";
-    //private static String caminhoFicheiro = null;
-    //private static String caminhoFicheiro = "null";
-
-
+    private static String caminhoFicheiro = "/tmp/servidor_soundcloud/";
 
 
    public static void start(Integer port, int nThreads, Repositorio repositorio) {
