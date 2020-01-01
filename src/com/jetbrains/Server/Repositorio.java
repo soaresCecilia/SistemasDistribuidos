@@ -1,7 +1,7 @@
 package com.jetbrains.Server;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Repositorio{
 
@@ -12,18 +12,11 @@ public class Repositorio{
     private static int idMusica = 0;
 
     public Repositorio() {
-        this.utilizadores = new HashMap<String, Utilizador>();
-        this.musicas = new HashMap<Integer, Musica>();
+        this.utilizadores = new ConcurrentHashMap<String, Utilizador>();
+        this.musicas = new ConcurrentHashMap<Integer, Musica>();
     }
 
-    public void setUtilizadores(Map<String, Utilizador> utilizadores) {
-        this.utilizadores = utilizadores;
-    }
-
-    public Map<String, Utilizador> getUtilizadores() {
-        return utilizadores;
-    }
-
+    //não precisa de synchronizde porque o ConcurrentHashMap já é thread safe
     public Map<Integer, Musica> getMusicas() {
         return musicas;
     }
@@ -32,28 +25,24 @@ public class Repositorio{
         return (this.musicas.get(id));
     }
 
-    public synchronized void addMusica(Musica m){
-        musicas.put(defineIdMusica(m), m);
-    }
-
-    public synchronized void addUtilizador(Utilizador u){
-        utilizadores.put(u.getNome(),u);
+    //não precisa de synchronizde porque o ConcurrentHashMap já é thread safe
+    public synchronized void addMusica(Musica m) {
+        m.setId(++idMusica);
+        musicas.put(m.getId(), m);
     }
 
     public synchronized void growNDownloads(int idMusica){
-
         this.musicas.get(idMusica).growNDowloads();
     }
 
-    public synchronized int defineIdMusica(Musica m){
-
-        idMusica++;
-
-        m.setId(idMusica);
-        return idMusica;
+    //não precisa de synchronizde porque o ConcurrentHashMap já é thread safe
+    public Map<String, Utilizador> getUtilizadores() {
+        return utilizadores;
     }
 
 
-
-
+    //não precisa de synchronizde porque o ConcurrentHashMap já é thread safe
+    public void addUtilizador(Utilizador u){
+        utilizadores.put(u.getNome(), u);
+    }
 }

@@ -61,7 +61,7 @@ public class Musica {
     /*
     Aumenta o numero de downloads
      */
-    public synchronized void growNDowloads(){
+    public void growNDowloads(){
         this.nDownloads++;
     }
 

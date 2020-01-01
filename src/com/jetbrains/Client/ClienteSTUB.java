@@ -72,7 +72,7 @@ public class ClienteSTUB implements SoundCloud {
     O nosso protocolo utiliza números inteiros para indicar o estado de uma operação. 1 - Se tudo correu bem e 0 - quando
     a operação não foi concluída.
      */
-    public synchronized void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClientesSTUBException, CredenciaisInvalidasException{
+    public void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClientesSTUBException, CredenciaisInvalidasException{
 
         out.println("registar " + nome + " " + password);
         out.flush();
@@ -105,7 +105,6 @@ public class ClienteSTUB implements SoundCloud {
 
 
             try {
-
                 String le = inBuffer.readLine();
 
                 String[] rsp = le.split(" ");
@@ -154,6 +153,7 @@ public class ClienteSTUB implements SoundCloud {
     public void upload(String caminho, String titulo, String interprete, String ano, String genero) throws UtilizadorNaoAutenticadoException, ClientesSTUBException{
 
             try {
+
 
                 File myFile = new File(caminho);
 
@@ -267,7 +267,7 @@ public class ClienteSTUB implements SoundCloud {
     Este método cria os elementos necessários para ser estabelecida uma conexão.
      */
 
-    public synchronized void conectar() throws ClientesSTUBException {
+    public void conectar() throws ClientesSTUBException {
         try {
             this.socket = new Socket(this.ip,this.porto);
             out = new PrintWriter(socket.getOutputStream());
@@ -286,6 +286,4 @@ public class ClienteSTUB implements SoundCloud {
         this.socket.shutdownInput();
         this.socket.close();
     }
-
-
 }

@@ -70,7 +70,7 @@ public class ServerHelper implements SoundCloud {
     registados. De notar que não podem existir dois utilizadores registados com o mesmo nome, nem o nome ou a password
     podem conter quaquer espaço, senão o nosso portocolo de transfeência de informação entre cliente e servidor não funciona.
      */
-    public synchronized void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClientesSTUBException, CredenciaisInvalidasException{
+    public void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClientesSTUBException, CredenciaisInvalidasException{
         if (!repositorio.getUtilizadores().containsKey(nome)) {
                 Utilizador novoUtilizador = new Utilizador(nome, password);
                 repositorio.getUtilizadores().put(nome, novoUtilizador);
@@ -160,7 +160,7 @@ public class ServerHelper implements SoundCloud {
 
         int tamanhoFile =  Integer.parseInt(tamanho);
 
-        byte[] mybytearray = new byte[1024];
+        byte[] mybytearray = new byte[MAX_SIZE];
 
         InputStream is = clSock.getInputStream();
 

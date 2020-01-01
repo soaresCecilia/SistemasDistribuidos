@@ -80,19 +80,19 @@ public class Cliente {
 
     public void upload() throws  IOException{
 
-        System.out.println("Insira o nome da musica sem espaços");
+        System.out.println("Insira o nome da musica. Atenção!!! O nome não pode conter espaços, utilize underscore");
         String nome = terminal.readLine();
 
-        System.out.println("Insira o interprete da musica");
+        System.out.println("Insira o interprete da musica. Atenção!!! O interprete não pode conter espaços, utilize underscore");
         String interprete = terminal.readLine();
 
-        System.out.println("Insira o ano da musica");
+        System.out.println("Insira o ano da musica. Atenção!!! O ano não pode conter espaços, utilize underscore");
         String ano = terminal.readLine();
 
-        System.out.println("Insira o género musical");
+        System.out.println("Insira o género musical. Atenção!!! O género não pode conter espaços, utilize underscore");
         String genero = terminal.readLine();
 
-        System.out.println("Insira o caminho para o ficheiro a fazer upload");
+        System.out.println("Insira o caminho para o ficheiro a fazer upload. Atenção!!! O caminho não pode conter espaços, utilize underscore");
         String caminho = terminal.readLine();
 
         try{
@@ -100,7 +100,7 @@ public class Cliente {
             System.out.println("Upload concluido com sucesso");
         }
         catch (UtilizadorNaoAutenticadoException e){
-            System.out.println("Por favor aguarde...");
+            System.out.println(e.getMessage());
         }
         catch (ClientesSTUBException e){
             e.printStackTrace();
@@ -111,7 +111,7 @@ public class Cliente {
         List<Musica> m = new ArrayList<>();
 
         try{
-            System.out.println("Insira a etiqueta a procurar");
+            System.out.println("Insira a etiqueta a procurar.");
             String etiqueta = terminal.readLine();
 
             m = cStub.procuraMusica(etiqueta);
@@ -144,7 +144,7 @@ public class Cliente {
     private void opcoes() {
         System.out.println("Para fazer login escreva login e o seu nome: ");
 
-        System.out.println("Para criar uma conta escreva registar e o nome do utilizador. Atenção!!! O nome não pode conter espaços. ");
+        System.out.println("Para criar uma conta escreva registar e o nome do utilizador. Atenção!!! O nome não pode conter espaços.");
     }
 
 
@@ -184,14 +184,14 @@ public class Cliente {
                     case "sair":
                         System.exit(0);
                     default:
-                        System.out.println("Comando introduzido não existe. Volte a tentar");
+                        System.out.println("Não foi possível efectuar a operação. Volte a tentar");
                 }
 
             } catch (UtilizadorNaoAutenticadoException e) {
-                System.out.println("Utilizador não está autenticado");
+                System.out.println(e.getMessage());
             }
             catch (Exception e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
                 System.out.println("Excepção desconhecida.");
             }
         }

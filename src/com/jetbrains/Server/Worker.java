@@ -1,7 +1,7 @@
 package com.jetbrains.Server;
 
 import com.jetbrains.Exceptions.*;
-import com.jetbrains.Server.ServerHelper;
+
 
 import java.io.*;
 import java.net.Socket;
@@ -15,12 +15,15 @@ public class Worker implements Runnable {
     private PrintWriter out;
     private String nome;
 
+
     public Worker(Socket clientesock, Repositorio repositorio) throws IOException{
         this.clSock = clientesock;
         this.serverhelper = new ServerHelper(clientesock, repositorio);
     }
 
     public void responde(String s){
+
+
         String[] comandos = s.split(" ");
 
         switch (comandos[0]) {
@@ -119,12 +122,12 @@ public class Worker implements Runnable {
 
             //passa o que li do canal para uma string
             String inComing = in.readLine();
+            //System.out.println(inComing);
 
             //System.out.println(inComing);
             while(inComing != null) {
                 responde(inComing);
-
-
+                //System.out.println(inComing);
                 inComing = in.readLine();
             }
             clSock.shutdownOutput();
