@@ -45,7 +45,7 @@ public class Cliente {
            System.out.println(e.getMessage());
             cStub.desconectar(); //quando dá erro desliga o socket
         }
-        catch (ClientesSTUBException e){
+        catch (ClienteServerException e){
             e.printStackTrace();
             cStub.desconectar();  //quando dá erro desliga o socket
         }
@@ -71,10 +71,11 @@ public class Cliente {
             e.printStackTrace();
         }
         catch (UtilizadorNaoAutenticadoException e){
-            e.printStackTrace();
+
+            System.out.println(e.getMessage());
         }
-        catch (ClientesSTUBException e){
-            e.printStackTrace();
+        catch (ClienteServerException e){
+            System.out.println(e.getMessage());
         }
     }
 
@@ -102,7 +103,7 @@ public class Cliente {
         catch (UtilizadorNaoAutenticadoException e){
             System.out.println(e.getMessage());
         }
-        catch (ClientesSTUBException e){
+        catch (ClienteServerException e){
             e.printStackTrace();
         }
     }
@@ -122,14 +123,14 @@ public class Cliente {
             System.out.println(e.getMessage());
             procuraMusica(); //Quando a música não existe volta a chamar a função para procurar algo novamente
         }
-        catch (ClientesSTUBException e){
+        catch (ClienteServerException e){
             e.printStackTrace();
         }
 
         return m;
     }
 
-    public static void start(String ip, Integer porto) throws ClientesSTUBException{
+    public static void start(String ip, Integer porto) throws ClienteServerException{
         Cliente cliente = new Cliente();
         cliente.caminhoServidor(ip, porto);
         cliente.opcoes();
@@ -201,7 +202,7 @@ public class Cliente {
        try {
            Cliente.start("127.0.0.1", 12345);
        }
-       catch (ClientesSTUBException e){
+       catch (ClienteServerException e){
            System.out.println("Erro na conexão");
        }
     }

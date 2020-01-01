@@ -10,15 +10,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteSTUB implements SoundCloud {
-    public static final int MAX_SIZE = 1024;
+    public static final int MAX_SIZE = 500000;
     private Socket socket;
     private final String ip;
     private final Integer porto;
     private PrintWriter out;
     private BufferedReader inBuffer;
+    private InputStream is;
+    private FileOutputStream fos;
+    private BufferedOutputStream bos;
+    private BufferedInputStream bis;
+    private OutputStream os;
 
-    //public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
-    public static String PATH_TO_RECEIVE = "/Users/cecilia/Desktop/musicas/cliente/";
+    public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
+    //public static String PATH_TO_RECEIVE = "/Users/cecilia/Desktop/musicas/cliente/";
     //public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
     //public static String PATH_TO_RECEIVE = "/home/luisabreu/Desktop/musicaC/";
 
@@ -33,7 +38,7 @@ public class ClienteSTUB implements SoundCloud {
      Método que comunica ao servidor que um utilizador quer fazer login e que verifica se
     essa operação foi ou não bem sucedida.
      */
-    public void login(String nome, String password) throws CredenciaisInvalidasException, ClientesSTUBException {
+    public void login(String nome, String password) throws CredenciaisInvalidasException, ClienteServerException {
         // os nomes e password não podem ter espaços
         out.println("login " + nome + " " + password);
         out.flush();
@@ -50,7 +55,7 @@ public class ClienteSTUB implements SoundCloud {
             }
         }
         catch (IOException e){
-            throw new ClientesSTUBException("Ocorreu um erro na ligação");
+            throw new ClienteServerException("Ocorreu um erro na ligação");
         }
     }
 
@@ -72,7 +77,9 @@ public class ClienteSTUB implements SoundCloud {
     O nosso protocolo utiliza números inteiros para indicar o estado de uma operação. 1 - Se tudo correu bem e 0 - quando
     a operação não foi concluída.
      */
-    public void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClientesSTUBException, CredenciaisInvalidasException{
+
+    public synchronized void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClienteServerException, CredenciaisInvalidasException{
+
 
         out.println("registar " + nome + " " + password);
         out.flush();
@@ -91,22 +98,25 @@ public class ClienteSTUB implements SoundCloud {
                 }
         }
         catch (IOException e){
-            throw new ClientesSTUBException("Erro na ligação com o servidor");
+            throw new ClienteServerException("Erro na ligação com o servidor");
         }
     }
 
     @Override
-    public void download(int id) throws MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClientesSTUBException{
-
+    public void download(int id) throws MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClienteServerException{
+        try {
             final String idM = "download " + id;
 
             out.println(idM);
             out.flush();
-
+        }
+        catch (Exception e){
+            throw new UtilizadorNaoAutenticadoException("Não esta autenticado, repita");
+        }
 
             try {
                 String le = inBuffer.readLine();
-
+                System.out.println(le);
                 String[] rsp = le.split(" ");
                 switch (rsp[0]) {
 
@@ -118,63 +128,75 @@ public class ClienteSTUB implements SoundCloud {
 
                         byte[] mybytearray = new byte[MAX_SIZE];
 
-                        InputStream is = socket.getInputStream();
+                        is = socket.getInputStream();
 
-                        FileOutputStream fos = new FileOutputStream(caminhoGuardarMusica);
+                        fos = new FileOutputStream(caminhoGuardarMusica);
 
-                        BufferedOutputStream bos = new BufferedOutputStream(fos);
+                        bos = new BufferedOutputStream(fos);
 
                         int bytesIni = 0;
+                        int bytesRead=0;
 
                         while (bytesIni < tamanhoFile) {
 
-                            int bytesRead = is.read(mybytearray, 0, mybytearray.length);
+                            bytesRead = Integer.min(tamanhoFile - bytesIni, mybytearray.length);
+                            bytesRead = is.read(mybytearray, 0, bytesRead);
 
                             bos.write(mybytearray, 0, bytesRead);
 
                             bytesIni += bytesRead;
                         }
 
+                        System.out.println("tamanho do ficheiro enviado"+bytesRead);
+
                         bos.flush();
 
                         bos.close();
 
                         break;
+                    case "-1":
+                        throw new ClienteServerException("Deu merda no servidor");
                     default:
+                        System.out.println(rsp);
                         throw new MusicaInexistenteException("Não existe esse id nas musicas");
                 }
             } catch (IOException e) {
-                throw new ClientesSTUBException("Ocorreu um erro na ligaçao");
+                throw new ClienteServerException("Ocorreu um erro na ligaçao");
             }
 
     }
 
     @Override
-    public void upload(String caminho, String titulo, String interprete, String ano, String genero) throws UtilizadorNaoAutenticadoException, ClientesSTUBException{
+    public void upload(String caminho, String titulo, String interprete, String ano, String genero) throws UtilizadorNaoAutenticadoException, ClienteServerException{
 
             try {
 
 
                 File myFile = new File(caminho);
 
-                int tamFile = (int) myFile.length();
+                int tamanhoFile = (int) myFile.length();
 
                 byte[] mybytearray = new byte[MAX_SIZE];
 
-                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
+                bis = new BufferedInputStream(new FileInputStream(myFile));
 
-                OutputStream os = socket.getOutputStream();
+                os = socket.getOutputStream();
 
                 int bytesIni = 0;
-                int bytesRead;
+                int bytesRead=0;
 
-                out.println("upload " + tamFile + " " + titulo + " " + interprete + " " + ano + " " + genero);
+                out.println("upload " + tamanhoFile + " " + titulo + " " + interprete + " " + ano + " " + genero);
                 out.flush();
 
-                while (bytesIni < tamFile) {
-                    bytesRead = bis.read(mybytearray, 0, mybytearray.length);
-                    os.write(mybytearray, 0, mybytearray.length);
+
+                while (bytesIni < tamanhoFile) {
+
+                    bytesRead = Integer.min(tamanhoFile -bytesIni, mybytearray.length);
+                    bytesRead = bis.read(mybytearray, 0, bytesRead);
+
+                    os.write(mybytearray, 0, bytesRead);
                     os.flush();
+
                     bytesIni += bytesRead;
                 }
             } catch (IOException e) {}
@@ -187,10 +209,10 @@ public class ClienteSTUB implements SoundCloud {
                     case "1": //correu tudo bem
                         break;
                     default:
-                        throw new ClientesSTUBException("Erro indefinido");
+                        throw new ClienteServerException("Erro indefinido");
                 }
             } catch (IOException e) {
-                throw new ClientesSTUBException("Ocorreu um erro com o servidor");
+                throw new ClienteServerException("Ocorreu um erro com o servidor");
             }
 
     }
@@ -201,7 +223,7 @@ public class ClienteSTUB implements SoundCloud {
     consoante tenham sido encontradas músicas ou não) e uma String que contém todas as músicas com a referida etiqueta.
     Finalmente, caso tenham sido encontradas músicas devolve uma lista com os metadados das mesmas.
      */
-    public List<Musica> procuraMusica (String etiqueta) throws ClientesSTUBException, MusicaInexistenteException{
+    public List<Musica> procuraMusica (String etiqueta) throws ClienteServerException, MusicaInexistenteException{
 
             String procuraEtiqueta = "procura " + etiqueta;
 
@@ -220,10 +242,10 @@ public class ClienteSTUB implements SoundCloud {
                     case "2":
                         throw new MusicaInexistenteException("Não existe nenhuma musica com essa etiqueta.");
                     default:
-                        throw new ClientesSTUBException("Erro indefinido");
+                        throw new ClienteServerException("Erro indefinido");
                 }
             } catch (IOException e) {
-                throw new ClientesSTUBException("Ocorreu um erro com o servidor");
+                throw new ClienteServerException("Ocorreu um erro com o servidor");
             }
 
     }
@@ -266,15 +288,16 @@ public class ClienteSTUB implements SoundCloud {
     /*
     Este método cria os elementos necessários para ser estabelecida uma conexão.
      */
+    
+    public synchronized void conectar() throws ClienteServerException {
 
-    public void conectar() throws ClientesSTUBException {
         try {
             this.socket = new Socket(this.ip,this.porto);
             out = new PrintWriter(socket.getOutputStream());
             inBuffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         }
         catch (IOException e){
-            throw new ClientesSTUBException("Ocorreu um erro na ligação com o servidor");
+            throw new ClienteServerException("Ocorreu um erro na ligação com o servidor");
         }
     }
 

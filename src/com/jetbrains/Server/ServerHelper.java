@@ -15,16 +15,22 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ServerHelper implements SoundCloud {
     private Repositorio repositorio;
     private Socket clSock;
-    //public static String PATH_TO_RECORD = "/home/luisabreu/Desktop/musicaS/";
-    public static String PATH_TO_RECORD = "/Users/cecilia/Desktop/musicas/servidor/";
+    public static String PATH_TO_RECORD = "/home/luisabreu/Desktop/musicaS/";
+    //public static String PATH_TO_RECORD = "/Users/cecilia/Desktop/musicas/servidor/";
     private PrintWriter out;
     private BufferedReader in;
-    public static final int MAX_SIZE = 1024; //tamanho de transferência de ficheiros limitado
+    public static final int MAX_SIZE = 500000; //tamanho de transferência de ficheiros limitado
     private static final int MAXDOWN = 10; //limite de descargas de ficheiros em simultaneo
     private static int n_Downloads = 0; //número de downloads a acontecer
     private ReentrantLock lock =  new ReentrantLock();
     private Condition esperaDownload = lock.newCondition();
     //private Condition esperaParaSair = lock.newCondition();
+    InputStream is;
+    FileOutputStream fos;
+    BufferedOutputStream bos;
+    BufferedInputStream bis ;
+
+    OutputStream os;
 
     public ServerHelper(Socket clsock, Repositorio r) throws IOException {
         this.repositorio = r;
@@ -37,7 +43,7 @@ public class ServerHelper implements SoundCloud {
     /*
     A função login verifica se o utilizador inseriu os dados correctos e se o mesmo deve ser autenticado.
      */
-    public void login(String nome, String password) throws IOException, CredenciaisInvalidasException, ClientesSTUBException {
+    public void login(String nome, String password) throws IOException, CredenciaisInvalidasException, ClienteServerException {
             Utilizador utilizador;
 
             utilizador = repositorio.getUtilizadores().get(nome);
@@ -56,7 +62,7 @@ public class ServerHelper implements SoundCloud {
     /*
     A função logout altera o estado do utilizador para inactivo.
      */
-    public void logout(String nome) throws IOException, ClientesSTUBException {
+    public void logout(String nome) throws IOException, ClienteServerException {
         Utilizador utilizador = repositorio.getUtilizadores().get(nome);
 
         if (utilizador != null && utilizador.getActivo()) {
@@ -70,7 +76,10 @@ public class ServerHelper implements SoundCloud {
     registados. De notar que não podem existir dois utilizadores registados com o mesmo nome, nem o nome ou a password
     podem conter quaquer espaço, senão o nosso portocolo de transfeência de informação entre cliente e servidor não funciona.
      */
-    public void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClientesSTUBException, CredenciaisInvalidasException{
+
+
+    public synchronized void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClienteServerException, CredenciaisInvalidasException{
+
         if (!repositorio.getUtilizadores().containsKey(nome)) {
                 Utilizador novoUtilizador = new Utilizador(nome, password);
                 repositorio.getUtilizadores().put(nome, novoUtilizador);
@@ -85,7 +94,7 @@ public class ServerHelper implements SoundCloud {
     }
 
     @Override
-    public void download(int idMusica) throws IOException, MusicaInexistenteException, ClientesSTUBException {
+    public void download(int idMusica) throws IOException, MusicaInexistenteException, ClienteServerException {
 
         boolean n = repositorio.getMusicas().containsKey(idMusica);
 
@@ -104,16 +113,16 @@ public class ServerHelper implements SoundCloud {
 
             File myFile = new File(m.getCaminhoFicheiro());
 
-            int tamFile = (int) myFile.length();
+            int tamanhoFile = (int) myFile.length();
 
             byte[] mybytearray = new byte[MAX_SIZE];
 
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
+            bis = new BufferedInputStream(new FileInputStream(myFile));
 
-            OutputStream os = clSock.getOutputStream();
+            os = clSock.getOutputStream();
 
             //envia a string "1 tamanhaFicheiroAler nomeFicheiro"
-            String okTam = "1 "+tamFile+" "+m.getTitulo();
+            String okTam = "1 "+tamanhoFile+" "+m.getTitulo();
 
             out.println(okTam);
             out.flush();
@@ -123,11 +132,12 @@ public class ServerHelper implements SoundCloud {
             int bytesIni=0;
             int bytesRead;
 
-            while (bytesIni<tamFile){
+            while (bytesIni < tamanhoFile){
 
-                bytesRead = bis.read(mybytearray, 0, mybytearray.length);
+                bytesRead = Integer.min(tamanhoFile - bytesIni, mybytearray.length);
+                bytesRead = bis.read(mybytearray, 0, bytesRead);
 
-                os.write(mybytearray, 0, mybytearray.length);
+                os.write(mybytearray, 0, bytesRead);
                 os.flush();
 
                 bytesIni+=bytesRead;
@@ -152,9 +162,8 @@ public class ServerHelper implements SoundCloud {
     }
 
     @Override
-    public void upload(String tamanho, String titulo, String interprete, String ano, String genero) throws IOException, ClientesSTUBException {
 
-
+    public void upload(String tamanho, String titulo, String interprete,  String ano, String genero) throws IOException, ClienteServerException {
 
         String caminho = PATH_TO_RECORD+titulo+".mp3";
 
@@ -162,24 +171,27 @@ public class ServerHelper implements SoundCloud {
 
         byte[] mybytearray = new byte[MAX_SIZE];
 
-        InputStream is = clSock.getInputStream();
+         is = clSock.getInputStream();
 
-        FileOutputStream fos = new FileOutputStream(caminho);
+         fos = new FileOutputStream(caminho);
 
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
+         bos = new BufferedOutputStream(fos);
 
         int bytesIni=0;
+        int bytesRead=0;
 
         while (bytesIni<tamanhoFile)       {
-            int bytesRead = is.read(mybytearray, 0, mybytearray.length);
+
+            bytesRead = Integer.min(tamanhoFile - bytesIni,mybytearray.length);
+            bytesRead = is.read(mybytearray, 0, bytesRead);
+
             bos.write(mybytearray, 0, bytesRead);
 
             bytesIni+= bytesRead;
         }
 
-        bos.close();
         bos.flush();
-
+        bos.close();
 
         Musica m = new Musica(0, titulo, interprete, ano, genero, caminho, 0);
 
@@ -197,7 +209,7 @@ public class ServerHelper implements SoundCloud {
     A função procura uma música devolve uma lista vazias e envia para o ClienteStub
     uma String com todas as músicas que tenham em algum dos seus metadados a String passada como parâmetro.
      */
-    public List<Musica> procuraMusica(String etiqueta) throws IOException, MusicaInexistenteException, ClientesSTUBException {
+    public List<Musica> procuraMusica(String etiqueta) throws IOException, MusicaInexistenteException, ClienteServerException {
         List<String> musicasComEtiqueta = new ArrayList<>();
         List<Musica> vazia = new ArrayList<Musica>(); //lista vazia que vai ser devolvida apenas para obedecer ao interface
         this.out = new PrintWriter(clSock.getOutputStream());
