@@ -76,7 +76,7 @@ public class ClienteSTUB implements SoundCloud {
     a operação não foi concluída.
      */
 
-    public synchronized void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClienteServerException, CredenciaisInvalidasException{
+    public synchronized void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClienteServerException {
 
 
         out.println("registar " + nome + " " + password);
@@ -89,10 +89,8 @@ public class ClienteSTUB implements SoundCloud {
                 switch (rsp[0]) {
                     case "1": //correu tudo bem
                         break;
-                    case "0":
-                        throw new UtilizadorJaExisteException("Já existe utilizador com esse login");
                     default:
-                        throw new CredenciaisInvalidasException("O utilizador inseriu credenciais erradas.");
+                        throw new UtilizadorJaExisteException("Já existe utilizador com esse login");
                 }
         }
         catch (IOException e){

@@ -8,7 +8,8 @@ import java.util.concurrent.Executors;
 
 public class Servidor {
 
-    private static String caminhoFicheiro = "/tmp/servidor_soundcloud/";
+    private static final ThreadPool threadPool = new ThreadPool();
+    private static final String caminhoFicheiro = "/tmp/servidor_soundcloud/";
 
 
    public static void start(Integer port, int nThreads, Repositorio repositorio) {
@@ -22,7 +23,7 @@ public class Servidor {
                 Socket clSocket = serverSocket.accept();
 
                 System.out.println("liguei!");
-                Thread t = new Thread(new Worker(clSocket, repositorio)); //tirar o socket do worker cria uma thread por cliente
+                Thread t = new Thread(new Worker(clSocket, repositorio, threadPool)); //tirar o socket do worker cria uma thread por cliente
                 t.start();
             }
 

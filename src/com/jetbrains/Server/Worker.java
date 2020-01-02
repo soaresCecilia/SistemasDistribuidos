@@ -5,104 +5,66 @@ import com.jetbrains.Exceptions.*;
 
 import java.io.*;
 import java.net.Socket;
-
+import java.util.PriorityQueue;
 
 
 public class Worker implements Runnable {
 
     private Socket clSock;
     private ServerHelper serverhelper;
-    private PrintWriter out;
+    private ThreadPool threadPool;
     private String nome;
 
-
-    public Worker(Socket clientesock, Repositorio repositorio) throws IOException{
+    public Worker(Socket clientesock, Repositorio repositorio, ThreadPool threadPool) throws IOException{
         this.clSock = clientesock;
         this.serverhelper = new ServerHelper(clientesock, repositorio);
+        this.threadPool = threadPool;
     }
 
-    public void responde(String s){
-
-
+    public void responde(String s) throws InterruptedException {
         String[] comandos = s.split(" ");
 
         switch (comandos[0]) {
 
             case "login":
-                String nome = (comandos[1]);
-                String pass = (comandos[2]);
-
-                try {
-                    serverhelper.login(nome, pass);
-                    this.nome = nome;
-                } catch (IOException e) {
-                } catch (CredenciaisInvalidasException e) {
-                    out.println("0");
-                    out.flush();
-                } catch (ClienteServerException e) {
-                    out.println("3");
-                    out.flush();
-                }
+                this.nome = comandos[1];
+                PedidoLogin pedidoLogin = new PedidoLogin(serverhelper, comandos[1], comandos[2]);
+                threadPool.adicionaTarefa(pedidoLogin);
+                pedidoLogin.espera();
                 break;
-            case "logout":
-                try {
-                    serverhelper.logout(this.nome);
-                } catch (IOException e) {
-                } catch (ClienteServerException e) {
-                }
 
+            case "logout":
+                PedidoLogout pedidoLogout = new PedidoLogout(serverhelper, this.nome);
+                threadPool.adicionaTarefa(pedidoLogout);
+                pedidoLogout.espera();
                 break;
 
             case "registar":
-                try {
-                    String password = (comandos[2]);
-                    nome = comandos[1];
-                    serverhelper.registarUtilizador(nome, password);
-                } catch (ClienteServerException e) {
-                    out.println(e);
-                    out.flush();
-                } catch (UtilizadorJaExisteException e) {
-                    out.println("0");
-                    out.flush();
-                } catch (CredenciaisInvalidasException e) {
-                    out.println("2");
-                    out.flush();
-                }
+                this.nome = comandos[1];
+                PedidoRegistar pedidoRegistar = new PedidoRegistar(serverhelper, comandos[1], comandos[2]);
+                threadPool.adicionaTarefa(pedidoRegistar);
+                pedidoRegistar.espera();
                 break;
 
             case "upload":
-                try {
-                    serverhelper.upload(comandos[1], comandos[2], comandos[3], comandos[4], comandos[5]);
-                } catch (IOException e) {
-                } catch (ClienteServerException e) {
-                }
+                PedidoUpload pedidoUpload = new PedidoUpload(serverhelper, comandos[1], comandos[2], comandos[3], comandos[4], comandos[5]);
+                threadPool.adicionaTarefa(pedidoUpload);
+                pedidoUpload.espera();
                 break;
 
             case "download":
-                try {
-                    int nrm = Integer.parseInt(comandos[1]);
-                    //System.out.println("id da musica reecebida: " + nrm);
-                    serverhelper.download(nrm);
-                    //System.out.println("ServerHelper funcionou!");
-                } catch (MusicaInexistenteException e) {
-                    out.println("2");
-                    out.flush();
-                } catch (IOException e) {
-                    out.println("0");
-                    out.flush();
-                } catch (ClienteServerException e) {
-                    out.println("-1");
-                    out.flush();
-                }
+                int nrm = Integer.parseInt(comandos[1]);
+                PedidoDownload pedidoDownload = new PedidoDownload(serverhelper, nrm);
+                threadPool.adicionaTarefa(pedidoDownload);
+                pedidoDownload.espera();
+                //System.out.println("id da musica reecebida: " + nrm);
+                //System.out.println("ServerHelper funcionou!");
                 break;
+
             case "procura":
-                try {
-                    serverhelper.procuraMusica(comandos[1]);
-                } catch (MusicaInexistenteException e) {
-                    out.println("2");  //saber se a não existir etiqueta é uma excepção!!!!!
-                    out.flush();
-                } catch (IOException | ClienteServerException e) {
-                }
+                PedidoProcura pedidoProcura = new PedidoProcura(serverhelper, comandos[1]);
+                threadPool.adicionaTarefa(pedidoProcura);
+                pedidoProcura.espera();
                 break;
 
             default:
@@ -118,8 +80,6 @@ public class Worker implements Runnable {
                 System.out.println("clSock null");
                 return;
             }
-
-            out = new PrintWriter(clSock.getOutputStream());
 
             BufferedReader in = new BufferedReader(new InputStreamReader(this.clSock.getInputStream()));
 
@@ -137,7 +97,7 @@ public class Worker implements Runnable {
             clSock.shutdownInput();
             clSock.close();
         }
-        catch (IOException e){}
+        catch (IOException | InterruptedException e){}
     }
 
 }

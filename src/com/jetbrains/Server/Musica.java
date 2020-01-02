@@ -136,7 +136,8 @@ public class Musica {
     case sensitive.
      */
     public boolean procuraEtiqueta(String etiqueta) {
-        return (Pattern.compile(Pattern.quote(etiqueta), Pattern.CASE_INSENSITIVE).matcher(this.titulo).find()
+        return (Pattern.compile(Pattern.quote(etiqueta), Pattern.CASE_INSENSITIVE).matcher(Integer.toString(this.id)).find()
+                || Pattern.compile(Pattern.quote(etiqueta), Pattern.CASE_INSENSITIVE).matcher(this.titulo).find()
                 || Pattern.compile(Pattern.quote(etiqueta), Pattern.CASE_INSENSITIVE).matcher(this.interprete).find()
                 || this.ano.equals(etiqueta)
                 || Pattern.compile(Pattern.quote(etiqueta), Pattern.CASE_INSENSITIVE).matcher(this.genero).find());
