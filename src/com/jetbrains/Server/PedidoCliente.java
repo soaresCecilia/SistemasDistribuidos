@@ -24,6 +24,7 @@ public abstract class PedidoCliente {
         notify();
     }
 
+    //lock de cada pedido
     public synchronized void espera() {
         while (!executado) {
             try {

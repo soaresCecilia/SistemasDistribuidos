@@ -18,9 +18,7 @@ public class ServerHelper implements SoundCloud {
     public static String PATH_TO_RECORD = "/tmp/servidor_soundcloud/";
     private PrintWriter out;
     private BufferedReader in;
-    public static final int MAX_SIZE = 500000; //tamanho de transferência de ficheiros limitado
-    private static final int MAXDOWN = 10; //limite de descargas de ficheiros em simultaneo
-    private static int n_Downloads = 0; //número de downloads a acontecer
+    public static final int MAX_SIZE = 1024; //tamanho de transferência de ficheiros limitado
     private InputStream is;
     private FileOutputStream fos;
     private BufferedOutputStream bos;
@@ -98,8 +96,10 @@ public class ServerHelper implements SoundCloud {
 
         boolean n = repositorio.getMusicas().containsKey(idMusica);
 
+
         try {
             if (n) {
+
 
                 Musica m = repositorio.getMusicaId(idMusica);
 
@@ -118,6 +118,13 @@ public class ServerHelper implements SoundCloud {
 
                 out.println(okTam);
                 out.flush();
+
+                /*
+                try {
+                    Thread.sleep(30000);
+                }catch (InterruptedException e) { }
+                */
+
 
                 //envia ficheiro pedido
 
