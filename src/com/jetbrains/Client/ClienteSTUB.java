@@ -25,6 +25,7 @@ public class ClienteSTUB implements SoundCloud {
     public static String PATH_TO_RECEIVE = "/tmp/cliente_soundcloud/";
 
 
+
     public ClienteSTUB(String ip, Integer porto){
         this.ip = ip;
         this.porto = porto;
@@ -151,10 +152,12 @@ public class ClienteSTUB implements SoundCloud {
 
                         break;
                     case "-1":
-                        throw new ClienteServerException("Deu merda no servidor");
-                    default:
-                        System.out.println(rsp);
+                        throw new ClienteServerException("Ocorreu erro no Servidor, contacte assistencia técnica.");
+                    case "2":
                         throw new MusicaInexistenteException("Não existe esse id nas musicas");
+
+                    default:
+                        throw new ClienteServerException("Ocorreu erro no Servidor, contacte assistencia técnica.");
                 }
             } catch (IOException e) {
                 throw new ClienteServerException("Ocorreu um erro na ligaçao");
@@ -180,10 +183,13 @@ public class ClienteSTUB implements SoundCloud {
 
                 int bytesIni = 0;
                 int bytesRead=0;
-
-                out.println("upload " + tamanhoFile + " " + titulo + " " + interprete + " " + ano + " " + genero);
-                out.flush();
-
+                try {
+                    out.println("upload " + tamanhoFile + " " + titulo + " " + interprete + " " + ano + " " + genero);
+                    out.flush();
+                }
+                catch (Exception e){
+                    throw new UtilizadorNaoAutenticadoException("Não esta autenticado, repita");
+                }
 
                 while (bytesIni < tamanhoFile) {
 
@@ -196,7 +202,7 @@ public class ClienteSTUB implements SoundCloud {
                     bytesIni += bytesRead;
                 }
             } catch (IOException e) {
-                throw new UtilizadorNaoAutenticadoException("Utilizador não está autenticado.");
+                throw new ClienteServerException("Ocorreu erro, contacte assistencia técnica.");
             }
 
             try {
@@ -207,7 +213,7 @@ public class ClienteSTUB implements SoundCloud {
                     case "1": //correu tudo bem
                         break;
                     default:
-                        throw new ClienteServerException("Erro indefinido com o servidor.");
+                        throw new ClienteServerException("Ocorreu erro no Servidor, contacte assistencia técnica.");
                 }
             } catch (IOException e) {
                 throw new ClienteServerException("Ocorreu um erro " + e.getMessage());
@@ -244,7 +250,7 @@ public class ClienteSTUB implements SoundCloud {
                     case "2":
                         throw new MusicaInexistenteException("Não existe nenhuma musica com essa etiqueta.");
                     default:
-                        throw new ClienteServerException("Ocorreu um erro no servidor, tente mais tarde.");
+                        throw new ClienteServerException("Ocorreu erro no Servidor, contacte assistencia técnica.");
                 }
             } catch (IOException e) {
                 throw new ClienteServerException("Ocorreu o erro " + e.getMessage());
@@ -298,7 +304,7 @@ public class ClienteSTUB implements SoundCloud {
             inBuffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         }
         catch (IOException e){
-            throw new ClienteServerException("Ocorreu um erro na ligação com o servidor");
+            throw new ClienteServerException("Ocorreu erro no Servidor, contacte assistencia técnica");
         }
     }
 

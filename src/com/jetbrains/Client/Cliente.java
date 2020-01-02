@@ -14,13 +14,18 @@ public class Cliente {
     ClienteSTUB cStub;
     BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
 
+    private static final int TAM_CAMPO_LOGIN = 3;
+    private static final int TAM_CAMPO_REGISTO = 3;
+    private static final int TAM_CAMPO_DOWNLOAD = 2;
+    private static final int TAM_CAMPO_UPLOAD = 6;
+    private static final int TAM_CAMPO_PROCURA_MUSICA = 2;
+
+
     private void caminhoServidor(String ip, Integer port) {
         cStub = new ClienteSTUB("127.0.0.1", 12346);
     }
 
-    private void autenticacao(String nome, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException, CredenciaisInvalidasException {
-        System.out.println("Agora introduza a sua password. Atenção!!! A password não pode conter espaços.");
-        String password = terminal.readLine();
+    private void autenticacao(String nome,String password, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException, CredenciaisInvalidasException {
 
         try {
             cStub.conectar();
@@ -31,11 +36,9 @@ public class Cliente {
             }
 
             cStub.login(nome, password);
+            bemVindo();
+            opcoesLoggedIn();
 
-            System.out.println("Utilizador autenticado, bem vindo");
-            System.out.println("Se quiser procurar alguma música escreva: procurarMusica ");
-            System.out.println("Se quiser fazer upload de uma música escreva: upload ");
-            System.out.println("Se quiser fazer o download de uma música escreva: download  idMusica");
         }
         catch (CredenciaisInvalidasException e) {
             System.out.println(e.getMessage());
@@ -46,7 +49,7 @@ public class Cliente {
             cStub.desconectar(); //quando dá erro desliga o socket
         }
         catch (ClienteServerException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
             cStub.desconectar();  //quando dá erro desliga o socket
         }
     }
@@ -58,7 +61,7 @@ public class Cliente {
             System.exit(0);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -68,7 +71,7 @@ public class Cliente {
             System.out.println("Download concluido com sucesso");
         }
         catch (MusicaInexistenteException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         catch (UtilizadorNaoAutenticadoException e){
 
@@ -79,22 +82,7 @@ public class Cliente {
         }
     }
 
-    public void upload() throws  IOException{
-
-        System.out.println("Insira o nome da musica. Atenção!!! O nome não pode conter espaços, utilize underscore");
-        String nome = terminal.readLine();
-
-        System.out.println("Insira o interprete da musica. Atenção!!! O interprete não pode conter espaços, utilize underscore");
-        String interprete = terminal.readLine();
-
-        System.out.println("Insira o ano da musica. Atenção!!! O ano não pode conter espaços, utilize underscore");
-        String ano = terminal.readLine();
-
-        System.out.println("Insira o género musical. Atenção!!! O género não pode conter espaços, utilize underscore");
-        String genero = terminal.readLine();
-
-        System.out.println("Insira o caminho para o ficheiro a fazer upload. Atenção!!! O caminho não pode conter espaços, utilize underscore");
-        String caminho = terminal.readLine();
+    public void upload( String nome, String interprete, String ano, String genero, String caminho) throws  IOException{
 
         try{
             cStub.upload(caminho, nome, interprete, ano, genero);
@@ -104,16 +92,14 @@ public class Cliente {
             System.out.println(e.getMessage());
         }
         catch (ClienteServerException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
-    public List<Musica> procuraMusica() throws IOException {
+    public List<Musica> procuraMusica(String etiqueta) throws IOException {
         List<Musica> m = new ArrayList<>();
 
         try{
-            System.out.println("Insira a etiqueta a procurar.");
-            String etiqueta = terminal.readLine();
 
             m = cStub.procuraMusica(etiqueta);
 
@@ -121,10 +107,12 @@ public class Cliente {
         }
         catch (MusicaInexistenteException e){
             System.out.println(e.getMessage());
-            procuraMusica(); //Quando a música não existe volta a chamar a função para procurar algo novamente
         }
-        catch (ClienteServerException | UtilizadorNaoAutenticadoException e){
-            e.printStackTrace();
+        catch (ClienteServerException e){
+            System.out.println(e.getMessage());
+        }
+        catch (UtilizadorNaoAutenticadoException e){
+            System.out.println(e.getMessage());
         }
 
         return m;
@@ -133,7 +121,7 @@ public class Cliente {
     public static void start(String ip, Integer porto) throws ClienteServerException{
         Cliente cliente = new Cliente();
         cliente.caminhoServidor(ip, porto);
-        cliente.opcoes();
+        cliente.opcoesNotLoggedIn();
 
         try {
             cliente.executaComandos();
@@ -141,13 +129,6 @@ public class Cliente {
             System.out.println("Erro ao executar comando");
         }
     }
-
-    private void opcoes() {
-        System.out.println("Para fazer login escreva login e o seu nome: ");
-
-        System.out.println("Para criar uma conta escreva registar e o nome do utilizador. Atenção!!! O nome não pode conter espaços.");
-    }
-
 
     private void executaComandos() throws IOException{
         String comando;
@@ -162,28 +143,52 @@ public class Cliente {
             try {
                 switch (arrayComandos[0]) {
                     case "login":
-                        autenticacao(arrayComandos[1], false);
+                        if (arrayComandos.length > TAM_CAMPO_LOGIN)
+                            throw new Exception();
+                        else{
+                        autenticacao(arrayComandos[1], arrayComandos[2], false);
+                        }
                         break;
                     case "registar":
-                        autenticacao(arrayComandos[1], true); //o nome não permite espaços
+                        if (arrayComandos.length > TAM_CAMPO_REGISTO)
+                            throw new Exception();
+                        else{
+                        autenticacao(arrayComandos[1], arrayComandos[2],true);
+                        }
                         break;
                     case "logout":
                         logout();
                         break;
+
                     case "download":
-                        int id = Integer.parseInt(arrayComandos[1]);
-                        System.out.println("Estou comando download e o id da musica pretendida: "+arrayComandos[1]+" parse integer :"+id);
-                        download(id);
-                        System.out.println("Passei o download");
+
+                        if (arrayComandos.length > TAM_CAMPO_DOWNLOAD)
+                            throw new Exception();
+                        else{
+
+                            int id = Integer.parseInt(arrayComandos[1]);
+                            download(id);
+                        }
                         break;
+
                     case "upload":
-                        upload();
+                        if (arrayComandos.length > TAM_CAMPO_UPLOAD)
+                            throw new Exception();
+                        else{
+                            upload(arrayComandos[1],arrayComandos[2],arrayComandos[3],arrayComandos[4],arrayComandos[5]);
+                        }
                         break;
+
                     case "procurarMusica":
-                        procuraMusica();
+                        if (arrayComandos.length > TAM_CAMPO_PROCURA_MUSICA)
+                            throw new Exception();
+                        else{
+                            procuraMusica(arrayComandos[1]);}
                         break;
+
                     case "sair":
                         System.exit(0);
+
                     default:
                         System.out.println("Não foi possível efectuar a operação. Volte a tentar");
                 }
@@ -192,8 +197,8 @@ public class Cliente {
                 System.out.println(e.getMessage());
             }
             catch (Exception e) {
-                System.out.println(e.getMessage());
-                System.out.println("Excepção desconhecida.");
+                System.out.println("Campos da accao indevidamente preenchidos.");
+                opcoesLoggedIn();
             }
         }
     }
@@ -205,5 +210,40 @@ public class Cliente {
        catch (ClienteServerException e){
            System.out.println("Erro na conexão");
        }
+    }
+
+
+    private void opcoesNotLoggedIn() {
+        System.out.println("........................................................................................................");
+        System.out.println("........................................................................................................");
+        System.out.println("........ATENCAO!!! O nome não pode conter espaços.......................................................");
+        System.out.println("........................................................................................................");
+        System.out.println("........................................................................................................");
+        System.out.println("Fazer login escreva: login seu_nome palavra_pass........................................................");
+        System.out.println("........................................................................................................");
+        System.out.println("Criar uma conta escreva: registar nome_utilizador pallavra_pass.........................................");
+        System.out.println("........................................................................................................");
+        System.out.println("........................................................................................................");
+
+    }
+    private void bemVindo(){
+        System.out.println("........................................................................................................");
+        System.out.println("........................................................................................................");
+        System.out.println("Utilizador autenticado, bem vindo.......................................................................");
+        System.out.println("........................................................................................................");
+    }
+    private void opcoesLoggedIn() {
+        System.out.println("........................................................................................................");
+        System.out.println("........................................................................................................");
+        System.out.println("........ATENCAO!!! Os nomes não podem conter espaços, utilize por exemplo:  _ &.........................");
+        System.out.println("........................................................................................................");
+        System.out.println("........................................................................................................");
+        System.out.println("Procurar música escreva: procurarMusica 'almofada_maluca'...............................................");
+        System.out.println("........................................................................................................");
+        System.out.println("Fazer upload de uma música escreva: upload titulo_da_musica interprete ano genero caminho_para_a_musica.");
+        System.out.println("........................................................................................................");
+        System.out.println("Fazer o download de uma música escreva: download  idMusica..............................................");
+        System.out.println("........................................................................................................");
+        System.out.println("........................................................................................................");
     }
 }
