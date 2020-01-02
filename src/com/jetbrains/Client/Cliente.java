@@ -49,11 +49,11 @@ public class Cliente {
             cStub.desconectar();
         }
         catch (UtilizadorJaExisteException e) {
-            System.out.println(e.getMessage());
+            logger.warning(e.getMessage());
             cStub.desconectar(); //quando dá erro desliga o socket
         }
         catch (ClienteServerException e){
-            System.out.println(e.getMessage());
+            logger.warning(e.getMessage());
             cStub.desconectar();  //quando dá erro desliga o socket
         }
     }
@@ -65,7 +65,7 @@ public class Cliente {
             System.exit(0);
         }
         catch (IOException e) {
-            System.out.println(e.getMessage());
+            logger.warning(e.getMessage());
         }
     }
 
@@ -75,13 +75,13 @@ public class Cliente {
             System.out.println("Download concluido com sucesso");
         }
         catch (MusicaInexistenteException e){
-            System.out.println(e.getMessage());
+            logger.warning(e.getMessage());
         }
         catch (UtilizadorNaoAutenticadoException e){
-            System.out.println(e.getMessage());
+            logger.warning(e.getMessage());
         }
         catch (ClienteServerException e){
-            System.out.println(e.getMessage());
+            logger.warning(e.getMessage());
         }
     }
 
@@ -152,7 +152,7 @@ public class Cliente {
                 switch (arrayComandos[0]) {
                     case "login":
                         if (arrayComandos.length > TAM_CAMPO_LOGIN)
-                            throw new Exception();
+                            throw new Exception("");
                         else {
                             autenticacao(arrayComandos[1], arrayComandos[2], false);
                         }
@@ -200,15 +200,16 @@ public class Cliente {
 
                     default:
                         System.out.println("Não foi possível efectuar a operação. Volte a tentar");
+
                 }
 
             }
             catch (UtilizadorNaoAutenticadoException e){
-                    logger.warning(e.getMessage());
+
                     logger.warning("Campos da accao indevidamente preenchidos.");
             }
             catch (Exception e) {
-                logger.warning(e.getMessage());
+
                 logger.warning("Campos da accao indevidamente preenchidos.");
                 opcoesLoggedIn();
 
