@@ -8,18 +8,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 
 public class Cliente {
     ClienteSTUB cStub;
     BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
+    private final Logger logger = Logger.getLogger("Cliente");
 
     private void caminhoServidor(String ip, Integer port) {
         cStub = new ClienteSTUB("127.0.0.1", 12346);
     }
 
-    private void autenticacao(String nome, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException, CredenciaisInvalidasException {
+    private void autenticacao(String nome, boolean querRegistar) throws IOException {
         System.out.println("Agora introduza a sua password. Atenção!!! A password não pode conter espaços.");
+
         String password = terminal.readLine();
 
         try {
@@ -27,7 +30,7 @@ public class Cliente {
 
             if (querRegistar) { //querRegistar = true se se quer registar, querRegistar = false se só quer o login
                 cStub.registarUtilizador(nome, password);
-                System.out.println("Utilizador registado com sucesso");
+                logger.info("Utilizador registado com sucesso");
             }
 
             cStub.login(nome, password);
@@ -38,15 +41,15 @@ public class Cliente {
             System.out.println("Se quiser fazer o download de uma música escreva: download  idMusica");
         }
         catch (CredenciaisInvalidasException e) {
-            System.out.println(e.getMessage());
+            logger.warning(e.getMessage());
             cStub.desconectar();
         }
         catch (UtilizadorJaExisteException e) {
-           System.out.println(e.getMessage());
+            System.out.println(e.getMessage());
             cStub.desconectar(); //quando dá erro desliga o socket
         }
         catch (ClienteServerException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
             cStub.desconectar();  //quando dá erro desliga o socket
         }
     }
@@ -58,7 +61,7 @@ public class Cliente {
             System.exit(0);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -68,10 +71,9 @@ public class Cliente {
             System.out.println("Download concluido com sucesso");
         }
         catch (MusicaInexistenteException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         catch (UtilizadorNaoAutenticadoException e){
-
             System.out.println(e.getMessage());
         }
         catch (ClienteServerException e){
@@ -101,10 +103,10 @@ public class Cliente {
             System.out.println("Upload concluido com sucesso");
         }
         catch (UtilizadorNaoAutenticadoException e){
-            System.out.println(e.getMessage());
+            logger.warning(e.getMessage());
         }
         catch (ClienteServerException e){
-            e.printStackTrace();
+            logger.warning(e.getMessage());
         }
     }
 
@@ -117,20 +119,22 @@ public class Cliente {
 
             m = cStub.procuraMusica(etiqueta);
 
-            System.out.println(m);
+           System.out.println("Lista das músicas: " + m);
         }
         catch (MusicaInexistenteException e){
-            System.out.println(e.getMessage());
-            procuraMusica(); //Quando a música não existe volta a chamar a função para procurar algo novamente
+            logger.warning(e.getMessage());
         }
-        catch (ClienteServerException | UtilizadorNaoAutenticadoException e){
-            e.printStackTrace();
+        catch (ClienteServerException e){
+            logger.warning(e.getMessage());
+        }
+        catch (UtilizadorNaoAutenticadoException e) {
+            logger.warning(e.getMessage());
         }
 
         return m;
     }
 
-    public static void start(String ip, Integer porto) throws ClienteServerException{
+    public static void start(String ip, Integer porto) {
         Cliente cliente = new Cliente();
         cliente.caminhoServidor(ip, porto);
         cliente.opcoes();
@@ -138,7 +142,7 @@ public class Cliente {
         try {
             cliente.executaComandos();
         } catch (IOException e) {
-            System.out.println("Erro ao executar comando");
+            System.out.println(e.getMessage()); //TODO: por logger
         }
     }
 
@@ -149,7 +153,7 @@ public class Cliente {
     }
 
 
-    private void executaComandos() throws IOException{
+    private void executaComandos() throws IOException {
         String comando;
         String[] arrayComandos;
 
@@ -188,22 +192,19 @@ public class Cliente {
                         System.out.println("Não foi possível efectuar a operação. Volte a tentar");
                 }
 
-            } catch (UtilizadorNaoAutenticadoException e) {
-                System.out.println(e.getMessage());
-            }
-            catch (Exception e) {
-                System.out.println(e.getMessage());
-                System.out.println("Excepção desconhecida.");
+            } catch (Exception e) {
+                logger.warning(e.getMessage());
+                logger.warning("Excepção desconhecida.");
             }
         }
     }
 
-    public static void main(String[] args) throws InterruptedException, UtilizadorNaoAutenticadoException {
+    public static void main(String[] args) throws Exception{
        try {
            Cliente.start("127.0.0.1", 12345);
        }
-       catch (ClienteServerException e){
-           System.out.println("Erro na conexão");
+       catch (Exception e){
+           System.out.println("Erro na conexão" + e.getMessage());
        }
     }
 }

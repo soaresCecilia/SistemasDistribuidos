@@ -7,22 +7,24 @@ import com.jetbrains.Server.Dados.Utilizador;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Logger;
 
 public class Servidor {
 
     private static final ThreadPool threadPool = new ThreadPool();
     private static final String caminhoFicheiro = "/tmp/servidor_soundcloud/";
+    private final Logger logger = Logger.getLogger("Servidor");
 
    public static void start(Integer port, Repositorio repositorio) {
         try {
 
-            System.out.println("Servidor esta a iniciar...");
+            System.out.println("Servidor esta a iniciar..."); //TODO: por logger
             ServerSocket serverSocket = new ServerSocket(port);
 
             while (!serverSocket.isClosed()) {
                 Socket clSocket = serverSocket.accept();
 
-                System.out.println("liguei!");
+                System.out.println("liguei!"); //TODO: por logger
                 Thread t = new Thread(new Worker(clSocket, repositorio, threadPool)); //tirar o socket do worker cria uma thread por cliente
                 t.start();
             }
@@ -33,7 +35,7 @@ public class Servidor {
             System.out.println(e.toString());
         }
 
-        System.out.println("Desligado");
+        System.out.println("Desligado"); //TODO: por logger
 
     }
 

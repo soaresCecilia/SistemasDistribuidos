@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class ClienteSTUB implements SoundCloud {
     public static final int MAX_SIZE = 500000;
@@ -21,8 +22,8 @@ public class ClienteSTUB implements SoundCloud {
     private BufferedOutputStream bos;
     private BufferedInputStream bis;
     private OutputStream os;
-
     public static String PATH_TO_RECEIVE = "/tmp/cliente_soundcloud/";
+    private final Logger loggerStub = Logger.getLogger("ClienteStub");
 
 
     public ClienteSTUB(String ip, Integer porto){
@@ -112,8 +113,11 @@ public class ClienteSTUB implements SoundCloud {
 
             try {
                 String le = inBuffer.readLine();
-                System.out.println(le);
+
+                loggerStub.info(le);
+
                 String[] rsp = le.split(" ");
+
                 switch (rsp[0]) {
 
                     case "1": //correu tudo bem
@@ -143,7 +147,7 @@ public class ClienteSTUB implements SoundCloud {
                             bytesIni += bytesRead;
                         }
 
-                        System.out.println("tamanho do ficheiro enviado"+bytesRead);
+                        loggerStub.info("tamanho do ficheiro enviado"+bytesRead);
 
                         bos.flush();
 
@@ -153,7 +157,7 @@ public class ClienteSTUB implements SoundCloud {
                     case "-1":
                         throw new ClienteServerException("Deu merda no servidor");
                     default:
-                        System.out.println(rsp);
+                        loggerStub.info("Resposta do servidor" + rsp);
                         throw new MusicaInexistenteException("Não existe esse id nas musicas");
                 }
             } catch (IOException e) {
