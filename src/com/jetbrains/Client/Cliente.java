@@ -1,7 +1,7 @@
 package com.jetbrains.Client;
 
 import com.jetbrains.Exceptions.*;
-import com.jetbrains.Server.Musica;
+import com.jetbrains.Server.Dados.Musica;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -123,7 +123,7 @@ public class Cliente {
             System.out.println(e.getMessage());
             procuraMusica(); //Quando a música não existe volta a chamar a função para procurar algo novamente
         }
-        catch (ClienteServerException e){
+        catch (ClienteServerException | UtilizadorNaoAutenticadoException e){
             e.printStackTrace();
         }
 

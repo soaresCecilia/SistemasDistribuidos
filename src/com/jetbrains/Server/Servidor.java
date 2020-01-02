@@ -1,20 +1,20 @@
 package com.jetbrains.Server;
 
+import com.jetbrains.Server.Dados.Musica;
+import com.jetbrains.Server.Dados.Repositorio;
+import com.jetbrains.Server.Dados.Utilizador;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Servidor {
 
     private static final ThreadPool threadPool = new ThreadPool();
     private static final String caminhoFicheiro = "/tmp/servidor_soundcloud/";
 
-
-   public static void start(Integer port, int nThreads, Repositorio repositorio) {
+   public static void start(Integer port, Repositorio repositorio) {
         try {
-
 
             System.out.println("Servidor esta a iniciar...");
             ServerSocket serverSocket = new ServerSocket(port);
@@ -72,7 +72,7 @@ public class Servidor {
 
         teste(repositorio);
 
-        Servidor.start(12346, 10, repositorio);
+        Servidor.start(12346,repositorio);
     }
 }
 

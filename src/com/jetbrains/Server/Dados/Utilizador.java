@@ -1,4 +1,4 @@
-package com.jetbrains.Server;
+package com.jetbrains.Server.Dados;
 
 public class Utilizador {
 

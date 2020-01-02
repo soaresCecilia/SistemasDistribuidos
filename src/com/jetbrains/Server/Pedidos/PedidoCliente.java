@@ -1,9 +1,10 @@
-package com.jetbrains.Server;
+package com.jetbrains.Server.Pedidos;
 
 import com.jetbrains.Exceptions.ClienteServerException;
 import com.jetbrains.Exceptions.CredenciaisInvalidasException;
 import com.jetbrains.Exceptions.MusicaInexistenteException;
 import com.jetbrains.Exceptions.UtilizadorJaExisteException;
+import com.jetbrains.Server.ServerHelper;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -24,7 +25,6 @@ public abstract class PedidoCliente {
         notify();
     }
 
-    //lock de cada pedido
     public synchronized void espera() {
         while (!executado) {
             try {

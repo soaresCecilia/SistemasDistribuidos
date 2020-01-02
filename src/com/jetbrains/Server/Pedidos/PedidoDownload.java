@@ -1,10 +1,6 @@
-package com.jetbrains.Server;
+package com.jetbrains.Server.Pedidos;
 
-import com.jetbrains.Exceptions.ClienteServerException;
-import com.jetbrains.Exceptions.MusicaInexistenteException;
-
-import java.io.IOException;
-import java.net.Socket;
+import com.jetbrains.Server.ServerHelper;
 
 public class PedidoDownload extends PedidoCliente{
     private int idMusica;

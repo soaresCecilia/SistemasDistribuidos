@@ -2,7 +2,7 @@ package com.jetbrains.Client;
 
 import com.jetbrains.*;
 import com.jetbrains.Exceptions.*;
-import com.jetbrains.Server.Musica;
+import com.jetbrains.Server.Dados.Musica;
 
 import java.io.*;
 import java.net.Socket;
@@ -195,7 +195,9 @@ public class ClienteSTUB implements SoundCloud {
 
                     bytesIni += bytesRead;
                 }
-            } catch (IOException e) {}
+            } catch (IOException e) {
+                throw new UtilizadorNaoAutenticadoException("Utilizador não está autenticado.");
+            }
 
             try {
                 String le = inBuffer.readLine();
@@ -205,10 +207,10 @@ public class ClienteSTUB implements SoundCloud {
                     case "1": //correu tudo bem
                         break;
                     default:
-                        throw new ClienteServerException("Erro indefinido");
+                        throw new ClienteServerException("Erro indefinido com o servidor.");
                 }
             } catch (IOException e) {
-                throw new ClienteServerException("Ocorreu um erro com o servidor");
+                throw new ClienteServerException("Ocorreu um erro " + e.getMessage());
             }
 
     }
@@ -219,13 +221,17 @@ public class ClienteSTUB implements SoundCloud {
     consoante tenham sido encontradas músicas ou não) e uma String que contém todas as músicas com a referida etiqueta.
     Finalmente, caso tenham sido encontradas músicas devolve uma lista com os metadados das mesmas.
      */
-    public List<Musica> procuraMusica (String etiqueta) throws ClienteServerException, MusicaInexistenteException{
+    public List<Musica> procuraMusica (String etiqueta) throws ClienteServerException, MusicaInexistenteException, UtilizadorNaoAutenticadoException {
 
+
+        try {
             String procuraEtiqueta = "procura " + etiqueta;
 
             out.println(procuraEtiqueta);
             out.flush();
-
+        } catch (Exception e) {
+            throw new UtilizadorNaoAutenticadoException("Utilizador não se encontra autenticado");
+        }
 
         try {
             String le =inBuffer.readLine();
@@ -238,10 +244,10 @@ public class ClienteSTUB implements SoundCloud {
                     case "2":
                         throw new MusicaInexistenteException("Não existe nenhuma musica com essa etiqueta.");
                     default:
-                        throw new ClienteServerException("Erro indefinido");
+                        throw new ClienteServerException("Ocorreu um erro no servidor, tente mais tarde.");
                 }
             } catch (IOException e) {
-                throw new ClienteServerException("Ocorreu um erro com o servidor");
+                throw new ClienteServerException("Ocorreu o erro " + e.getMessage());
             }
 
     }
@@ -279,7 +285,6 @@ public class ClienteSTUB implements SoundCloud {
         }
         return musicas;
     }
-
 
     /*
     Este método cria os elementos necessários para ser estabelecida uma conexão.

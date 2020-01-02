@@ -1,12 +1,6 @@
-package com.jetbrains.Server;
+package com.jetbrains.Server.Pedidos;
 
-import com.jetbrains.Exceptions.ClienteServerException;
-import com.jetbrains.Exceptions.CredenciaisInvalidasException;
-import com.jetbrains.Exceptions.MusicaInexistenteException;
-import com.jetbrains.Exceptions.UtilizadorJaExisteException;
-
-import java.io.IOException;
-import java.net.Socket;
+import com.jetbrains.Server.ServerHelper;
 
 public class PedidoUpload extends PedidoCliente {
     private String tamanho;

@@ -1,22 +1,15 @@
-package com.jetbrains.Server;
+package com.jetbrains.Server.Pedidos;
 
-import com.jetbrains.Exceptions.ClienteServerException;
-import com.jetbrains.Exceptions.CredenciaisInvalidasException;
-import com.jetbrains.Exceptions.MusicaInexistenteException;
+import com.jetbrains.Server.ServerHelper;
 
-import java.io.IOException;
-import java.net.Socket;
-
-public class PedidoLogin extends PedidoCliente{
+public class PedidoRegistar extends PedidoCliente {
     private String nome;
     private String password;
-    private Boolean executado;
 
-    public PedidoLogin(ServerHelper s, String nome, String password) {
+    public PedidoRegistar(ServerHelper s, String nome, String password) {
         super(s);
         this.nome = nome;
         this.password = password;
-        this.executado = false;
     }
 
     public String getNome() {
@@ -26,6 +19,7 @@ public class PedidoLogin extends PedidoCliente{
     public String getPassword() {
         return password;
     }
+
 
     public void setNome(String nome) {
         this.nome = nome;
@@ -50,7 +44,7 @@ public class PedidoLogin extends PedidoCliente{
     public void executar() {
         ServerHelper s = getServerHelper();
 
-        s.login(getNome(), getPassword());
+        s.registarUtilizador(getNome(), getPassword());
 
         notificaEspera();
     }

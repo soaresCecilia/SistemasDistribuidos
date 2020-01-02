@@ -1,16 +1,15 @@
 package com.jetbrains.Server;
 
 import com.jetbrains.*;
-import com.jetbrains.Exceptions.*;
+import com.jetbrains.Server.Dados.Musica;
+import com.jetbrains.Server.Dados.Repositorio;
+import com.jetbrains.Server.Dados.Utilizador;
 
 import java.io.*;
 
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class ServerHelper implements SoundCloud {
     private Repositorio repositorio;
@@ -119,13 +118,13 @@ public class ServerHelper implements SoundCloud {
                 out.println(okTam);
                 out.flush();
 
+
+
                 /*
                 try {
                     Thread.sleep(30000);
                 }catch (InterruptedException e) { }
                 */
-
-
                 //envia ficheiro pedido
 
                 int bytesIni = 0;
