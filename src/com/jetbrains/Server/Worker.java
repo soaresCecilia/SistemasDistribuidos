@@ -6,6 +6,7 @@ import com.jetbrains.Server.Pedidos.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.logging.Logger;
 
 
 public class Worker implements Runnable {
@@ -14,6 +15,8 @@ public class Worker implements Runnable {
     private ServerHelper serverhelper;
     private ThreadPool threadPool;
     private String nome;
+
+    private final Logger loggerWorker = Logger.getLogger("Worker");
 
     public Worker(Socket clientesock, Repositorio repositorio, ThreadPool threadPool) throws IOException{
         this.clSock = clientesock;
@@ -57,8 +60,8 @@ public class Worker implements Runnable {
                 PedidoDownload pedidoDownload = new PedidoDownload(serverhelper, nrm);
                 threadPool.adicionaTarefa(pedidoDownload);
                 pedidoDownload.espera();
-                //System.out.println("id da musica reecebida: " + nrm);
-                //System.out.println("ServerHelper funcionou!");
+                loggerWorker.info("id da musica reecebida: " + nrm);
+                loggerWorker.info("ServerHelper funcionou!");
                 break;
 
             case "procura":
@@ -68,7 +71,7 @@ public class Worker implements Runnable {
                 break;
 
             default:
-                System.out.println("Opcao invalida"); //mandar para o cliente
+                loggerWorker.warning("Opcao invalida");
         }
     }
 
@@ -85,19 +88,24 @@ public class Worker implements Runnable {
 
             //passa o que li do canal para uma string
             String inComing = in.readLine();
-            //System.out.println(inComing);
+            loggerWorker.info(inComing);
 
-            //System.out.println(inComing);
+            loggerWorker.info(inComing);
+
             while(inComing != null) {
                 responde(inComing);
-                //System.out.println(inComing);
+
+                loggerWorker.info(inComing);
+
                 inComing = in.readLine();
             }
             clSock.shutdownOutput();
             clSock.shutdownInput();
             clSock.close();
         }
-        catch (IOException | InterruptedException e){}
+        catch (IOException | InterruptedException e){
+            loggerWorker.warning(e.getMessage());
+        }
     }
 
 }

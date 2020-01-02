@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class ServerHelper implements SoundCloud {
     private Repositorio repositorio;
@@ -23,7 +24,7 @@ public class ServerHelper implements SoundCloud {
     private BufferedOutputStream bos;
     private BufferedInputStream bis ;
     private OutputStream os;
-    private Thread t;
+    private final Logger logger = Logger.getLogger("ServerHelper");
 
     public ServerHelper(Socket clsock, Repositorio r) throws IOException {
         this.repositorio = r;
@@ -222,15 +223,15 @@ public class ServerHelper implements SoundCloud {
                 }
             }
 
-            // System.out.println("O tamanho da lista da etiqueta é " + musicasComEtiqueta.size());
+            logger.info("O tamanho da lista da etiqueta é " + musicasComEtiqueta.size());
 
             //sinal delimitador de que começa uma nova música
             String delim = "%-%";
             String res = String.join(delim, musicasComEtiqueta);
             String resultado = "1%" + res;
 
-            System.out.println(res);
-            System.out.println(resultado);
+            logger.info("As musica com a etiqueta são " + res);
+            logger.info("As musicas com a etiqueta e com o indicador de que correu tudo bem - 1 " + resultado);
 
             if (musicasComEtiqueta.size() == 0) {
                 out.println("2");

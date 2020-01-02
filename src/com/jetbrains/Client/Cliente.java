@@ -8,11 +8,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 
 public class Cliente {
     ClienteSTUB cStub;
     BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
+    private final Logger logger = Logger.getLogger("Cliente");
 
     private static final int TAM_CAMPO_LOGIN = 3;
     private static final int TAM_CAMPO_REGISTO = 3;
@@ -25,14 +27,16 @@ public class Cliente {
         cStub = new ClienteSTUB("127.0.0.1", 12346);
     }
 
+
     private void autenticacao(String nome,String password, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException, CredenciaisInvalidasException {
+
 
         try {
             cStub.conectar();
 
             if (querRegistar) { //querRegistar = true se se quer registar, querRegistar = false se só quer o login
                 cStub.registarUtilizador(nome, password);
-                System.out.println("Utilizador registado com sucesso");
+                logger.info("Utilizador registado com sucesso");
             }
 
             cStub.login(nome, password);
@@ -41,11 +45,11 @@ public class Cliente {
 
         }
         catch (CredenciaisInvalidasException e) {
-            System.out.println(e.getMessage());
+            logger.warning(e.getMessage());
             cStub.desconectar();
         }
         catch (UtilizadorJaExisteException e) {
-           System.out.println(e.getMessage());
+            System.out.println(e.getMessage());
             cStub.desconectar(); //quando dá erro desliga o socket
         }
         catch (ClienteServerException e){
@@ -74,7 +78,6 @@ public class Cliente {
             System.out.println(e.getMessage());
         }
         catch (UtilizadorNaoAutenticadoException e){
-
             System.out.println(e.getMessage());
         }
         catch (ClienteServerException e){
@@ -89,10 +92,12 @@ public class Cliente {
             System.out.println("Upload concluido com sucesso");
         }
         catch (UtilizadorNaoAutenticadoException e){
-            System.out.println(e.getMessage());
+            logger.warning(e.getMessage());
         }
         catch (ClienteServerException e){
-            System.out.println(e.getMessage());
+
+            logger.warning(e.getMessage());
+
         }
     }
 
@@ -103,22 +108,24 @@ public class Cliente {
 
             m = cStub.procuraMusica(etiqueta);
 
-            System.out.println(m);
+           System.out.println("Lista das músicas: " + m);
         }
         catch (MusicaInexistenteException e){
-            System.out.println(e.getMessage());
+
+            logger.warning(e.getMessage());
         }
         catch (ClienteServerException e){
-            System.out.println(e.getMessage());
+            logger.warning(e.getMessage());
         }
-        catch (UtilizadorNaoAutenticadoException e){
-            System.out.println(e.getMessage());
+        catch (UtilizadorNaoAutenticadoException e) {
+            logger.warning(e.getMessage());
+
         }
 
         return m;
     }
 
-    public static void start(String ip, Integer porto) throws ClienteServerException{
+    public static void start(String ip, Integer porto) {
         Cliente cliente = new Cliente();
         cliente.caminhoServidor(ip, porto);
         cliente.opcoesNotLoggedIn();
@@ -126,11 +133,12 @@ public class Cliente {
         try {
             cliente.executaComandos();
         } catch (IOException e) {
-            System.out.println("Erro ao executar comando");
+            System.out.println(e.getMessage()); //TODO: por logger
         }
     }
 
-    private void executaComandos() throws IOException{
+    private void executaComandos() throws IOException {
+
         String comando;
         String[] arrayComandos;
 
@@ -145,15 +153,15 @@ public class Cliente {
                     case "login":
                         if (arrayComandos.length > TAM_CAMPO_LOGIN)
                             throw new Exception();
-                        else{
-                        autenticacao(arrayComandos[1], arrayComandos[2], false);
+                        else {
+                            autenticacao(arrayComandos[1], arrayComandos[2], false);
                         }
                         break;
                     case "registar":
                         if (arrayComandos.length > TAM_CAMPO_REGISTO)
                             throw new Exception();
-                        else{
-                        autenticacao(arrayComandos[1], arrayComandos[2],true);
+                        else {
+                            autenticacao(arrayComandos[1], arrayComandos[2], true);
                         }
                         break;
                     case "logout":
@@ -164,7 +172,7 @@ public class Cliente {
 
                         if (arrayComandos.length > TAM_CAMPO_DOWNLOAD)
                             throw new Exception();
-                        else{
+                        else {
 
                             int id = Integer.parseInt(arrayComandos[1]);
                             download(id);
@@ -174,16 +182,17 @@ public class Cliente {
                     case "upload":
                         if (arrayComandos.length > TAM_CAMPO_UPLOAD)
                             throw new Exception();
-                        else{
-                            upload(arrayComandos[1],arrayComandos[2],arrayComandos[3],arrayComandos[4],arrayComandos[5]);
+                        else {
+                            upload(arrayComandos[1], arrayComandos[2], arrayComandos[3], arrayComandos[4], arrayComandos[5]);
                         }
                         break;
 
                     case "procurarMusica":
                         if (arrayComandos.length > TAM_CAMPO_PROCURA_MUSICA)
                             throw new Exception();
-                        else{
-                            procuraMusica(arrayComandos[1]);}
+                        else {
+                            procuraMusica(arrayComandos[1]);
+                        }
                         break;
 
                     case "sair":
@@ -193,22 +202,26 @@ public class Cliente {
                         System.out.println("Não foi possível efectuar a operação. Volte a tentar");
                 }
 
-            } catch (UtilizadorNaoAutenticadoException e) {
-                System.out.println(e.getMessage());
+            }
+            catch (UtilizadorNaoAutenticadoException e){
+                    logger.warning(e.getMessage());
+                    logger.warning("Campos da accao indevidamente preenchidos.");
             }
             catch (Exception e) {
-                System.out.println("Campos da accao indevidamente preenchidos.");
+                logger.warning(e.getMessage());
+                logger.warning("Campos da accao indevidamente preenchidos.");
                 opcoesLoggedIn();
+
             }
         }
     }
 
-    public static void main(String[] args) throws InterruptedException, UtilizadorNaoAutenticadoException {
+    public static void main(String[] args) throws Exception{
        try {
            Cliente.start("127.0.0.1", 12345);
        }
-       catch (ClienteServerException e){
-           System.out.println("Erro na conexão");
+       catch (Exception e){
+           System.out.println("Erro na conexão" + e.getMessage());
        }
     }
 
