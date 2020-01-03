@@ -96,10 +96,8 @@ public class ServerHelper implements SoundCloud {
 
         boolean n = repositorio.getMusicas().containsKey(idMusica);
 
-
         try {
             if (n) {
-
 
                 Musica m = repositorio.getMusicaId(idMusica);
 
@@ -119,8 +117,6 @@ public class ServerHelper implements SoundCloud {
                 out.println(okTam);
                 out.flush();
 
-
-
                 /*
                 try {
                     Thread.sleep(30000);
@@ -130,6 +126,12 @@ public class ServerHelper implements SoundCloud {
 
                 int bytesIni = 0;
                 int bytesRead;
+
+                final String threadNome = Thread.currentThread().getName();
+                String msg = null;
+
+                msg = String.format("%s: Tamanho do ficheiro %d", threadNome, tamanhoFile);
+                logger.info(msg);
 
                 while (bytesIni < tamanhoFile) {
 
@@ -142,10 +144,14 @@ public class ServerHelper implements SoundCloud {
                     bytesIni += bytesRead;
                 }
 
+                msg = String.format("Acabei o download");
+                logger.info("Acabei o download");
+
+                msg = String.format("%s: Tamanho do ficheiro %d", threadNome, bytesIni);
+                logger.info(msg);
+
                 //aumenta o numero de downloads da musica
                 repositorio.growNDownloads(idMusica);
-
-
             } else {
                 out.println("2");
                 out.flush();

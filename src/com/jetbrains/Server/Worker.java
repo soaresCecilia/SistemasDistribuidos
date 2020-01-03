@@ -16,7 +16,7 @@ public class Worker implements Runnable {
     private ThreadPool threadPool;
     private String nome;
 
-    private final Logger loggerWorker = Logger.getLogger("Worker");
+    private final Logger logger = Logger.getLogger("Worker");
 
     public Worker(Socket clientesock, Repositorio repositorio, ThreadPool threadPool) throws IOException{
         this.clSock = clientesock;
@@ -27,13 +27,25 @@ public class Worker implements Runnable {
     public void responde(String s) throws InterruptedException {
         String[] comandos = s.split(" ");
 
+        String threadNome = Thread.currentThread().getName();
+        String msg = null;
+
         switch (comandos[0]) {
 
             case "login":
                 this.nome = comandos[1];
                 PedidoLogin pedidoLogin = new PedidoLogin(serverhelper, comandos[1], comandos[2]);
+
+                msg = String.format("%s : Adiciona pedido %s", threadNome, pedidoLogin);
+                logger.info(msg);
                 threadPool.adicionaTarefa(pedidoLogin);
+
+                msg = String.format("%s : Espera processar pedido %s", threadNome, pedidoLogin);
+                logger.info(msg);
                 pedidoLogin.espera();
+
+                msg = String.format("%s : Pedido processado %s", threadNome, pedidoLogin);
+                logger.info(msg);
                 break;
 
             case "logout":
@@ -57,11 +69,20 @@ public class Worker implements Runnable {
 
             case "download":
                 int nrm = Integer.parseInt(comandos[1]);
+
                 PedidoDownload pedidoDownload = new PedidoDownload(serverhelper, nrm);
+                msg = String.format("%s : Adiciona pedido %s", threadNome, pedidoDownload);
+                logger.info(msg);
+
                 threadPool.adicionaTarefa(pedidoDownload);
+
+                msg = String.format("%s : Espera processar pedido %s", threadNome, pedidoDownload);
+                logger.info(msg);
+
                 pedidoDownload.espera();
-                loggerWorker.info("id da musica reecebida: " + nrm);
-                loggerWorker.info("ServerHelper funcionou!");
+
+                msg = String.format("%s : Pedido processado %s ", threadNome, pedidoDownload);
+                logger.info(msg);
                 break;
 
             case "procura":
@@ -71,7 +92,7 @@ public class Worker implements Runnable {
                 break;
 
             default:
-                loggerWorker.warning("Opcao invalida");
+                logger.warning("Opcao invalida");
         }
     }
 
@@ -86,25 +107,29 @@ public class Worker implements Runnable {
 
             BufferedReader in = new BufferedReader(new InputStreamReader(this.clSock.getInputStream()));
 
+            String threadNome = Thread.currentThread().getName();
+            String msg = null;
+
             //passa o que li do canal para uma string
             String inComing = in.readLine();
-            loggerWorker.info(inComing);
 
-            loggerWorker.info(inComing);
+            msg = String.format("%s : Pedido recebido %s", threadNome, inComing);
+            logger.info(msg);
 
             while(inComing != null) {
                 responde(inComing);
 
-                loggerWorker.info(inComing);
-
                 inComing = in.readLine();
+
+                msg = String.format("%s : Pedido recebido %s", threadNome, inComing);
+                logger.info(msg);
             }
             clSock.shutdownOutput();
             clSock.shutdownInput();
             clSock.close();
         }
         catch (IOException | InterruptedException e){
-            loggerWorker.warning(e.getMessage());
+            logger.warning(e.getMessage());
         }
     }
 

@@ -23,7 +23,7 @@ public class ClienteSTUB implements SoundCloud {
     private BufferedInputStream bis;
     private OutputStream os;
     public static String PATH_TO_RECEIVE = "/tmp/cliente_soundcloud/";
-    private final Logger loggerStub = Logger.getLogger("ClienteStub");
+    private final Logger logger = Logger.getLogger("ClienteStub");
 
 
     public ClienteSTUB(String ip, Integer porto){
@@ -102,6 +102,11 @@ public class ClienteSTUB implements SoundCloud {
     @Override
     public void download(int id) throws MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClienteServerException{
         try {
+
+            /*
+            Thread.sleep(10000);
+            */
+
             final String idM = "download " + id;
 
             out.println(idM);
@@ -114,7 +119,7 @@ public class ClienteSTUB implements SoundCloud {
             try {
                 String le = inBuffer.readLine();
 
-                loggerStub.info(le);
+                logger.info(le);
 
                 String[] rsp = le.split(" ");
 
@@ -135,7 +140,9 @@ public class ClienteSTUB implements SoundCloud {
                         bos = new BufferedOutputStream(fos);
 
                         int bytesIni = 0;
-                        int bytesRead=0;
+                        int bytesRead = 0;
+
+                        logger.info("Preparar para ler " + tamanhoFile + " bytes");
 
                         while (bytesIni < tamanhoFile) {
 
@@ -147,7 +154,7 @@ public class ClienteSTUB implements SoundCloud {
                             bytesIni += bytesRead;
                         }
 
-                        loggerStub.info("tamanho do ficheiro enviado"+bytesRead);
+                        logger.info("tamanho do ficheiro enviado " + bytesIni);
 
                         bos.flush();
 
@@ -157,7 +164,7 @@ public class ClienteSTUB implements SoundCloud {
                     case "-1":
                         throw new ClienteServerException("Deu merda no servidor");
                     default:
-                        loggerStub.info("Resposta do servidor" + rsp);
+                        logger.info("Resposta do servidor" + rsp);
                         throw new MusicaInexistenteException("Não existe esse id nas musicas");
                 }
             } catch (IOException e) {

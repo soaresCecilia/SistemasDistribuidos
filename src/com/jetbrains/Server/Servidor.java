@@ -14,6 +14,7 @@ public class Servidor {
     private static final ThreadPool threadPool = new ThreadPool();
     private static final String caminhoFicheiro = "/tmp/servidor_soundcloud/";
     private final Logger logger = Logger.getLogger("Servidor");
+    private static int workerThread  = 0;
 
    public static void start(Integer port, Repositorio repositorio) {
         try {
@@ -26,6 +27,8 @@ public class Servidor {
 
                 System.out.println("liguei!"); //TODO: por logger
                 Thread t = new Thread(new Worker(clSocket, repositorio, threadPool)); //tirar o socket do worker cria uma thread por cliente
+                t.setName("Worker Thread " + workerThread);
+                workerThread++;
                 t.start();
             }
 

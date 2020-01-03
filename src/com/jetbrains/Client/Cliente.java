@@ -12,9 +12,11 @@ import java.util.logging.Logger;
 
 
 public class Cliente {
-    ClienteSTUB cStub;
-    BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
+    private ClienteSTUB cStub;
+    private BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
     private final Logger logger = Logger.getLogger("Cliente");
+
+
 
     private void caminhoServidor(String ip, Integer port) {
         cStub = new ClienteSTUB("127.0.0.1", 12346);
