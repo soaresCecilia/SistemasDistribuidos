@@ -73,7 +73,7 @@ public class ClienteSTUB implements SoundCloud {
     a operação não foi concluída.
      */
 
-    public synchronized void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClienteServerException {
+    public void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClienteServerException {
         out.println("registar " + nome + " " + password);
         out.flush();
 
@@ -300,7 +300,7 @@ public class ClienteSTUB implements SoundCloud {
     Este método cria os elementos necessários para ser estabelecida uma conexão.
      */
     
-    public synchronized void conectar() throws ClienteServerException {
+    public void conectar() throws ClienteServerException {
 
         try {
             this.socket = new Socket(this.ip, this.porto);
