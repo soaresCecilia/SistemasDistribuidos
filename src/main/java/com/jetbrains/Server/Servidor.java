@@ -40,7 +40,7 @@ public class Servidor {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e){
-            System.out.println(e.toString());
+            logger.error(e.toString());
         }
 
         System.out.println("Desligado");

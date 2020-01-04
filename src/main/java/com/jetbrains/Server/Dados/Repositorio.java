@@ -25,6 +25,10 @@ public class Repositorio{
         return (this.musicas.get(id));
     }
 
+    public Boolean existeMusica(int idMusica){
+        return (this.musicas.containsKey(idMusica));
+    }
+
     //não precisa de synchronizde porque o ConcurrentHashMap já é thread safe
     public synchronized void addMusica(Musica m) {
         m.setId(++idMusica);

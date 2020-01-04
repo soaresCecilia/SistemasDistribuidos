@@ -107,8 +107,8 @@ public class ClienteSTUB implements SoundCloud {
             out.println(idM);
             out.flush();
         }
-        catch (Exception e){
-            throw new UtilizadorNaoAutenticadoException("Não esta autenticado, repita");
+        catch (NullPointerException e){
+            throw new UtilizadorNaoAutenticadoException("Utilizador não se encontra autenticado");
         }
 
             try {
@@ -185,8 +185,8 @@ public class ClienteSTUB implements SoundCloud {
                     out.println("upload " + tamanhoFile + " " + titulo + " " + interprete + " " + ano + " " + genero);
                     out.flush();
                 }
-                catch (Exception e){
-                    throw new UtilizadorNaoAutenticadoException("Não esta autenticado, repita");
+                catch (NullPointerException e){
+                    throw new UtilizadorNaoAutenticadoException("Utilizador não se encontra autenticado");
                 }
 
                 while (bytesIni < tamanhoFile) {
@@ -237,7 +237,7 @@ public class ClienteSTUB implements SoundCloud {
 
             out.println(procuraEtiqueta);
             out.flush();
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             throw new UtilizadorNaoAutenticadoException("Utilizador não se encontra autenticado");
         }
 

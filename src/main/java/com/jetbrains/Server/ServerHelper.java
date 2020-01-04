@@ -89,10 +89,10 @@ public class ServerHelper implements SoundCloud {
     @Override
     public void download(int idMusica) {
 
-        boolean n = repositorio.getMusicas().containsKey(idMusica);
+        boolean existe = repositorio.existeMusica(idMusica);
 
         try {
-            if (n) {
+            if (existe) {
 
                 Musica m = repositorio.getMusicaId(idMusica);
 
@@ -135,7 +135,7 @@ public class ServerHelper implements SoundCloud {
                 bis.close();
                 os.flush();
 
-                logger.info("Acabei o download");
+                logger.info("Acabei o download da musica: "+idMusica);
                 logger.info("Tamanho do ficheiro " + bytesIni);
 
                 //aumenta o numero de downloads da musica
@@ -187,7 +187,8 @@ public class ServerHelper implements SoundCloud {
             //correu tudo bem
             out.println("1");
             out.flush();
-
+            logger.info("Acabei o upload da musica: "+titulo);
+            logger.info("Tamanho do ficheiro: "+tamanhoFile);
         }catch (IOException e) {
             out.println("0");
             out.flush();

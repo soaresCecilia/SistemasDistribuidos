@@ -38,8 +38,6 @@ public class Cliente {
                 logger.info("Utilizador registado com sucesso");
             }
 
-            System.out.println("Download concluido com sucesso");
-
             cStub.login(nome, password);
             bemVindo();
             opcoesLoggedIn();
@@ -60,7 +58,7 @@ public class Cliente {
     }
 
     private void logout() {
-        System.out.println("Adeus");
+        adeus();
         try{
             cStub.logout(null);
             System.exit(0);
@@ -107,8 +105,10 @@ public class Cliente {
 
             m = cStub.procuraMusica(etiqueta);
 
-           System.out.println("Lista das músicas: " + m);
-        }
+            for(Musica musica : m){
+
+                System.out.println(musica.toString());}
+            }
         catch (MusicaInexistenteException e){
             logger.error(e.getMessage());
         }
@@ -148,15 +148,19 @@ public class Cliente {
             try {
                 switch (arrayComandos[0]) {
                     case "login":
-                        if (arrayComandos.length > TAM_CAMPO_LOGIN)
-                            throw new Exception("");
+                        if (arrayComandos.length != TAM_CAMPO_LOGIN){
+                            opcoesNotLoggedIn();
+                            throw new CamposInvalidosException();
+                        }
                         else {
                             autenticacao(arrayComandos[1], arrayComandos[2], false);
                         }
                         break;
                     case "registar":
-                        if (arrayComandos.length > TAM_CAMPO_REGISTO)
-                            throw new Exception();
+                        if (arrayComandos.length != TAM_CAMPO_REGISTO){
+                            opcoesNotLoggedIn();
+                            throw new CamposInvalidosException();
+                        }
                         else {
                             autenticacao(arrayComandos[1], arrayComandos[2], true);
                         }
@@ -167,8 +171,10 @@ public class Cliente {
 
                     case "download":
 
-                        if (arrayComandos.length > TAM_CAMPO_DOWNLOAD)
-                            throw new Exception();
+                        if (arrayComandos.length != TAM_CAMPO_DOWNLOAD){
+                            opcoesLoggedIn();
+                            throw new CamposInvalidosException();
+                        }
                         else {
 
                             int id = Integer.parseInt(arrayComandos[1]);
@@ -177,16 +183,20 @@ public class Cliente {
                         break;
 
                     case "upload":
-                        if (arrayComandos.length > TAM_CAMPO_UPLOAD)
-                            throw new Exception();
+                        if (arrayComandos.length != TAM_CAMPO_UPLOAD ){
+                            opcoesLoggedIn();
+                            throw new CamposInvalidosException();
+                        }
                         else {
                             upload(arrayComandos[1], arrayComandos[2], arrayComandos[3], arrayComandos[4], arrayComandos[5]);
                         }
                         break;
 
                     case "procurarMusica":
-                        if (arrayComandos.length > TAM_CAMPO_PROCURA_MUSICA)
-                            throw new Exception();
+                        if (arrayComandos.length != TAM_CAMPO_PROCURA_MUSICA){
+                            opcoesLoggedIn();
+                            throw new CamposInvalidosException();
+                        }
                         else {
                             procuraMusica(arrayComandos[1]);
                         }
@@ -200,11 +210,13 @@ public class Cliente {
                 }
             }
             catch (UtilizadorNaoAutenticadoException e){
-                logger.error("Campos da accao indevidamente preenchidos.");
+                logger.error("Utilizador não esta autenticado.");
             }
-            catch (Exception e) {
+            catch (CredenciaisInvalidasException e){
+                logger.error("Credenciais inválidas");
+            }
+            catch (CamposInvalidosException e) {
                 logger.error("Campos da accao indevidamente preenchidos.");
-                opcoesLoggedIn();
             }
         }
     }
@@ -237,36 +249,48 @@ public class Cliente {
 
 
     private void opcoesNotLoggedIn() {
-        System.out.println("........................................................................................................");
-        System.out.println("........................................................................................................");
-        System.out.println("........ATENCAO!!! O nome não pode conter espaços.......................................................");
-        System.out.println("........................................................................................................");
-        System.out.println("........................................................................................................");
-        System.out.println("Fazer login escreva: login seu_nome palavra_pass........................................................");
-        System.out.println("........................................................................................................");
-        System.out.println("Criar uma conta escreva: registar nome_utilizador pallavra_pass.........................................");
-        System.out.println("........................................................................................................");
-        System.out.println("........................................................................................................");
-
+        System.out.println(".........................................................................................................");
+        System.out.println(".........................................................................................................");
+        System.out.println("........ATENCAO!!! O nome não pode conter espaços........................................................");
+        System.out.println(".........................................................................................................");
+        System.out.println(".........................................................................................................");
+        System.out.println("Fazer login, escreva: login seu_nome palavra_pass........................................................");
+        System.out.println(".........................................................................................................");
+        System.out.println("Criar uma conta, escreva: registar nome_utilizador pallavra_pass.........................................");
+        System.out.println(".........................................................................................................");
+        System.out.println(".........................................................................................................");
     }
     private void bemVindo(){
-        System.out.println("........................................................................................................");
-        System.out.println("........................................................................................................");
-        System.out.println("Utilizador autenticado, bem vindo.......................................................................");
-        System.out.println("........................................................................................................");
+        System.out.println(".........................................................................................................");
+        System.out.println(".........................................................................................................");
+        System.out.println("Utilizador autenticado, bem vindo........................................................................");
+        System.out.println(".........................................................................................................");
     }
+
+    private void adeus(){
+        System.out.println(".........................................................................................................");
+        System.out.println(".........................................................................................................");
+        System.out.println("..................................................Adeus..................................................");
+        System.out.println(".........................................................................................................");
+        System.out.println(".........................................................................................................");
+
+    }
+
     private void opcoesLoggedIn() {
-        System.out.println("........................................................................................................");
-        System.out.println("........................................................................................................");
-        System.out.println("........ATENCAO!!! Os nomes não podem conter espaços, utilize por exemplo:  _ &.........................");
-        System.out.println("........................................................................................................");
-        System.out.println("........................................................................................................");
-        System.out.println("Procurar música escreva: procurarMusica 'almofada_maluca'...............................................");
-        System.out.println("........................................................................................................");
-        System.out.println("Fazer upload de uma música escreva: upload titulo_da_musica interprete ano genero caminho_para_a_musica.");
-        System.out.println("........................................................................................................");
-        System.out.println("Fazer o download de uma música escreva: download  idMusica..............................................");
-        System.out.println("........................................................................................................");
-        System.out.println("........................................................................................................");
+        System.out.println(".........................................................................................................");
+        System.out.println(".........................................................................................................");
+        System.out.println("........ATENCAO!!! Os nomes não podem conter espaços, utilize por exemplo:  _ &..........................");
+        System.out.println(".........................................................................................................");
+        System.out.println(".........................................................................................................");
+        System.out.println("Procurar música, escreva: procurarMusica 'almofada_maluca'...............................................");
+        System.out.println(".........................................................................................................");
+        System.out.println("Fazer upload de uma música, escreva: upload titulo_da_musica interprete ano genero caminho_para_a_musica.");
+        System.out.println(".........................................................................................................");
+        System.out.println("Fazer o download de uma música, escreva: download  idMusica..............................................");
+        System.out.println(".........................................................................................................");
+        System.out.println("Fazer logout, escreva: logout............................................................................");
+        System.out.println(".........................................................................................................");
+        System.out.println(".........................................................................................................");
+
     }
 }
