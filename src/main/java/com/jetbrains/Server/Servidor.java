@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class Servidor {
 
     private static final ThreadPool threadPool = new ThreadPool();
-    private static final String caminhoFicheiro = /*"/tmp/servidor_soundcloud/";*/"/home/luisabreu/Desktop/musicaS/";
+    private static final String caminhoFicheiro = "/tmp/servidor_soundcloud/";
     private final Logger logger = Logger.getLogger("Servidor");
     private static int workerThread  = 0;
 

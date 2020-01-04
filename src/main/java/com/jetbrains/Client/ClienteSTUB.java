@@ -11,27 +11,21 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class ClienteSTUB implements SoundCloud {
-    public static final int MAX_SIZE = 500000;
+    public static final int MAX_SIZE = 1024;
     private Socket socket;
     private final String ip;
     private final Integer porto;
     private PrintWriter out;
-    private BufferedReader inBuffer;
+    private BufferedReader in;
     private InputStream is;
-    private FileOutputStream fos;
-    private BufferedOutputStream bos;
-    private BufferedInputStream bis;
     private OutputStream os;
     public static String PATH_TO_RECEIVE = "/tmp/cliente_soundcloud/";
     private final Logger loggerStub = Logger.getLogger("ClienteStub");
-
-
 
     public ClienteSTUB(String ip, Integer porto){
         this.ip = ip;
         this.porto = porto;
     }
-
 
     @Override
     /*
@@ -44,7 +38,7 @@ public class ClienteSTUB implements SoundCloud {
         out.flush();
 
         try {
-            String le = inBuffer.readLine();
+            String le = in.readLine();
 
             String[] rsp = le.split(" ");
             switch (rsp[0]) {
@@ -86,7 +80,7 @@ public class ClienteSTUB implements SoundCloud {
         out.flush();
 
         try {
-            String le = inBuffer.readLine();
+            String le = in.readLine();
 
                 String[] rsp = le.split(" ");
                 switch (rsp[0]) {
@@ -120,7 +114,7 @@ public class ClienteSTUB implements SoundCloud {
         }
 
             try {
-                String le = inBuffer.readLine();
+                String le = in.readLine();
 
                 loggerStub.info(le);
 
@@ -136,11 +130,7 @@ public class ClienteSTUB implements SoundCloud {
 
                         byte[] mybytearray = new byte[MAX_SIZE];
 
-                        is = socket.getInputStream();
-
-                        fos = new FileOutputStream(caminhoGuardarMusica);
-
-                        bos = new BufferedOutputStream(fos);
+                        FileOutputStream bos = new FileOutputStream(caminhoGuardarMusica);
 
                         int bytesIni = 0;
                         int bytesRead = 0;
@@ -159,9 +149,7 @@ public class ClienteSTUB implements SoundCloud {
 
                         loggerStub.info("tamanho do ficheiro enviado " + bytesIni);
 
-
                         bos.flush();
-
                         bos.close();
 
                         break;
@@ -185,16 +173,13 @@ public class ClienteSTUB implements SoundCloud {
 
             try {
 
-
                 File myFile = new File(caminho);
 
                 int tamanhoFile = (int) myFile.length();
 
                 byte[] mybytearray = new byte[MAX_SIZE];
 
-                bis = new BufferedInputStream(new FileInputStream(myFile));
-
-                os = socket.getOutputStream();
+                FileInputStream bis = new FileInputStream(myFile);
 
                 int bytesIni = 0;
                 int bytesRead = 0;
@@ -212,16 +197,19 @@ public class ClienteSTUB implements SoundCloud {
                     bytesRead = bis.read(mybytearray, 0, bytesRead);
 
                     os.write(mybytearray, 0, bytesRead);
-                    os.flush();
 
                     bytesIni += bytesRead;
                 }
+
+                os.flush();
+                bis.close();
+
             } catch (IOException e) {
                 throw new ClienteServerException("Ocorreu erro, contacte assistencia técnica.");
             }
 
             try {
-                String le = inBuffer.readLine();
+                String le = in.readLine();
 
                 String[] rsp = le.split(" ");
                 switch (rsp[0]) {
@@ -256,7 +244,7 @@ public class ClienteSTUB implements SoundCloud {
         }
 
         try {
-            String le =inBuffer.readLine();
+            String le = in.readLine();
 
             String[] rsp = le.split("%");
 
@@ -318,8 +306,10 @@ public class ClienteSTUB implements SoundCloud {
 
         try {
             this.socket = new Socket(this.ip,this.porto);
-            out = new PrintWriter(socket.getOutputStream());
-            inBuffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.out = new PrintWriter(socket.getOutputStream());
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.is = socket.getInputStream();
+            this.os = socket.getOutputStream();
         }
         catch (IOException e){
             throw new ClienteServerException("Ocorreu erro no Servidor, contacte assistencia técnica");

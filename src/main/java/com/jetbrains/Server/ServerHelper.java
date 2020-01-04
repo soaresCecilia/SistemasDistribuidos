@@ -14,23 +14,22 @@ import java.util.logging.Logger;
 
 public class ServerHelper implements SoundCloud {
     private Repositorio repositorio;
-    private Socket clSock;
+    private Socket socket;
     public static String PATH_TO_RECORD = "/tmp/servidor_soundcloud/";
     private PrintWriter out;
     private BufferedReader in;
-    public static final int MAX_SIZE = 1024; //tamanho de transferência de ficheiros limitado
-    private InputStream is;
-    private FileOutputStream fos;
-    private BufferedOutputStream bos;
-    private BufferedInputStream bis ;
     private OutputStream os;
+    private InputStream is;
+    public static final int MAX_SIZE = 1024; //tamanho de transferência de ficheiros limitado
     private final Logger logger = Logger.getLogger("ServerHelper");
 
-    public ServerHelper(Socket clsock, Repositorio r) throws IOException {
+    public ServerHelper(Socket clienteSock, Repositorio r) throws IOException {
         this.repositorio = r;
-        this.clSock = clsock;
-        this.out = new PrintWriter(clSock.getOutputStream());
-        this.in = new BufferedReader(new InputStreamReader(clSock.getInputStream()));
+        this.socket = clienteSock;
+        this.out = new PrintWriter(socket.getOutputStream());
+        this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.os = socket.getOutputStream();
+        this.is = socket.getInputStream();
     }
 
     @Override
@@ -39,7 +38,6 @@ public class ServerHelper implements SoundCloud {
      */
     public void login(String nome, String password) {
             Utilizador utilizador;
-
 
             utilizador = repositorio.getUtilizadores().get(nome);
 
@@ -72,8 +70,6 @@ public class ServerHelper implements SoundCloud {
     registados. De notar que não podem existir dois utilizadores registados com o mesmo nome, nem o nome ou a password
     podem conter quaquer espaço, senão o nosso portocolo de transfeência de informação entre cliente e servidor não funciona.
      */
-
-
     public synchronized void registarUtilizador(String nome, String password) {
 
         if (!repositorio.getUtilizadores().containsKey(nome)) {
@@ -88,7 +84,6 @@ public class ServerHelper implements SoundCloud {
             out.println("0");
             out.flush();
         }
-
     }
 
     @Override
@@ -107,9 +102,7 @@ public class ServerHelper implements SoundCloud {
 
                 byte[] mybytearray = new byte[MAX_SIZE];
 
-                bis = new BufferedInputStream(new FileInputStream(myFile));
-
-                os = clSock.getOutputStream();
+                FileInputStream bis = new FileInputStream(myFile);
 
                 //envia a string "1 tamanhaFicheiroAler nomeFicheiro"
                 String okTam = "1 " + tamanhoFile + " " + m.getTitulo();
@@ -138,12 +131,13 @@ public class ServerHelper implements SoundCloud {
                     bytesRead = Integer.min(tamanhoFile - bytesIni, mybytearray.length);
                     bytesRead = bis.read(mybytearray, 0, bytesRead);
 
-
                     os.write(mybytearray, 0, bytesRead);
-                    os.flush();
 
                     bytesIni += bytesRead;
                 }
+
+                bis.close();
+                os.flush();
 
                 msg = String.format("Acabei o download");
                 logger.info("Acabei o download");
@@ -176,11 +170,7 @@ public class ServerHelper implements SoundCloud {
 
             byte[] mybytearray = new byte[MAX_SIZE];
 
-            is = clSock.getInputStream();
-
-            fos = new FileOutputStream(caminho);
-
-            bos = new BufferedOutputStream(fos);
+            FileOutputStream bos = new FileOutputStream(caminho);
 
             int bytesIni = 0;
             int bytesRead = 0;
@@ -191,6 +181,7 @@ public class ServerHelper implements SoundCloud {
                 bytesRead = is.read(mybytearray, 0, bytesRead);
 
                 bos.write(mybytearray, 0, bytesRead);
+                bos.flush();
 
                 bytesIni += bytesRead;
             }
@@ -224,8 +215,6 @@ public class ServerHelper implements SoundCloud {
         List<Musica> vazia = new ArrayList<Musica>(); //lista vazia que vai ser devolvida apenas para obedecer ao interface
 
         try {
-            this.out = new PrintWriter(clSock.getOutputStream());
-
             for (Musica m : repositorio.getMusicas().values()) {
                 if (m.procuraEtiqueta(etiqueta)) {
                     musicasComEtiqueta.add(m.toStringPlus());
@@ -239,7 +228,7 @@ public class ServerHelper implements SoundCloud {
             String res = String.join(delim, musicasComEtiqueta);
             String resultado = "1%" + res;
 
-            logger.info("As musica com a etiqueta são " + res);
+            logger.info("As musicas com a etiqueta são " + res);
             logger.info("As musicas com a etiqueta e com o indicador de que correu tudo bem - 1 " + resultado);
 
             if (musicasComEtiqueta.size() == 0) {
@@ -258,6 +247,4 @@ public class ServerHelper implements SoundCloud {
 
         return vazia;
     }
-
-
 }

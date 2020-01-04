@@ -11,16 +11,16 @@ import java.util.logging.Logger;
 
 public class Worker implements Runnable {
 
-    private Socket clSock;
+    private Socket socket;
     private ServerHelper serverhelper;
     private ThreadPool threadPool;
     private String nome;
 
     private final Logger logger = Logger.getLogger("Worker");
 
-    public Worker(Socket clientesock, Repositorio repositorio, ThreadPool threadPool) throws IOException{
-        this.clSock = clientesock;
-        this.serverhelper = new ServerHelper(clientesock, repositorio);
+    public Worker(Socket clienteSock, Repositorio repositorio, ThreadPool threadPool) throws IOException{
+        this.socket = clienteSock;
+        this.serverhelper = new ServerHelper(socket, repositorio);
         this.threadPool = threadPool;
     }
 
@@ -100,12 +100,12 @@ public class Worker implements Runnable {
     //O worker so fala com o stub quando dá erro
     public void run(){
         try {
-            if (clSock == null) {
+            if (socket == null) {
                 System.out.println("clSock null");
                 return;
             }
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(this.clSock.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 
             String threadNome = Thread.currentThread().getName();
             String msg = null;
@@ -124,9 +124,9 @@ public class Worker implements Runnable {
                 msg = String.format("%s : Pedido recebido %s", threadNome, inComing);
                 logger.info(msg);
             }
-            clSock.shutdownOutput();
-            clSock.shutdownInput();
-            clSock.close();
+            socket.shutdownOutput();
+            socket.shutdownInput();
+            socket.close();
         }
         catch (IOException | InterruptedException e){
             logger.warning(e.getMessage());
