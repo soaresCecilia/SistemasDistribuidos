@@ -3,12 +3,12 @@ package com.jetbrains.Client;
 import com.jetbrains.*;
 import com.jetbrains.Exceptions.*;
 import com.jetbrains.Server.Dados.Musica;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class ClienteSTUB implements SoundCloud {
     public static final int MAX_SIZE = 1024;
@@ -20,7 +20,7 @@ public class ClienteSTUB implements SoundCloud {
     private InputStream is;
     private OutputStream os;
     public static String PATH_TO_RECEIVE = "/tmp/cliente_soundcloud/";
-    private final Logger loggerStub = Logger.getLogger("ClienteStub");
+    private final Logger logger = Logger.getLogger("ClienteStub");
 
     public ClienteSTUB(String ip, Integer porto){
         this.ip = ip;
@@ -45,7 +45,7 @@ public class ClienteSTUB implements SoundCloud {
                 case "1": //correu tudo bem
                     break;
                 default:
-                    loggerStub.info(le);
+                    logger.info(le);
                     throw new CredenciaisInvalidasException("Credenciais inválidas");
             }
         }
@@ -74,8 +74,6 @@ public class ClienteSTUB implements SoundCloud {
      */
 
     public synchronized void registarUtilizador(String nome, String password) throws UtilizadorJaExisteException, ClienteServerException {
-
-
         out.println("registar " + nome + " " + password);
         out.flush();
 
@@ -87,7 +85,7 @@ public class ClienteSTUB implements SoundCloud {
                     case "1": //correu tudo bem
                         break;
                     default:
-                        loggerStub.info(le);
+                        logger.info(le);
                         throw new UtilizadorJaExisteException("Já existe utilizador com esse login");
                 }
         }
@@ -116,7 +114,7 @@ public class ClienteSTUB implements SoundCloud {
             try {
                 String le = in.readLine();
 
-                loggerStub.info(le);
+                logger.info(le);
 
                 String[] rsp = le.split(" ");
 
@@ -135,7 +133,7 @@ public class ClienteSTUB implements SoundCloud {
                         int bytesIni = 0;
                         int bytesRead = 0;
 
-                        loggerStub.info("Preparar para ler " + tamanhoFile + " bytes");
+                        logger.info("Preparar para ler " + tamanhoFile + " bytes");
 
                         while (bytesIni < tamanhoFile) {
 
@@ -147,7 +145,7 @@ public class ClienteSTUB implements SoundCloud {
                             bytesIni += bytesRead;
                         }
 
-                        loggerStub.info("tamanho do ficheiro enviado " + bytesIni);
+                        logger.info("tamanho do ficheiro enviado " + bytesIni);
 
                         bos.flush();
                         bos.close();
@@ -216,7 +214,7 @@ public class ClienteSTUB implements SoundCloud {
                     case "1": //correu tudo bem
                         break;
                     default:
-                        loggerStub.info(le);
+                        logger.info(le);
                         throw new ClienteServerException("Ocorreu erro no Servidor, contacte assistencia técnica.");
                 }
             } catch (IOException e) {
@@ -252,10 +250,10 @@ public class ClienteSTUB implements SoundCloud {
                     case "1": //correu tudo bem
                         return transformaString(rsp);//manda a lista das musicas
                     case "2":
-                        loggerStub.info(le);
+                        logger.info(le);
                         throw new MusicaInexistenteException("Não existe nenhuma musica com essa etiqueta.");
                     default:
-                        loggerStub.info(le);
+                        logger.info(le);
                         throw new ClienteServerException("Ocorreu erro no Servidor, contacte assistencia técnica.");
                 }
             } catch (IOException e) {

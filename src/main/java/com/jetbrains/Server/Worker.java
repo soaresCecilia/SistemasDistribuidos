@@ -2,12 +2,10 @@ package com.jetbrains.Server;
 
 import com.jetbrains.Server.Dados.Repositorio;
 import com.jetbrains.Server.Pedidos.*;
-
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.logging.Logger;
-
 
 public class Worker implements Runnable {
 
@@ -27,25 +25,19 @@ public class Worker implements Runnable {
     public void responde(String s) throws InterruptedException {
         String[] comandos = s.split(" ");
 
-        String threadNome = Thread.currentThread().getName();
-        String msg = null;
-
         switch (comandos[0]) {
 
             case "login":
                 this.nome = comandos[1];
                 PedidoLogin pedidoLogin = new PedidoLogin(serverhelper, comandos[1], comandos[2]);
 
-                msg = String.format("%s : Adiciona pedido %s", threadNome, pedidoLogin);
-                logger.info(msg);
+                logger.info("Adiciona pedido " + pedidoLogin);
                 threadPool.adicionaTarefa(pedidoLogin);
 
-                msg = String.format("%s : Espera processar pedido %s", threadNome, pedidoLogin);
-                logger.info(msg);
+                logger.info("Espera processar pedido " + pedidoLogin);
                 pedidoLogin.espera();
 
-                msg = String.format("%s : Pedido processado %s", threadNome, pedidoLogin);
-                logger.info(msg);
+                logger.info("Pedido processado " + pedidoLogin);
                 break;
 
             case "logout":
@@ -71,18 +63,14 @@ public class Worker implements Runnable {
                 int nrm = Integer.parseInt(comandos[1]);
 
                 PedidoDownload pedidoDownload = new PedidoDownload(serverhelper, nrm);
-                msg = String.format("%s : Adiciona pedido %s", threadNome, pedidoDownload);
-                logger.info(msg);
 
+                logger.info("Adiciona pedido " + pedidoDownload);
                 threadPool.adicionaTarefa(pedidoDownload);
 
-                msg = String.format("%s : Espera processar pedido %s", threadNome, pedidoDownload);
-                logger.info(msg);
-
+                logger.info("Espera processar pedido " + pedidoDownload);
                 pedidoDownload.espera();
 
-                msg = String.format("%s : Pedido processado %s ", threadNome, pedidoDownload);
-                logger.info(msg);
+                logger.info("Pedido processado" + pedidoDownload);
                 break;
 
             case "procura":
@@ -92,7 +80,7 @@ public class Worker implements Runnable {
                 break;
 
             default:
-                logger.warning("Opcao invalida");
+                logger.error("Opcao invalida");
         }
     }
 
@@ -107,29 +95,24 @@ public class Worker implements Runnable {
 
             BufferedReader in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 
-            String threadNome = Thread.currentThread().getName();
-            String msg = null;
-
             //passa o que li do canal para uma string
             String inComing = in.readLine();
 
-            msg = String.format("%s : Pedido recebido %s", threadNome, inComing);
-            logger.info(msg);
+            logger.info("Pedido recebido " + inComing);
 
             while(inComing != null) {
                 responde(inComing);
 
                 inComing = in.readLine();
 
-                msg = String.format("%s : Pedido recebido %s", threadNome, inComing);
-                logger.info(msg);
+                logger.info("Pedido recebido " + inComing);
             }
             socket.shutdownOutput();
             socket.shutdownInput();
             socket.close();
         }
         catch (IOException | InterruptedException e){
-            logger.warning(e.getMessage());
+            logger.error("Erro ao processar pediodo: ", e);
         }
     }
 

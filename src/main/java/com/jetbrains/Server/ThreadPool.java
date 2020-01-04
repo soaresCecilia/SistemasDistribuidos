@@ -1,6 +1,5 @@
 package com.jetbrains.Server;
 
-
 import com.jetbrains.Server.Pedidos.PedidoCliente;
 import com.jetbrains.Server.Pedidos.PedidoDownload;
 
@@ -28,7 +27,7 @@ public class ThreadPool {
         this.threadsPool = new PoolWorker[MAX_THREADS];
 
         for (int i = 0; i < MAX_THREADS; i++) {
-            this.threadsPool[i] = new PoolWorker("Worker Pool" + i);
+            this.threadsPool[i] = new PoolWorker("Worker Pool " + i);
             this.threadsPool[i].start();
         }
     }

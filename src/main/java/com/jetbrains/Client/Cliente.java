@@ -2,19 +2,21 @@ package com.jetbrains.Client;
 
 import com.jetbrains.Exceptions.*;
 import com.jetbrains.Server.Dados.Musica;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.RollingFileAppender;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
 
 public class Cliente {
     private ClienteSTUB cStub;
     private BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
-    private final Logger logger = Logger.getLogger("Cliente");
+    private Logger logger = Logger.getLogger("Cliente");
     private static final int TAM_CAMPO_LOGIN = 3;
     private static final int TAM_CAMPO_REGISTO = 3;
     private static final int TAM_CAMPO_DOWNLOAD = 2;
@@ -28,8 +30,6 @@ public class Cliente {
 
 
     private void autenticacao(String nome,String password, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException, CredenciaisInvalidasException {
-
-
         try {
             cStub.conectar();
 
@@ -38,21 +38,23 @@ public class Cliente {
                 logger.info("Utilizador registado com sucesso");
             }
 
+            System.out.println("Download concluido com sucesso");
+
             cStub.login(nome, password);
             bemVindo();
             opcoesLoggedIn();
 
         }
         catch (CredenciaisInvalidasException e) {
-            logger.warning(e.getMessage());
+            logger.error(e.getMessage());
             cStub.desconectar();
         }
         catch (UtilizadorJaExisteException e) {
-            logger.warning(e.getMessage());
+            logger.error(e.getMessage());
             cStub.desconectar(); //quando dá erro desliga o socket
         }
         catch (ClienteServerException e){
-            logger.warning(e.getMessage());
+            logger.error(e.getMessage());
             cStub.desconectar();  //quando dá erro desliga o socket
         }
     }
@@ -64,7 +66,7 @@ public class Cliente {
             System.exit(0);
         }
         catch (IOException e) {
-            logger.warning(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 
@@ -74,13 +76,13 @@ public class Cliente {
             System.out.println("Download concluido com sucesso");
         }
         catch (MusicaInexistenteException e){
-            logger.warning(e.getMessage());
+            logger.error(e.getMessage());
         }
         catch (UtilizadorNaoAutenticadoException e){
-            logger.warning(e.getMessage());
+            logger.error(e.getMessage());
         }
         catch (ClienteServerException e){
-            logger.warning(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 
@@ -91,12 +93,10 @@ public class Cliente {
             System.out.println("Upload concluido com sucesso");
         }
         catch (UtilizadorNaoAutenticadoException e){
-            logger.warning(e.getMessage());
+            logger.error(e.getMessage());
         }
         catch (ClienteServerException e){
-
-            logger.warning(e.getMessage());
-
+            logger.error(e.getMessage());
         }
     }
 
@@ -110,15 +110,13 @@ public class Cliente {
            System.out.println("Lista das músicas: " + m);
         }
         catch (MusicaInexistenteException e){
-
-            logger.warning(e.getMessage());
+            logger.error(e.getMessage());
         }
         catch (ClienteServerException e){
-            logger.warning(e.getMessage());
+            logger.error(e.getMessage());
         }
         catch (UtilizadorNaoAutenticadoException e) {
-            logger.warning(e.getMessage());
-
+            logger.error(e.getMessage());
         }
 
         return m;
@@ -132,7 +130,7 @@ public class Cliente {
         try {
             cliente.executaComandos();
         } catch (IOException e) {
-            System.out.println(e.getMessage()); //TODO: por logger
+            System.out.println(e.getMessage());
         }
     }
 
@@ -199,30 +197,42 @@ public class Cliente {
 
                     default:
                         System.out.println("Não foi possível efectuar a operação. Volte a tentar");
-
                 }
-
             }
             catch (UtilizadorNaoAutenticadoException e){
-
-                    logger.warning("Campos da accao indevidamente preenchidos.");
+                logger.error("Campos da accao indevidamente preenchidos.");
             }
             catch (Exception e) {
-
-                logger.warning("Campos da accao indevidamente preenchidos.");
+                logger.error("Campos da accao indevidamente preenchidos.");
                 opcoesLoggedIn();
-
             }
         }
     }
 
-    public static void main(String[] args) throws Exception{
-       try {
-           Cliente.start("127.0.0.1", 12345);
-       }
-       catch (Exception e){
-           System.out.println("Erro na conexão" + e.getMessage());
-       }
+    private static void initLogger() {
+        Logger rootLogger = Logger.getRootLogger();
+        PatternLayout layout = new PatternLayout("[%-5p] %t:%c - %m%n");
+
+        try {
+            RollingFileAppender fileAppender = new RollingFileAppender(layout, System.getProperty("log.file", "./cliente-ssd.log"));
+            fileAppender.setImmediateFlush(true);
+            fileAppender.setThreshold(Level.DEBUG);
+            fileAppender.setAppend(true);
+            rootLogger.addAppender(fileAppender);
+        } catch (IOException e) {
+            rootLogger.error("Falha ao configurar o logging.", e);
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        initLogger();
+
+        try {
+            Cliente.start("127.0.0.1", 12345);
+        }
+        catch (Exception e){
+            System.out.println("Erro na conexão" + e.getMessage());
+        }
     }
 
 

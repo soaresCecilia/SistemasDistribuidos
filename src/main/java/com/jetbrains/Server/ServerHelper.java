@@ -4,13 +4,13 @@ import com.jetbrains.*;
 import com.jetbrains.Server.Dados.Musica;
 import com.jetbrains.Server.Dados.Repositorio;
 import com.jetbrains.Server.Dados.Utilizador;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class ServerHelper implements SoundCloud {
     private Repositorio repositorio;
@@ -120,11 +120,7 @@ public class ServerHelper implements SoundCloud {
                 int bytesIni = 0;
                 int bytesRead;
 
-                final String threadNome = Thread.currentThread().getName();
-                String msg = null;
-
-                msg = String.format("%s: Tamanho do ficheiro %d", threadNome, tamanhoFile);
-                logger.info(msg);
+                logger.info("Tamanho do ficheiro " + tamanhoFile);
 
                 while (bytesIni < tamanhoFile) {
 
@@ -139,16 +135,11 @@ public class ServerHelper implements SoundCloud {
                 bis.close();
                 os.flush();
 
-                msg = String.format("Acabei o download");
                 logger.info("Acabei o download");
-
-                msg = String.format("%s: Tamanho do ficheiro %d", threadNome, bytesIni);
-                logger.info(msg);
+                logger.info("Tamanho do ficheiro " + bytesIni);
 
                 //aumenta o numero de downloads da musica
                 repositorio.growNDownloads(idMusica);
-
-
             } else {
                 out.println("2");
                 out.flush();
@@ -214,36 +205,30 @@ public class ServerHelper implements SoundCloud {
         List<String> musicasComEtiqueta = new ArrayList<>();
         List<Musica> vazia = new ArrayList<Musica>(); //lista vazia que vai ser devolvida apenas para obedecer ao interface
 
-        try {
-            for (Musica m : repositorio.getMusicas().values()) {
-                if (m.procuraEtiqueta(etiqueta)) {
-                    musicasComEtiqueta.add(m.toStringPlus());
-                }
+        for (Musica m : repositorio.getMusicas().values()) {
+            if (m.procuraEtiqueta(etiqueta)) {
+                musicasComEtiqueta.add(m.toStringPlus());
             }
-
-            logger.info("O tamanho da lista da etiqueta é " + musicasComEtiqueta.size());
-
-            //sinal delimitador de que começa uma nova música
-            String delim = "%-%";
-            String res = String.join(delim, musicasComEtiqueta);
-            String resultado = "1%" + res;
-
-            logger.info("As musicas com a etiqueta são " + res);
-            logger.info("As musicas com a etiqueta e com o indicador de que correu tudo bem - 1 " + resultado);
-
-            if (musicasComEtiqueta.size() == 0) {
-                out.println("2");
-                out.flush();
-                return vazia;
-            }
-
-            out.println(resultado);
-            out.flush();
-
-        } catch (IOException e) {
-            out.println("0");
-            out.flush();
         }
+
+        logger.info("O tamanho da lista da etiqueta é " + musicasComEtiqueta.size());
+
+        //sinal delimitador de que começa uma nova música
+        final CharSequence delim = "%-%";
+        String res = String.join(delim, musicasComEtiqueta);
+        String resultado = "1%" + res;
+
+        logger.info("As musicas com a etiqueta são " + res);
+        logger.info("As musicas com a etiqueta e com o indicador de que correu tudo bem - 1 " + resultado);
+
+        if (musicasComEtiqueta.size() == 0) {
+            out.println("2");
+            out.flush();
+            return vazia;
+        }
+
+        out.println(resultado);
+        out.flush();
 
         return vazia;
     }
