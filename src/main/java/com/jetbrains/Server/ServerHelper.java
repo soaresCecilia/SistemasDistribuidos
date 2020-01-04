@@ -26,10 +26,10 @@ public class ServerHelper implements SoundCloud {
     public ServerHelper(Socket clienteSock, Repositorio r) throws IOException {
         this.repositorio = r;
         this.socket = clienteSock;
-        this.out = new PrintWriter(socket.getOutputStream());
-        this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.os = socket.getOutputStream();
         this.is = socket.getInputStream();
+        this.out = new PrintWriter(this.os);
+        this.in = new BufferedReader(new InputStreamReader(this.is));
     }
 
     @Override

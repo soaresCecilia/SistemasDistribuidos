@@ -303,11 +303,11 @@ public class ClienteSTUB implements SoundCloud {
     public synchronized void conectar() throws ClienteServerException {
 
         try {
-            this.socket = new Socket(this.ip,this.porto);
-            this.out = new PrintWriter(socket.getOutputStream());
-            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.socket = new Socket(this.ip, this.porto);
             this.is = socket.getInputStream();
             this.os = socket.getOutputStream();
+            this.out = new PrintWriter(this.os);
+            this.in = new BufferedReader(new InputStreamReader(this.is));
         }
         catch (IOException e){
             throw new ClienteServerException("Ocorreu erro no Servidor, contacte assistencia técnica");
