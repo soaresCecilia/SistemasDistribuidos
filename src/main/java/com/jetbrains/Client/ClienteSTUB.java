@@ -244,7 +244,7 @@ public class ClienteSTUB implements SoundCloud {
         try {
             String le = in.readLine();
 
-            String[] rsp = le.split("%");
+            String[] rsp = le.split(" ");
 
                 switch (rsp[0]) {
                     case "1": //correu tudo bem

@@ -83,31 +83,6 @@ public class Musica {
 
 
     /*
-    Método que imprime uma música com o simbolo % entre cada uma das variáveis da classe música.
-    Este método auxilia na procura das músicas por uma etiqueta.
-     */
-    public String toStringPlus() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("ID:%");
-        sb.append(this.id + "%");
-        sb.append("Título:%");
-        sb.append(this.titulo + "%");
-        sb.append("Interprete:%");
-        sb.append(this.interprete+"%");
-        sb.append("Ano:%");
-        sb.append(this.ano + "%");
-        sb.append("Genero:%");
-        sb.append(this.genero + "%");
-        sb.append("Numero_downloads:%");
-        sb.append(this.nDownloads+"%");
-
-
-        return sb.toString();
-    }
-
-
-    /*
     Método que imprime uma música.
      */
     public String toString() {

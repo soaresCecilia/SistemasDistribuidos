@@ -208,16 +208,16 @@ public class ServerHelper implements SoundCloud {
 
         for (Musica m : repositorio.getMusicas().values()) {
             if (m.procuraEtiqueta(etiqueta)) {
-                musicasComEtiqueta.add(m.toStringPlus());
+                musicasComEtiqueta.add(m.toString());
             }
         }
 
         logger.info("O tamanho da lista da etiqueta é " + musicasComEtiqueta.size());
 
         //sinal delimitador de que começa uma nova música
-        final CharSequence delim = "%-%";
+        final CharSequence delim = " - ";
         String res = String.join(delim, musicasComEtiqueta);
-        String resultado = "1%" + res;
+        String resultado = "1 " + res;
 
         logger.info("As musicas com a etiqueta são " + res);
         logger.info("As musicas com a etiqueta e com o indicador de que correu tudo bem - 1 " + resultado);
