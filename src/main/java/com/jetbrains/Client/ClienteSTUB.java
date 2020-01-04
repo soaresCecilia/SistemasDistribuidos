@@ -197,7 +197,7 @@ public class ClienteSTUB implements SoundCloud {
                 os = socket.getOutputStream();
 
                 int bytesIni = 0;
-                int bytesRead=0;
+                int bytesRead = 0;
                 try {
                     out.println("upload " + tamanhoFile + " " + titulo + " " + interprete + " " + ano + " " + genero);
                     out.flush();
@@ -267,7 +267,7 @@ public class ClienteSTUB implements SoundCloud {
                         loggerStub.info(le);
                         throw new MusicaInexistenteException("Não existe nenhuma musica com essa etiqueta.");
                     default:
-                        loggerstub.info(le);
+                        loggerStub.info(le);
                         throw new ClienteServerException("Ocorreu erro no Servidor, contacte assistencia técnica.");
                 }
             } catch (IOException e) {

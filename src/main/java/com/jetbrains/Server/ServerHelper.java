@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 public class ServerHelper implements SoundCloud {
     private Repositorio repositorio;
     private Socket clSock;
-    public static String PATH_TO_RECORD = /*"/tmp/servidor_soundcloud/";*/ "/home/luisabreu/Desktop/musicaS/";
+    public static String PATH_TO_RECORD = "/tmp/servidor_soundcloud/";
     private PrintWriter out;
     private BufferedReader in;
     public static final int MAX_SIZE = 1024; //tamanho de transferência de ficheiros limitado
@@ -153,6 +153,8 @@ public class ServerHelper implements SoundCloud {
 
                 //aumenta o numero de downloads da musica
                 repositorio.growNDownloads(idMusica);
+
+
             } else {
                 out.println("2");
                 out.flush();
