@@ -22,6 +22,9 @@ public class ThreadPool {
     private Condition esperaExecutarDownload = lockDownload.newCondition();
 
 
+    /*
+    Construtor da classe
+     */
     public ThreadPool() {
         this.filaTarefas = new LinkedTransferQueue();
         this.threadsPool = new PoolWorker[MAX_THREADS];
@@ -32,6 +35,9 @@ public class ThreadPool {
         }
     }
 
+    /*
+    Método que adiciona as tarefas à fila de tarefas enquanto esta não estiver cheia.
+     */
     public void adicionaTarefa(PedidoCliente tarefa) {
         lockFila.lock();
 
@@ -54,6 +60,9 @@ public class ThreadPool {
     }
 
 
+    /*
+    Método que retira uma tarefa da fila de tarefas, desde que haja tarefas na fila.
+     */
     public PedidoCliente seleccionaTarefaExecutar() {
 
         this.lockFila.lock();
@@ -75,6 +84,11 @@ public class ThreadPool {
     }
 
 
+    /*
+    Método que executa a tarefa. Para tal, verifica se a tarefa é um pedido de download e, em caso afirmativo,
+    verifica se o mesmo está dentro do limite de downloads que podem ocorrer em simultâneo. Se sim executa-o,
+    senão espera até obter um sinal de que pode executar o seu download.
+     */
     public void executaTarefa(PedidoCliente tarefa) {
 
         boolean executaPedido = false;
@@ -110,6 +124,9 @@ public class ThreadPool {
         }
     }
 
+    /*
+    Classe privada que extends a classe Thread para poder executar estes métodos com a nossa threadsPool.
+     */
     private class PoolWorker extends Thread {
         public PoolWorker(String name) {
             super(name);
