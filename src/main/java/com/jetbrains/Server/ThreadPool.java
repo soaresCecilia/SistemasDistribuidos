@@ -125,7 +125,7 @@ public class ThreadPool {
     }
 
     /*
-    Classe privada que extends a classe Thread para poder executar estes métodos com a nossa threadsPool.
+    Classe privada que extends a classe Thread para prover um runnable para cada uma das threads.
      */
     private class PoolWorker extends Thread {
         public PoolWorker(String name) {
