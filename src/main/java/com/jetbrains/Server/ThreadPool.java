@@ -13,8 +13,8 @@ public class ThreadPool {
     private final Thread[] threadsPool;
     private final Queue filaTarefas;
     private static int nDownloads = 0;
-    private static final int MAX_TAM_FILA = 2;
-    private static final int MAX_DOWNLOADS = 1;
+    private static final int MAX_TAM_FILA = 30;
+    private static final int MAX_DOWNLOADS = 10;
     private ReentrantLock lockFila = new ReentrantLock();
     private ReentrantLock lockDownload = new ReentrantLock();
     private Condition esperaExecutarTarefa = lockFila.newCondition();
