@@ -23,6 +23,9 @@ public class ServerHelper implements SoundCloud {
     public static final int MAX_SIZE = 1024; //tamanho de transferência de ficheiros limitado
     private final Logger logger = Logger.getLogger("ServerHelper");
 
+    /*
+     * Construtor Parametrizado da Classe ServerHelper
+     */
     public ServerHelper(Socket clienteSock, Repositorio r) throws IOException {
         this.repositorio = r;
         this.socket = clienteSock;
@@ -87,6 +90,12 @@ public class ServerHelper implements SoundCloud {
     }
 
     @Override
+    /*
+     * Metodo que realiza o download de uma Musica com um determinado id.
+     * Não existindo a Musica escreve "2" que corresponde à excessão MusicaInexistente no socket
+     * Existindo a Musica, envia uma String para o socket, ex: "1 tamanhaMusica nomeMusica",
+     * seguido da leitura e escrita de 1024 em 1024 bytes para o socket
+     */
     public void download(int idMusica) {
 
         boolean existe = repositorio.existeMusica(idMusica);
@@ -151,7 +160,12 @@ public class ServerHelper implements SoundCloud {
     }
 
     @Override
-
+    /*
+     * Metodo que realiza o upload de uma Musica com um determinado tamanho, titulo, interprete, ano, genero.
+     * Armazena a Musica num caminho genérico dado pela seguinte String:  PATH_TO_RECORD + titulo + ".mp3"
+     * Lê do socket para um array de bytes com tamanho de 1024 bytes, em que de seguida escreve no ficheiro criado
+     * no diretorio definido inicialmente
+     */
     public void upload(String tamanho, String titulo, String interprete,  String ano, String genero) {
 
         try {

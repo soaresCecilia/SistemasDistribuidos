@@ -20,6 +20,7 @@ public class ClienteSTUB implements SoundCloud {
     private InputStream is;
     private OutputStream os;
     public static String PATH_TO_RECEIVE = "/tmp/cliente_soundcloud/";
+
     private final Logger logger = Logger.getLogger("ClienteStub");
 
     public ClienteSTUB(String ip, Integer porto){
@@ -55,6 +56,9 @@ public class ClienteSTUB implements SoundCloud {
     }
 
     @Override
+    /*
+    * Metodo que faz logout do cliente no servidor, e termina a ligação do Cliente com o Servidor
+    * */
     public void logout(String nome) throws IOException{
         try {
             out.println("logout");
@@ -95,6 +99,19 @@ public class ClienteSTUB implements SoundCloud {
     }
 
     @Override
+    /*
+    * Metodo que recebe o id da musica a fazer download.
+    * Envia uma string, EX: "download idMusica"
+    *
+    * Obtem a resposta do servidor, se -1 ĺança excessao de erro no Servidor
+    * se -2 lança a excessao de que a musica não existe
+    *
+    * Correndo tudo bem (1), recebe uma resposta do servidor com este formato "1 tamanhoMusica nomeMusica"
+    * Armazena a Musica num caminho genérico dado pela seguinte String:  PATH_TO_RECEIVE + nomeMusica + ".mp3"
+    * Lê do socket para um array de bytes com tamanho de 1024 bytes, em que de seguida escreve no ficheiro criado
+    * no diretorio definido inicialmente
+    *
+    */
     public void download(int id) throws MusicaInexistenteException, UtilizadorNaoAutenticadoException, ClienteServerException{
         try {
 
@@ -167,6 +184,15 @@ public class ClienteSTUB implements SoundCloud {
     }
 
     @Override
+    /*
+    * Metodo que recebe os dados da musica, à qual será feito o upload
+    *
+    * É determinado o tamanho do ficheiro da musica a transferir, e enviada uma String ao Servidor com o seguinte formato:
+    * "upload tamanhoMusica titulo interprete ano genero"
+    *
+    * Em seguida ocorre aa leitura do ficheiro e sua escrita de 1024 em 1024 bytes para o socket
+    *
+    */
     public void upload(String caminho, String titulo, String interprete, String ano, String genero) throws UtilizadorNaoAutenticadoException, ClienteServerException{
 
             try {
@@ -297,7 +323,7 @@ public class ClienteSTUB implements SoundCloud {
     }
 
     /*
-    Este método cria os elementos necessários para ser estabelecida uma conexão.
+    Este método cria os elementos necessários para ser estabelecida uma conexão com o Servidor.
      */
     
     public void conectar() throws ClienteServerException {
@@ -315,7 +341,7 @@ public class ClienteSTUB implements SoundCloud {
     }
 
     /*
-    Método que termina a conexão.
+    Método que termina a conexão com o Servidor.
      */
     public void desconectar()throws  IOException{
         this.socket.shutdownOutput();

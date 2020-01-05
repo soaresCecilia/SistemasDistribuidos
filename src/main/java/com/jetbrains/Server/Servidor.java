@@ -16,9 +16,12 @@ import org.apache.log4j.RollingFileAppender;
 public class Servidor {
 
     private static final ThreadPool threadPool = new ThreadPool();
-    private static final String caminhoFicheiro = "/tmp/servidor_soundcloud/";
+    private static final String caminhoFicheiro = "/tmp/servidor_soundcloud/"; 
     private static int workerThread  = 0;
 
+    /*
+    * Metodo que cria os sockets e as threads que darão resposta aos Clientes
+    */
    public static void start(Integer port, Repositorio repositorio) {
        Logger logger = Logger.getLogger("Servidor");
 
@@ -46,7 +49,10 @@ public class Servidor {
         System.out.println("Desligado");
 
     }
-
+    /*
+    * Metodo criado para iniciar o nosso Sound Cloud com dados, e assim melhor executar os varios comandos.
+    * Este método cria, 4 utilizadores e 4 musicas
+    */
     public static void teste(Repositorio repositorio) {
 
         Musica m1 = new Musica (1,"ola", "Elton_zJohn", "1982","rock", caminhoFicheiro+"ola.mp3", 9);
@@ -73,6 +79,9 @@ public class Servidor {
             System.out.println(m.toString());
     }
 
+    /*
+    * Metodo criado para um melhor debug, aquando o teste e utilização do Sistema do lado do Servidor
+    */
     private static void initLogger() {
         Logger rootLogger = Logger.getRootLogger();
         PatternLayout layout = new PatternLayout("[%-5p] %t:%c - %m%n");
@@ -96,7 +105,7 @@ public class Servidor {
 
         teste(repositorio);
 
-        Servidor.start(12346,repositorio);
+        Servidor.start(12345,repositorio);
     }
 }
 

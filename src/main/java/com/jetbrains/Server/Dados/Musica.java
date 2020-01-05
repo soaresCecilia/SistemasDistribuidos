@@ -11,6 +11,9 @@ public class Musica {
     private String caminhoFicheiro;
     private int nDownloads;
 
+    /*
+    *construtor de musica sem caminho para o ficheiro
+    */
     public Musica(int id, String titulo, String interprete, String ano, String genero, int nDownloads) {
         this.id = id;
         this.titulo = titulo;
@@ -20,6 +23,9 @@ public class Musica {
         this.nDownloads = nDownloads;
     }
 
+    /*
+    *construtor de musica com caminho para o ficheiro
+    */
     public Musica(int id, String titulo, String interprete, String ano, String genero, String ficheiro, int nDownloads) {
         this.id = id;
         this.titulo = titulo;
@@ -29,7 +35,9 @@ public class Musica {
         this.caminhoFicheiro = ficheiro;
         this.nDownloads = nDownloads;
     }
-
+    /*
+    * get's
+    */
     public int getId() {
         return this.id;
     }
@@ -58,13 +66,15 @@ public class Musica {
 
 
     /*
-    Aumenta o numero de downloads
-     */
+    *Aumenta o numero de downloads
+    */
     public void growNDowloads(){
         this.nDownloads++;
     }
 
-
+    /*
+    * metodo equals
+    */
     public boolean equals(Object o){
         if(this == o){
             return true;
@@ -83,8 +93,8 @@ public class Musica {
 
 
     /*
-    Método que imprime uma música.
-     */
+    *Método que converte uma música numa String.
+    */
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
