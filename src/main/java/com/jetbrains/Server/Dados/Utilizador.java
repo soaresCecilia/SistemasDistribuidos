@@ -7,7 +7,9 @@ public class Utilizador {
     private boolean activo = false;
     private String caminhoFicheiro; //uploads
 
-
+    /*
+     * Metodo construtor da Classe Utilizador
+     */
     public Utilizador(String nome, String pass) {
         this.nome = nome;
         this.password = pass;
@@ -15,17 +17,23 @@ public class Utilizador {
         this.caminhoFicheiro = null;
     }
 
-
+    /*
+     * get nome de um Utilizador
+     */
     public String getNome(){
         return this.nome;
     }
 
-
-
+    /*
+     * get password de um Utilizador
+     */
     public String getPassword() {
         return password;
     }
 
+    /*
+     * metodo equals
+     */
     public boolean equals(Object o){
         if(this == o){
             return true;
@@ -37,9 +45,9 @@ public class Utilizador {
         return super.equals(aux) && this.nome.equals(aux.getNome());
     }
 
-
-
-
+    /*
+     * Metodo que transforma um Utilizador numa String
+     */
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
@@ -52,16 +60,23 @@ public class Utilizador {
         return sb.toString();
     }
 
+    /*
+     * Metodo que retorna True, caso o nome e a password introduzida estão de acordo com um Utilizador já registado no Sistema
+     */
     public boolean autentica(String nome, String password) {
         return (this.nome.equals(nome) && this.password.equals(password));
     }
 
-
+    /*
+     * get do estado em que o Utilizador se encontra no Sistema
+     */
     public boolean getActivo() {
         return this.activo;
     }
 
-
+    /*
+     * set's do estado do Utilizador no Sistema
+     */
     public void setActivo() {
         this.activo = true;
     }

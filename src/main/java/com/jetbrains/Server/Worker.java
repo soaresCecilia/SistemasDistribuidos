@@ -22,6 +22,10 @@ public class Worker implements Runnable {
         this.threadPool = threadPool;
     }
 
+    /*
+    * Metodo que faz o tratamento do pedido proveniente do Cliente e o reencaminha para a Thread Pool, para posteriormente ser
+    * tratado
+    */
     public void responde(String s) throws InterruptedException {
         String[] comandos = s.split(" ");
 
@@ -85,7 +89,9 @@ public class Worker implements Runnable {
     }
 
 
-    //O worker so fala com o stub quando dá erro
+    /*
+    * Metodo que lê os pedidos provenientes do Cliente
+    */
     public void run(){
         try {
             if (socket == null) {

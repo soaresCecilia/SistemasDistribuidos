@@ -25,10 +25,19 @@ public class Cliente {
 
 
     private void caminhoServidor(String ip, Integer port) {
-        cStub = new ClienteSTUB("127.0.0.1", 12346);
+        cStub = new ClienteSTUB(ip, port);
     }
 
-
+    /*
+    * Metodo que faz a autenticação de um Cliente no Sistema
+    *
+    * Se invocado com String nome, String password, false , executa o login do Cliente no sistema. dando-lhe acesso
+    * ao sistema, caso os dados introduzidos sejam válidos
+    *
+    * Se invocado com String nome, String password, true , executa o registo do Cliente no sistema, e dá
+    * acesso ao Sistema no fim do registo
+    *
+    */
     private void autenticacao(String nome,String password, boolean querRegistar) throws IOException, UtilizadorNaoAutenticadoException, CredenciaisInvalidasException {
         try {
             cStub.conectar();
@@ -56,7 +65,9 @@ public class Cliente {
             cStub.desconectar();  //quando dá erro desliga o socket
         }
     }
-
+    /*
+    * Metodo que faz logout do Cliente
+    */
     private void logout() {
         adeus();
         try{
@@ -68,15 +79,21 @@ public class Cliente {
         }
     }
 
+    /*
+     *  Metodo que envia ao cStub, o id da musica que se pretende fazer downloaload.
+     * Após a sua conclusão, informa o cliente se o download foi bem sucedido ou não
+     */
     public void download(int id) {
         try{
             cStub.download(id);
             System.out.println("Download concluido com sucesso");
         }
         catch (MusicaInexistenteException e){
+            System.out.println("Musica não existe.");
             logger.error(e.getMessage());
         }
         catch (UtilizadorNaoAutenticadoException e){
+            System.out.println("Por favor, faça login");
             logger.error(e.getMessage());
         }
         catch (ClienteServerException e){
@@ -84,6 +101,10 @@ public class Cliente {
         }
     }
 
+    /*
+    *  Metodo que envia ao cStub, os dados da musica que se pretende fazer upload.
+    * Após a sua conclusão, informa o cliente se o upload foi bem sucedido ou não
+    */
     public void upload( String nome, String interprete, String ano, String genero, String caminho) throws  IOException{
 
         try{
@@ -91,6 +112,7 @@ public class Cliente {
             System.out.println("Upload concluido com sucesso");
         }
         catch (UtilizadorNaoAutenticadoException e){
+            System.out.println("Por favor, faça login");
             logger.error(e.getMessage());
         }
         catch (ClienteServerException e){
@@ -98,6 +120,12 @@ public class Cliente {
         }
     }
 
+    /*
+    * Metodo que envia ao cStub, a etiqueta a procurar nas musicas, e apresenta a resposta com
+    * as musicas encontradas ao Cliente.
+    * Se não existirem musicas com a etiqueta enviada, naõ apresenta nenhum resultado.
+    * Se obtiver uma lista de musicas, apresenta-as linha a linha
+    */
     public List<Musica> procuraMusica(String etiqueta) throws IOException {
         List<Musica> m = new ArrayList<>();
 
@@ -110,18 +138,23 @@ public class Cliente {
                 System.out.println(musica.toString());}
             }
         catch (MusicaInexistenteException e){
+            System.out.println("Não existe nenhuma musica com essa etiqueta");
             logger.error(e.getMessage());
         }
         catch (ClienteServerException e){
             logger.error(e.getMessage());
         }
         catch (UtilizadorNaoAutenticadoException e) {
+            System.out.println("Por favor, faça login");
             logger.error(e.getMessage());
         }
 
         return m;
     }
 
+    /*
+    * Metodo que faz a ligação Cliente ClienteSTUB
+    */
     public static void start(String ip, Integer porto) {
         Cliente cliente = new Cliente();
         cliente.caminhoServidor(ip, porto);
@@ -134,6 +167,10 @@ public class Cliente {
         }
     }
 
+    /*
+    * Metodo que faz o tratamentos dos varios comando inseridos pelo Cliente.
+    * Lê do terminal o comando inserido pelo Cliente, verifica se está de acordo com a norma, e executa-os
+    */
     private void executaComandos() throws IOException {
 
         String comando;
@@ -206,7 +243,7 @@ public class Cliente {
                         System.exit(0);
 
                     default:
-                        System.out.println("Não foi possível efectuar a operação. Volte a tentar");
+                        System.out.println("Não é possível efectuar a operação. Volte a tentar");
                 }
             }
             catch (UtilizadorNaoAutenticadoException e){
@@ -221,6 +258,9 @@ public class Cliente {
         }
     }
 
+    /*
+     * Metodo criado para um melhor debug, aquando o teste e utilização do Sistema do lado do Cliente
+     */
     private static void initLogger() {
         Logger rootLogger = Logger.getRootLogger();
         PatternLayout layout = new PatternLayout("[%-5p] %t:%c - %m%n");
@@ -247,6 +287,15 @@ public class Cliente {
         }
     }
 
+
+
+    /*
+    *
+    *
+    * Metodos utilizados para obtermos um interface Cliente/Sistema mais user friendly
+    *
+    *
+    */
 
     private void opcoesNotLoggedIn() {
         System.out.println(".........................................................................................................");
